@@ -11,7 +11,7 @@ const App = () => {
       <ProgressProvider>
         <UserProvider>
           <StatusBar
-            backgroundColor={theme.backgruond}
+            backgroundColor={theme.background}
             barStyle="dark-content"
           />
           <Navigation />
