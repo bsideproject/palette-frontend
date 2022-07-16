@@ -1,0 +1,5 @@
+rootProject.name = 'PaletteFrontEnd'
+include ':react-native-kakao-connect'
+project(':react-native-kakao-connect').projectDir = new File(rootProject.projectDir, '../KakaoConnect/android')
+apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
+include ':app'
