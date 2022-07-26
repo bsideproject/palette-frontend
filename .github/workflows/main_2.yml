@@ -4,15 +4,7 @@ on:
     branches:
       - master
 jobs:
-  install-and-test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install npm dependencies
-        run: |
-          cd test && npm install 
   build-android:
-    needs: install-and-test
     runs-on: ubuntu-latest
     steps: 
       - uses: actions/checkout@v2
@@ -20,13 +12,12 @@ jobs:
       - name: Install npm dependencies
         run: |
           cd test && npm install
-        working-directory: ${{ env.working-directory-root }}
         
       - name: Build Android Release
         run: |
           ls -al
-          cd android && chmod 777 ./gradlew
-          ./gradlew assembleRelease
+          cd test/android && chmod 777 ./gradlew
+          cd test/android && ./gradlew assembleRelease
         working-directory: ${{ env.working-directory-root }}
         
       - name: Upload Artifact
