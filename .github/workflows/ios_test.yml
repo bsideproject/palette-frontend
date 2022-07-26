@@ -1,9 +1,11 @@
-name: Deploy-iOS-PROD
+# action 이름
+name: react-native-ios-build-apk
 
+# action 트리거 조건 (release 브랜치에 푸쉬될 때)
 on:
   push:
-    tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+'
+    branches:
+      - master
     
 env:
   WORKSPACE: ${{ 'ios/MyApp.xcworkspace' }}
