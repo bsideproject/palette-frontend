@@ -54,10 +54,10 @@ jobs:
       - name: Deploy build outputs
         uses: appleboy/scp-action@master
         with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
+          host: 106.10.49.159
+          username: root
           key: ${{ secrets.SSH_PEM_KEY }}
-          port: ${{ secrets.PORT }}
+          port: 22
           source: "build/*"
           strip_components: 1
           target: "/var/www/html"
