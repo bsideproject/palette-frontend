@@ -12,13 +12,20 @@ jobs:
       - name: Install npm dependencies
         run: |
           cd test && npm install
+          
+      - name: set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+          cache: gradle
+        
+      - name: Grant execute permission for gradlew
+        run: cd test/android && chmod +x gradlew 
         
       - name: Build Android Release
         run: |
-          ls -al
-          cd test/android && chmod 777 ./gradlew
           cd test/android && ./gradlew assembleRelease
-        working-directory: ${{ env.working-directory-root }}
         
       - name: Upload Artifact
         uses: actions/upload-artifact@v1
