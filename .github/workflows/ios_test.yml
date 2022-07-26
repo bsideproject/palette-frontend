@@ -39,17 +39,29 @@ jobs:
     name: Build
     runs-on: macos-latest
     
+    strategy:
+      matrix:
+        node-version: [14.x]
+    
     steps:
       - name: Checkout
         uses: actions/checkout@v2
         
-      - name: Set up Node.js 12.16.1
+      - name: set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+          cache: gradle
+        
+      - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
-          node-version: 12.16.1
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
           
       - name: Install dependencies
-        run: npm install
+        run: cd test && npm install && npm audit fix
         
       - name: Install pod dependencies
         run: |
