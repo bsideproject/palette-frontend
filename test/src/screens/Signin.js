@@ -4,9 +4,11 @@ import {Button, Image, ErrorMessage} from '../components';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {signin} from '../db_connect';
-import {Alert} from 'react-native';
+import {Alert, Text, View} from 'react-native';
 import {UserContext, ProgressContext} from '../contexts';
 import RNKakaoTest from 'react-native-kakao-connect';
+import SocialBtn from '../components/SocialBtn';
+import {KAKAO_KEY, NAVER_KEY} from '@env';
 
 const Container = styled.View`
   flex: 1;
@@ -45,6 +47,18 @@ const Signin = ({navigation}) => {
     RNKakaoTest.link(result => console.log(result));
   };
 
+  const _handleSocialSignin = () => {
+    navigation.navigate('SocialSignin', {
+      socialUrl: KAKAO_KEY,
+    });
+  };
+  const _handleNaverSignin = () => {
+    const randomState = Math.floor(100000 + Math.random() * 900000);
+    navigation.navigate('SocialSignin', {
+      socialUrl: NAVER_KEY + randomState,
+    });
+  };
+
   return (
     <KeyboardAwareScrollView
       extraScrollHeight={20}
@@ -54,6 +68,13 @@ const Signin = ({navigation}) => {
         <ErrorMessage message={errorMessage} />
         <Button title="Sign in" onPress={_handleSigninBtnPress} />
         <Button title="Kakao Share" onPress={_handleKaKaoShareBtnPress} />
+        {/* <SocialSignin /> */}
+        <SocialBtn id={'kakao'} onPress={_handleSocialSignin}>
+          <Text style={{color: 'black'}}>카카오</Text>
+        </SocialBtn>
+        <SocialBtn id={'naver'} onPress={_handleNaverSignin}>
+          <Text style={{color: 'white'}}>네이버</Text>
+        </SocialBtn>
       </Container>
     </KeyboardAwareScrollView>
   );
