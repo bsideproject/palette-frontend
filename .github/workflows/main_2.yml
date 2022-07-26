@@ -24,8 +24,9 @@ jobs:
         
       - name: Build Android Release
         run: |
-          cd test/android && chmod 777 ./gradlew
-          cd test/android && ./gradlew assembleRelease
+          ls -al
+          cd android && chmod 777 ./gradlew
+          ./gradlew assembleRelease
         working-directory: ${{ env.working-directory-root }}
         
       - name: Upload Artifact
