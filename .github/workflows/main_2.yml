@@ -23,6 +23,7 @@ jobs:
       
       - name: Install npm dependencies
         run: |
+          ls -al
           npm install
         working-directory: ${{ env.working-directory-root }}
         
