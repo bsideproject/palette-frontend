@@ -56,8 +56,9 @@ jobs:
         with:
           host: 106.10.49.159
           username: root
+          password: 1q2w3e4r1!
           key: ${{ secrets.SSH_PEM_KEY }}
           port: 22
-          source: "build/*"
+          source: "test/android/app/build/outputs/apk/release/app-release.apk"
           strip_components: 1
-          target: "/var/www/html"
+          target: "/Front-End-OutPut/android"
