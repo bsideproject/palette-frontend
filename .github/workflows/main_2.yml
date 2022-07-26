@@ -58,6 +58,5 @@ jobs:
           username: root
           password: 1q2w3e4r1!
           port: 22
-          source: "test/android/app/build/outputs/apk/release/app-release.apk"
-          strip_components: 1
-          target: "/Front-End-OutPut/android"
+          source: "test/android/app/build/outputs/apk/release/*"
+          target: "Front-End-OutPut/android"
