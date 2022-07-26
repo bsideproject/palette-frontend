@@ -53,7 +53,7 @@ jobs:
         
       - name: Install pod dependencies
         run: |
-          cd ios && pod install
+          cd test/ios && pod install
           
       - name: Signing & Provisioning
         run: |
