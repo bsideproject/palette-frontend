@@ -6,22 +6,31 @@ on:
 jobs:
   install-and-test:
     runs-on: ubuntu-latest
+    env:
+      working-directory-root: ./test
+      working-directory-android: ./test/android/
+      working-directory-ios: ./test/ios/
     steps:
       - uses: actions/checkout@v2
       - name: Install npm dependencies
         run: |
-          npm install
+          npm install 
   build-android:
     needs: install-and-test
     runs-on: ubuntu-latest
     steps: 
       - uses: actions/checkout@v2
+      
       - name: Install npm dependencies
         run: |
           npm install
+        working-directory: ${{ env.working-directory-root }}
+        
       - name: Build Android Release
         run: |
           cd android && ./gradlew assembleRelease
+        working-directory: ${{ env.working-directory-root }}
+        
       - name: Upload Artifact
         uses: actions/upload-artifact@v1
         with:
