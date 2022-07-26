@@ -19,6 +19,13 @@ jobs:
     steps: 
       - name: Checkout Repository
         uses: actions/checkout@v2
+        
+      - name: set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+          cache: gradle
     
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
@@ -30,13 +37,6 @@ jobs:
       - name: Install npm dependencies
         run: |
           cd test && npm install
-          
-      - name: set up JDK 11
-        uses: actions/setup-java@v2
-        with:
-          java-version: '11'
-          distribution: 'adopt'
-          cache: gradle
         
       - name: Grant execute permission for gradlew
         run: cd test/android && chmod +x gradlew 
