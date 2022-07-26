@@ -1,14 +1,30 @@
+# action 이름
 name: react-native-android-build-apk
+
+# action 트리거 조건 (release 브랜치에 푸쉬될 때)
 on:
   push:
     branches:
       - master
+      
+# action 동작
 jobs:
   build-android:
     runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [14.x]
+    
     steps: 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
       
+      # 모듈 설치
       - name: Install npm dependencies
         run: |
           cd test && npm install
@@ -31,4 +47,4 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: app-release.apk
-          path: android/app/build/outputs/apk/release/
+          path: test/android/app/build/outputs/apk/release/
