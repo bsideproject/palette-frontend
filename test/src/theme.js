@@ -5,6 +5,8 @@ const Colors = {
   grey_0: '#d5d5d5',
   grey_1: '#a6a6a6',
   red: '#e84118',
+  icon_grey: '#D9D9D9',
+  skip_color: '#8C8C8C',
 };
 
 export const theme = {
@@ -47,4 +49,11 @@ export const theme = {
   // Chat
   sendBtnActive: Colors.main,
   sendBtnInActive: Colors.grey_1,
+
+  // Icon
+  iconBackground: Colors.icon_grey,
+  modalBackground: Colors.white,
+  btnFooterText: Colors.white,
+  btnFooterBackground: Colors.black,
+  skipFontColor: Colors.skip_color,
 };

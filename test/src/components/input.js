@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 const Container = styled.View`
   flex-direction: column;
-  width: 100%;
+  width: 80%;
   margin: 10px 0;
 `;
 
