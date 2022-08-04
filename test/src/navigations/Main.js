@@ -1,7 +1,7 @@
 import React, {useContext, useEffect} from 'react';
 import {ThemeContext} from 'styled-components/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import {Sub, AddMemo, AddMemoImage, AddInviteCode} from '../screens';
+import {MemoMain, AddMemo, AddMemoColor, AddInviteCode} from '../screens';
 import {LogBox} from 'react-native';
 
 const Stack = createStackNavigator();
@@ -20,17 +20,23 @@ const Main = () => {
         headerTintColor: theme.text,
         headerBackTitleVisible: false,
         headerStyle: {
-          backgroundColor: '#45413C',
+          backgroundColor: '#FFFFFF',
           borderBottomWidth: 1,
-          borderBottomColor: '#99154E',
+          borderBottomColor: '#EEEEEE',
+          height: 60,
         },
-        title: '반쪽일기',
-        headerTitleStyle: {color: '#FFFFFF', fontsize: 24},
+        title: '일기장 만들기',
+        headerTitleStyle: {
+          color: '#111111',
+          fontSize: 16,
+          fontWeight: '700',
+          fontFamily: theme.fontRegular,
+        },
         cardStyle: {backgroundColor: theme.background},
       }}>
-      <Stack.Screen name="Sub" component={Sub} />
+      <Stack.Screen name="MemoMain" component={MemoMain} />
       <Stack.Screen name="AddMemo" component={AddMemo} />
-      <Stack.Screen name="AddMemoImage" component={AddMemoImage} />
+      <Stack.Screen name="AddMemoColor" component={AddMemoColor} />
       <Stack.Screen name="AddInviteCode" component={AddInviteCode} />
     </Stack.Navigator>
   );

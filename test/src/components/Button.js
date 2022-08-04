@@ -2,31 +2,44 @@ import React from 'react';
 import {TouchableOpacity} from 'react-native';
 import styled from 'styled-components/native';
 import PropTypes from 'prop-types';
+import Icon from 'react-native-vector-icons/AntDesign';
 
 const Container = styled.View`
-  background-color: ${({theme}) => theme.btnBackground};
-  padding: 10px;
-  margin: 10px 0;
+  padding: 14px;
   flex: 1;
+  gap: 10px;
   justify-content: center;
   align-items: center;
-  border-radius: 4px;
-  opacity: ${({disabled}) => (disabled ? 0.5 : 1)};
+  border-radius: 6px;
 `;
 
 const Title = styled.Text`
-  font-size: 24px;
+  font-size: 18px;
+  line-height: 26px;
   color: ${({theme}) => theme.btnTitle};
 `;
 
-const Button = ({title, onPress, containerStyle, textStyle, disabled}) => {
+const Button = ({
+  title,
+  onPress,
+  containerStyle,
+  textStyle,
+  IconType,
+  IconColor,
+}) => {
   return (
-    <TouchableOpacity
-      onPress={onPress}
-      style={{flexDirection: 'row'}}
-      disabled={disabled}>
-      <Container style={containerStyle} disabled={disabled}>
-        <Title style={textStyle}>{title}</Title>
+    <TouchableOpacity onPress={onPress} style={{flexDirection: 'row'}}>
+      <Container style={containerStyle}>
+        <Title style={textStyle}>
+          <Icon
+            name={IconType}
+            size={21}
+            color={IconColor}
+            style={{color: IconColor}}
+          />
+          &nbsp;&nbsp;
+          {title}
+        </Title>
       </Container>
     </TouchableOpacity>
   );
@@ -37,7 +50,6 @@ Button.propTypes = {
   onPress: PropTypes.func.isRequired,
   containerStyle: PropTypes.object,
   textStyle: PropTypes.object,
-  disabled: PropTypes.bool,
 };
 
 export default Button;

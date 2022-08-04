@@ -3,10 +3,17 @@ const Colors = {
   black: '#111111',
   main: '#3679fe',
   grey_0: '#d5d5d5',
-  grey_1: '#a6a6a6',
-  red: '#e84118',
+  grey_1: '#999999',
+  red: '#FC2F2F',
   icon_grey: '#D9D9D9',
   skip_color: '#8C8C8C',
+  main_color: '#0F4CFC',
+};
+
+const Fonts = {
+  regular: 'Pretendard-Regular',
+  bold: 'Pretendard-Bold',
+  light: 'Pretendard-Light',
 };
 
 export const theme = {
@@ -54,6 +61,18 @@ export const theme = {
   iconBackground: Colors.icon_grey,
   modalBackground: Colors.white,
   btnFooterText: Colors.white,
-  btnFooterBackground: Colors.black,
+
+  btnMainColorBg: Colors.main_color,
+  btnWhiteFont: Colors.white,
+  btnWhiteColorBg: Colors.white,
+  btnMainFont: Colors.main_color,
+
+  inputValidChkColor: Colors.red,
+
   skipFontColor: Colors.skip_color,
+
+  // font
+  fontRegular: Fonts.regular,
+  fontBold: Fonts.bold,
+  fontLight: Fonts.light,
 };

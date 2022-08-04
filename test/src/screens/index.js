@@ -1,7 +1,7 @@
 import Signin from './Signin';
-import Sub from './sub';
+import MemoMain from './MemoMain';
 import AddMemo from './AddMemo';
-import AddMemoImage from './AddMemoImage';
+import AddMemoColor from './AddMemoColor';
 import AddInviteCode from './AddInviteCode';
 
-export {Signin, Sub, AddMemo, AddMemoImage, AddInviteCode};
+export {Signin, MemoMain, AddMemo, AddMemoColor, AddInviteCode};

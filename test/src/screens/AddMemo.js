@@ -13,74 +13,91 @@ const Container = styled.View`
   flex: 1;
   background-color: ${({theme}) => theme.background};
   flex-direction: column;
-`;
-
-const TitleContainer = styled.View`
   width: 100%;
-  height: 70%;
-  margin-top: 10%;
-  margin-left: 7%;
+  height: 100%;
 `;
 
 const TitleTextContainer = styled.Text`
   font-size: 20px;
-  font-weight: 600;
+  font-weight: 400;
+  padding-left: 5%;
+  margin-top: 10%;
+  font-family: ${({theme}) => theme.fontRegular};
 `;
 
-const FooterContainer = styled.View`
+const BtnContainer = styled.View`
+  width: 95%;
+  padding-left: 5%;
   justify-content: center;
   align-items: center;
+  margin-top: 80%;
 `;
 
 const AddMemo = ({navigation}) => {
   const [name, setName] = useState('');
   const theme = useContext(ThemeContext);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isError, setIsError] = useState(false);
+  const pattern_spc = /[~!@#$%^&*()_+|<>?:{}]/; // 특수문자
 
-  const _handleSetNamePress = () => {
-    console.log('Set Name');
-    navigation.navigate('AddMemoImage', {name: name});
+  const _handleSetMemoColorPress = () => {
+    // Check Valid Type
+    console.log('Set Memo Color Press');
+    setIsError(true);
+
+    if (name.length == 0) {
+      setErrorMessage('일기장 제목을 입력해주세요.');
+    } else if (name.length < 1 || name.length > 12) {
+      setErrorMessage('1자~12자의 제목을 입력해주세요.');
+    } else if (pattern_spc.test(name)) {
+      setErrorMessage('특수문자를 제외한 제목을 입력해주세요.');
+    } else {
+      navigation.navigate('AddMemoColor', {name: name});
+    }
   };
 
   return (
     <Container>
-      <TitleContainer>
-        <TitleTextContainer>
-          <Text>일기 이름을 입력해주세요.</Text>
-        </TitleTextContainer>
-
-        <Input
-          label="이름"
-          value={name}
-          onChangeText={setName}
-          onSubmitEditing={_handleSetNamePress}
-          onBlur={() => setName(name.trim())}
-          placeholder="그룹 이름 입력"
-          returnKeyType="next"
-          maxLength={20}
+      <TitleTextContainer>
+        <Text>일기장 이름을 입력해보세요.</Text>
+      </TitleTextContainer>
+      <Input
+        value={name}
+        onChangeText={setName}
+        onSubmitEditing={_handleSetMemoColorPress}
+        onBlur={() => setName(name.trim())}
+        placeholder="최대 12자의 그룹 이름을 입력하세요"
+        returnKeyType="next"
+        maxLength={12}
+        isError={isError}
+      />
+      {isError && (
+        <ErrorMessage
+          message={errorMessage}
+          IconColor={theme.inputValidChkColor}
+          IconType="exclamationcircleo"
         />
-      </TitleContainer>
-      <FooterContainer>
+      )}
+      <BtnContainer>
         <Button
-          title="다음"
-          onPress={_handleSetNamePress}
+          title="다음 단계로"
+          onPress={_handleSetMemoColorPress}
           containerStyle={{
-            backgroundColor: theme.btnFooterBackground,
-            borderRadius: 0,
-            height: '66%',
-            padding: 0,
-            margin: 0,
+            backgroundColor: theme.btnMainColorBg,
             alignItems: 'center',
             justifyContent: 'center',
           }}
           textStyle={{
-            color: theme.btnFooterText,
+            color: theme.btnWhiteFont,
             fontSize: 18,
+            fontWeight: '700',
+            fontFamily: theme.fontRegular,
             textAlign: 'center',
             alignItems: 'center',
             justifyContent: 'center',
           }}
         />
-      </FooterContainer>
+      </BtnContainer>
     </Container>
   );
 };

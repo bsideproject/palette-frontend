@@ -4,15 +4,9 @@ import PropTypes from 'prop-types';
 
 const Container = styled.View`
   flex-direction: column;
-  width: 80%;
+  width: 95%;
+  padding-left: 5%;
   margin: 10px 0;
-`;
-
-const Label = styled.Text`
-  font-size: 14px;
-  font-weight: 600;
-  margin-bottom: 6px;
-  color: ${({theme, isFocused}) => (isFocused ? theme.text : theme.inputLabel)};
 `;
 
 const StyledInput = styled.TextInput.attrs(({theme}) => ({
@@ -22,16 +16,22 @@ const StyledInput = styled.TextInput.attrs(({theme}) => ({
     editable ? theme.inputBackground : theme.inputDisabled};
   color: ${({theme}) => theme.text};
   padding: 20px 10px;
-  font-size: 16px;
+  font-size: 14px;
+  font-weight: 400;
+  font-family: ${({theme}) => theme.fontRegular};
   border: 1px solid
-    ${({theme, isFocused}) => (isFocused ? theme.text : theme.inputBorder)};
-  border-radius: 4px;
+    ${({theme, isFocused, isError}) =>
+      isFocused
+        ? isError
+          ? theme.inputValidChkColor
+          : theme.text
+        : theme.inputBorder};
+  border-radius: 6px;
 `;
 
 const Input = forwardRef(
   (
     {
-      label,
       value,
       onChangeText,
       onSubmitEditing,
@@ -41,6 +41,7 @@ const Input = forwardRef(
       maxLength,
       isPassword,
       disabled,
+      isError,
     },
     ref,
   ) => {
@@ -48,7 +49,6 @@ const Input = forwardRef(
 
     return (
       <Container>
-        <Label isFocused={isFocused}>{label}</Label>
         <StyledInput
           ref={ref}
           value={value}
@@ -65,6 +65,7 @@ const Input = forwardRef(
           autoCorrect={false}
           textContentType="none"
           isFocused={isFocused}
+          isError={isError}
           onFocus={() => setIsFocused(true)}
           secureTextEntry={isPassword}
           editable={!disabled}
@@ -79,7 +80,6 @@ Input.defaultProps = {
 };
 
 Input.propTypes = {
-  label: PropTypes.string,
   value: PropTypes.string.isRequired,
   onChangeText: PropTypes.func,
   onSubmitEditing: PropTypes.func,
