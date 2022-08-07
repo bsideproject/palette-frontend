@@ -7,7 +7,7 @@ const StyledText = styled.Text`
   align-items: flex-start;
   width: 100%;
   height: 20px;
-  margin-left: 8%;
+  margin-left: 2%;
   line-height: 20px;
   color: ${({theme}) => theme.errorText};
 `;

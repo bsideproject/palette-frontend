@@ -14,7 +14,7 @@ const Container = styled.View`
   flex: 1;
   flex-direction: row;
   background-color: ${({theme}) => theme.background};
-  width: 95%;
+  padding-right: 5%;
   padding-left: 5%;
   justify-content: space-between;
 `;
@@ -26,8 +26,8 @@ const SpinnerContainer = styled.Text`
 `;
 
 const TitleTextContainer = styled.Text`
-  width: 100%;
   padding-left: 5%;
+  width: 100%;
   font-size: 20px;
   font-weight: 400;
   margin-top: 10%;
@@ -38,8 +38,8 @@ const TitleTextContainer = styled.Text`
 const BtnContainer = styled.View`
   justify-content: center;
   align-items: center;
+  padding-right: 5%;
   padding-left: 5%;
-  width: 95%;
   margin-top: 10%;
   margin-bottom: 30%;
 `;
@@ -197,9 +197,6 @@ const AddMemoColor = ({navigation, route}) => {
           />
         </BtnContainer>
       }>
-      <SpinnerContainer>
-        <Spinner visible={isLoading} textContent={'표지 색상 불러오는 중...'} />
-      </SpinnerContainer>
       <TitleTextContainer>표시 색상 선택을 해보세요</TitleTextContainer>
       <Container>
         <FlatList
@@ -210,6 +207,9 @@ const AddMemoColor = ({navigation, route}) => {
           extraData={selectedId}
         />
       </Container>
+      <SpinnerContainer>
+        <Spinner visible={isLoading} textContent={'표지 색상 불러오는 중...'} />
+      </SpinnerContainer>
     </KeyboardAvoidingScrollView>
   );
 };
