@@ -1,7 +1,14 @@
 import React, {useContext, useEffect} from 'react';
 import {ThemeContext} from 'styled-components/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import {MemoMain, AddMemo, AddMemoColor, AddInviteCode} from '../screens';
+import {
+  MemoMain,
+  AddMemo,
+  AddMemoColor,
+  AddInviteCode,
+  MainPage,
+} from '../screens';
+import Home from './Home';
 import {LogBox} from 'react-native';
 
 const Stack = createStackNavigator();
@@ -34,6 +41,11 @@ const Main = () => {
         },
         cardStyle: {backgroundColor: theme.background},
       }}>
+      <Stack.Screen
+        name="Home"
+        component={Home}
+        options={{headerShown: false}}
+      />
       <Stack.Screen name="MemoMain" component={MemoMain} />
       <Stack.Screen name="AddMemo" component={AddMemo} />
       <Stack.Screen name="AddMemoColor" component={AddMemoColor} />

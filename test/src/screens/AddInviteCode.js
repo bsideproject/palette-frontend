@@ -1,11 +1,8 @@
 import React, {useContext, useState} from 'react';
 import styled from 'styled-components/native';
 import {DB} from '../db_connect';
-import Icon from 'react-native-vector-icons/AntDesign';
-import {View, Text} from 'react-native';
-import {TouchableOpacity} from 'react-native';
-import Tooltip from 'react-native-walkthrough-tooltip';
-import Modal from 'react-native-simple-modal';
+import {Text} from 'react-native';
+import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
 import {ThemeContext} from 'styled-components/native';
 import {Button, Input, ErrorMessage} from '../components';
 
@@ -30,7 +27,7 @@ const BtnContainer = styled.View`
   padding-left: 5%;
   justify-content: center;
   align-items: center;
-  margin-top: 80%;
+  margin-bottom: 30%;
 `;
 
 const AddInviteCode = ({navigation}) => {
@@ -51,48 +48,52 @@ const AddInviteCode = ({navigation}) => {
   };
 
   return (
-    <Container>
-      <TitleTextContainer>
-        <Text>전달받은 초대 코드를 입력하세요</Text>
-      </TitleTextContainer>
-      <Input
-        value={code}
-        onChangeText={setCode}
-        onSubmitEditing={_handleSetInviteComplete}
-        onBlur={() => setCode(code.trim())}
-        placeholder="8자 이내 한글 or 영문"
-        returnKeyType="next"
-        maxLength={8}
-        isError={isError}
-      />
-      {isError && (
-        <ErrorMessage
-          message={errorMessage}
-          IconColor={theme.inputValidChkColor}
-          IconType="exclamationcircleo"
+    <KeyboardAvoidingScrollView
+      stickyFooter={
+        <BtnContainer>
+          <Button
+            title="다음 단계로"
+            onPress={_handleSetInviteComplete}
+            containerStyle={{
+              backgroundColor: theme.btnMainColorBg,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+            textStyle={{
+              color: theme.btnWhiteFont,
+              fontSize: 18,
+              fontWeight: '700',
+              fontFamily: theme.fontRegular,
+              textAlign: 'center',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          />
+        </BtnContainer>
+      }>
+      <Container>
+        <TitleTextContainer>
+          <Text>전달받은 초대 코드를 입력하세요</Text>
+        </TitleTextContainer>
+        <Input
+          value={code}
+          onChangeText={setCode}
+          onSubmitEditing={_handleSetInviteComplete}
+          onBlur={() => setCode(code.trim())}
+          placeholder="8자 이내 한글 or 영문"
+          returnKeyType="next"
+          maxLength={8}
+          isError={isError}
         />
-      )}
-      <BtnContainer>
-        <Button
-          title="다음 단계로"
-          onPress={_handleSetInviteComplete}
-          containerStyle={{
-            backgroundColor: theme.btnMainColorBg,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-          textStyle={{
-            color: theme.btnWhiteFont,
-            fontSize: 18,
-            fontWeight: '700',
-            fontFamily: theme.fontRegular,
-            textAlign: 'center',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        />
-      </BtnContainer>
-    </Container>
+        {isError && (
+          <ErrorMessage
+            message={errorMessage}
+            IconColor={theme.inputValidChkColor}
+            IconType="exclamationcircleo"
+          />
+        )}
+      </Container>
+    </KeyboardAvoidingScrollView>
   );
 };
 

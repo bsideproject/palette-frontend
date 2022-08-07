@@ -2,6 +2,6 @@ import Button from './Button';
 import Image from './image';
 import Input from './input';
 import ErrorMessage from './ErrorMessage';
-import Spinner from './spinner';
+import Color from './Color';
 
-export {Button, Image, Input, ErrorMessage, Spinner};
+export {Button, Image, Input, ErrorMessage, Color};

@@ -3,6 +3,7 @@ import styled from 'styled-components/native';
 import PropTypes from 'prop-types';
 
 const Container = styled.View`
+  flex: 1;
   flex-direction: column;
   width: 95%;
   padding-left: 5%;

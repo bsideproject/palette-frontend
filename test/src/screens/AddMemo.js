@@ -2,11 +2,8 @@ import React, {useContext, useState} from 'react';
 import {ThemeContext} from 'styled-components/native';
 import styled from 'styled-components/native';
 import {DB} from '../db_connect';
-import Icon from 'react-native-vector-icons/AntDesign';
-import {View, Text} from 'react-native';
-import {TouchableOpacity} from 'react-native';
-import Tooltip from 'react-native-walkthrough-tooltip';
-import Modal from 'react-native-simple-modal';
+import {Text} from 'react-native';
+import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
 import {Button, Input, ErrorMessage} from '../components';
 
 const Container = styled.View`
@@ -30,7 +27,7 @@ const BtnContainer = styled.View`
   padding-left: 5%;
   justify-content: center;
   align-items: center;
-  margin-top: 80%;
+  margin-bottom: 30%;
 `;
 
 const AddMemo = ({navigation}) => {
@@ -52,53 +49,58 @@ const AddMemo = ({navigation}) => {
     } else if (pattern_spc.test(name)) {
       setErrorMessage('특수문자를 제외한 제목을 입력해주세요.');
     } else {
+      setIsError(false);
       navigation.navigate('AddMemoColor', {name: name});
     }
   };
 
   return (
-    <Container>
-      <TitleTextContainer>
-        <Text>일기장 이름을 입력해보세요.</Text>
-      </TitleTextContainer>
-      <Input
-        value={name}
-        onChangeText={setName}
-        onSubmitEditing={_handleSetMemoColorPress}
-        onBlur={() => setName(name.trim())}
-        placeholder="최대 12자의 그룹 이름을 입력하세요"
-        returnKeyType="next"
-        maxLength={12}
-        isError={isError}
-      />
-      {isError && (
-        <ErrorMessage
-          message={errorMessage}
-          IconColor={theme.inputValidChkColor}
-          IconType="exclamationcircleo"
+    <KeyboardAvoidingScrollView
+      stickyFooter={
+        <BtnContainer>
+          <Button
+            title="다음 단계로"
+            onPress={_handleSetMemoColorPress}
+            containerStyle={{
+              backgroundColor: theme.btnMainColorBg,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+            textStyle={{
+              color: theme.btnWhiteFont,
+              fontSize: 18,
+              fontWeight: '700',
+              fontFamily: theme.fontRegular,
+              textAlign: 'center',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          />
+        </BtnContainer>
+      }>
+      <Container>
+        <TitleTextContainer>
+          <Text>일기장 이름을 입력해보세요.</Text>
+        </TitleTextContainer>
+        <Input
+          value={name}
+          onChangeText={setName}
+          onSubmitEditing={_handleSetMemoColorPress}
+          onBlur={() => setName(name.trim())}
+          placeholder="최대 12자의 그룹 이름을 입력하세요"
+          returnKeyType="next"
+          maxLength={12}
+          isError={isError}
         />
-      )}
-      <BtnContainer>
-        <Button
-          title="다음 단계로"
-          onPress={_handleSetMemoColorPress}
-          containerStyle={{
-            backgroundColor: theme.btnMainColorBg,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-          textStyle={{
-            color: theme.btnWhiteFont,
-            fontSize: 18,
-            fontWeight: '700',
-            fontFamily: theme.fontRegular,
-            textAlign: 'center',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        />
-      </BtnContainer>
-    </Container>
+        {isError && (
+          <ErrorMessage
+            message={errorMessage}
+            IconColor={theme.inputValidChkColor}
+            IconType="exclamationcircleo"
+          />
+        )}
+      </Container>
+    </KeyboardAvoidingScrollView>
   );
 };
 

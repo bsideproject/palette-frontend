@@ -43,10 +43,6 @@ export const theme = {
   spinnerBackground: Colors.black,
   spinnerIndicator: Colors.white,
 
-  // Tab
-  tabBtnActive: Colors.main,
-  tabBtnInActive: Colors.grey_1,
-
   // List - Item
   itemBorder: Colors.grey_0,
   itemTime: Colors.grey_1,
@@ -70,6 +66,10 @@ export const theme = {
   inputValidChkColor: Colors.red,
 
   skipFontColor: Colors.skip_color,
+
+  // Tab
+  tabBtnActive: Colors.main_color,
+  tabBtnInActive: Colors.grey_1,
 
   // font
   fontRegular: Fonts.regular,
