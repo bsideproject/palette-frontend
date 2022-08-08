@@ -1,8 +1,8 @@
 import React, {useContext} from 'react';
 import {ThemeContext} from 'styled-components/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import {Signin} from '../screens';
-import SocialSignin from '../screens/SocialSignin';
+import {Signin, Agree, FirstExplain, SecondExplain, Nickname, Joined} from '../screens';
+
 
 const Stack = createStackNavigator();
 
@@ -20,11 +20,32 @@ const Auth = () => {
         options={{headerShown: false}}
       />
       <Stack.Screen
-        name="SocialSignin"
-        component={SocialSignin}
+        name="Agree"
+        component={Agree}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="FirstExplain"
+        component={FirstExplain}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="SecondExplain"
+        component={SecondExplain}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="Nickname"
+        component={Nickname}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="Joined"
+        component={Joined}
         options={{headerShown: false}}
       />
     </Stack.Navigator>
+    
   );
 };
 

@@ -8,12 +8,13 @@ function SocialBtn({children, id, onPress}) {
 export default SocialBtn;
 
 const SocialButton = styled.TouchableOpacity`
-  width: 100%;
-  margin: 10px 0;
-  padding: 10px;
+  flex-direction: row;
+  width: 283px;
+  height: 56px;
+  margin-bottom: 20px;
   justify-content: center;
   align-items: center;
-  border-radius: 4px;
+  border-radius: 14px;
   ${({id}) =>
-    id === 'kakao' ? 'background-color:orange' : 'background-color:green'}
+    id === 'kakao' ? 'background-color:#FFE812' : 'background-color:#03C75A'}
 `;

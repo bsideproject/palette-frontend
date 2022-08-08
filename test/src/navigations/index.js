@@ -11,8 +11,8 @@ const Navigation = () => {
 
   return (
     <NavigationContainer>
-      {/* {user.uid ? <Main /> : <Auth />} */}
-      <Main />
+      {user.uid ? <Main /> : <Auth />}
+      {/* <Main /> */}
       {inProgress && <Spinner />}
     </NavigationContainer>
   );
