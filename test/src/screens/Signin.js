@@ -131,6 +131,8 @@ const Signin = ({navigation}) => {
     console.log('getProfile --> ', profile);
     AsyncStorage.setItem('social_type', 'kakao', () => {
       console.log('AsyncStorage Save!');
+      // main페이지로 가는 변수관리
+      // setUser({uid:123});
     });
     navigation.navigate('Agree');
     // setResult(JSON.stringify(token));

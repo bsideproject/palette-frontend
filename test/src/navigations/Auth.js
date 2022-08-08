@@ -1,7 +1,7 @@
 import React, {useContext} from 'react';
 import {ThemeContext} from 'styled-components/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import {Signin, Agree, FirstExplain, SecondExplain, Nickname, Joined} from '../screens';
+import {Signin, Agree, FirstExplain, SecondExplain, Nickname, ProfileImage, Joined} from '../screens';
 
 
 const Stack = createStackNavigator();
@@ -37,6 +37,11 @@ const Auth = () => {
       <Stack.Screen
         name="Nickname"
         component={Nickname}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="ProfileImage"
+        component={ProfileImage}
         options={{headerShown: false}}
       />
       <Stack.Screen

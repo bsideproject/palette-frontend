@@ -22,6 +22,7 @@ static void InitializeFlipper(UIApplication *application) {
   [client start];
 }
 #endif
+#import "RNSplashScreen.h" // 추가
 
 @implementation AppDelegate
 
@@ -47,6 +48,7 @@ static void InitializeFlipper(UIApplication *application) {
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
+  [RNSplashScreen show]; // 추가
   return YES;
 }
 

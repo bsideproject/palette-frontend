@@ -9,6 +9,7 @@ import Agree from './Agree';
 import FirstExplain from './FirstExplain';
 import SecondExplain from './SecondExplain';
 import Nickname from './Nickname';
+import ProfileImage from './ProfileImage';
 import Joined from './Joined';
 
 export {
@@ -23,5 +24,6 @@ export {
   FirstExplain,
   SecondExplain,
   Nickname,
+  ProfileImage,
   Joined,
 };
