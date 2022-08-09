@@ -20,7 +20,9 @@ const Container = styled.View`
 `;
 
 const SpinnerContainer = styled.Text`
-  width: 100%;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
   font-size: 20px;
   font-family: ${({theme}) => theme.fontRegular};
 `;
@@ -194,7 +196,11 @@ const AddMemoColor = ({navigation, route}) => {
     }
   }, [colors]);
 
-  return (
+  return isLoading ? (
+    <SpinnerContainer>
+      <Spinner visible={isLoading} textContent={'표지 색상 불러오는 중...'} />
+    </SpinnerContainer>
+  ) : (
     <KeyboardAvoidingScrollView
       stickyFooter={
         <BtnContainer>
@@ -218,7 +224,7 @@ const AddMemoColor = ({navigation, route}) => {
           />
         </BtnContainer>
       }>
-      <TitleTextContainer>표시 색상 선택을 해보세요</TitleTextContainer>
+      <TitleTextContainer>표지 색상 선택을 해보세요</TitleTextContainer>
       {isError ? (
         <ErrorContainer>
           <ErrorMessage
@@ -230,24 +236,15 @@ const AddMemoColor = ({navigation, route}) => {
       ) : (
         <NotErrorContainer></NotErrorContainer>
       )}
-      {isLoading ? (
-        <SpinnerContainer>
-          <Spinner
-            visible={isLoading}
-            textContent={'표지 색상 불러오는 중...'}
-          />
-        </SpinnerContainer>
-      ) : (
-        <Container>
-          <FlatList
-            data={formedData(colors, numColumns)}
-            renderItem={renderItem}
-            keyExtractor={item => item.id}
-            numColumns={numColumns}
-            extraData={selectedId}
-          />
-        </Container>
-      )}
+      <Container>
+        <FlatList
+          data={formedData(colors, numColumns)}
+          renderItem={renderItem}
+          keyExtractor={item => item.id}
+          numColumns={numColumns}
+          extraData={selectedId}
+        />
+      </Container>
     </KeyboardAvoidingScrollView>
   );
 };
