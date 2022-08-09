@@ -46,9 +46,9 @@ jobs:
       - name: Grant execute permission for gradlew
         run: cd test/android && chmod +x gradlew 
         
-      - name: Build Android Release
+      - name: Build Android Release -> Debug(Kakao.Naver Social Login.08.09)
         run: |
-          cd test/android && ./gradlew app:assembleRelease
+          cd test/android && ./gradlew app:assembleDebug
         
       - name: Upload Artifact
         uses: actions/upload-artifact@v1
