@@ -23,6 +23,7 @@ const MemoContainer = styled.View`
 `;
 
 const Memo_Item1 = styled.View`
+  margin-top: 2%;
   flex: 1;
 `;
 
@@ -42,12 +43,23 @@ const Memo_Item2 = styled.View`
 
 const Item2_Text = styled.Text`
   font-size: 25px;
+  font-weight: 700;
   color: ${({theme}) => theme.btnWhiteFont};
   font-family: ${({theme}) => theme.fontRegular};
 `;
 
 const Memo_Item3 = styled.View`
   flex: 1;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 3%;
+`;
+
+const Item3_Text = styled.Text`
+  font-size: 14px;
+  font-weight: 400;
+  color: ${({theme}) => theme.btnWhiteFont};
+  font-family: ${({theme}) => theme.fontRegular};
 `;
 
 const TitleTextContainer = styled.Text`
@@ -56,6 +68,10 @@ const TitleTextContainer = styled.Text`
   padding-left: 5%;
   margin-top: 10%;
   font-family: ${({theme}) => theme.fontRegular};
+`;
+
+const PaddingRight = styled.View`
+  padding-right: 50;
 `;
 
 const MainPage = ({navigation}) => {
@@ -76,7 +92,13 @@ const MainPage = ({navigation}) => {
           <Memo_Item2>
             <Item2_Text>일기를 시작해 보세요!</Item2_Text>
           </Memo_Item2>
-          <Memo_Item3></Memo_Item3>
+          <Memo_Item3>
+            <Item3_Text>
+              새 일기장 만들기
+              <PaddingRight />|<PaddingRight />
+              초대 코드 입력
+            </Item3_Text>
+          </Memo_Item3>
         </MemoContainer>
       </TouchableOpacity>
     </Container>
