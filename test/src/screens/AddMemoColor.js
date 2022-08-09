@@ -5,7 +5,7 @@ import {DB} from '../db_connect';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {View, Text} from 'react-native';
 import {TouchableOpacity} from 'react-native';
-import {Button, Input, Color} from '../components';
+import {Button, ErrorMessage} from '../components';
 import Spinner from 'react-native-loading-spinner-overlay';
 import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
 import {FlatList} from 'react-native-gesture-handler';
@@ -31,8 +31,17 @@ const TitleTextContainer = styled.Text`
   font-size: 20px;
   font-weight: 400;
   margin-top: 10%;
+  font-family: ${({theme}) => theme.fontRegular};
+`;
+
+const ErrorContainer = styled.View`
+  padding-left: 5%;
   margin-bottom: 10%;
   font-family: ${({theme}) => theme.fontRegular};
+`;
+
+const NotErrorContainer = styled.View`
+  margin-bottom: 10%;
 `;
 
 const BtnContainer = styled.View`
@@ -77,9 +86,11 @@ const AddMemoColor = ({navigation, route}) => {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedId, setSelectedId] = useState(null);
   const theme = useContext(ThemeContext);
-  const sendedData = route.params.name;
+  const receivedName = route.params.name;
   const mounted = useRef(false);
   const numColumns = 3;
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isError, setIsError] = useState(false);
 
   const testColorData = [
     {id: '1', color: '#FFFFFF', selected: 'false'},
@@ -114,8 +125,18 @@ const AddMemoColor = ({navigation, route}) => {
     }, 1000);
   };
 
-  const _handleSetCompleteMemo = (item, index) => {
-    console.log('Set Memo Complete', sendedData, selectedId);
+  const _handleSetCompleteMemo = () => {
+    console.log(receivedName, selectedId);
+    if (selectedId == null) {
+      setErrorMessage('표지 색상을 선택해주세요.');
+      setIsError(true);
+    } else {
+      setIsError(false);
+      navigation.navigate('CompleteMemo', {
+        name: receivedName,
+        colorId: selectedId,
+      });
+    }
   };
 
   const formedData = (data, numColumns) => {
@@ -198,18 +219,35 @@ const AddMemoColor = ({navigation, route}) => {
         </BtnContainer>
       }>
       <TitleTextContainer>표시 색상 선택을 해보세요</TitleTextContainer>
-      <Container>
-        <FlatList
-          data={formedData(colors, numColumns)}
-          renderItem={renderItem}
-          keyExtractor={item => item.id}
-          numColumns={numColumns}
-          extraData={selectedId}
-        />
-      </Container>
-      <SpinnerContainer>
-        <Spinner visible={isLoading} textContent={'표지 색상 불러오는 중...'} />
-      </SpinnerContainer>
+      {isError ? (
+        <ErrorContainer>
+          <ErrorMessage
+            message={errorMessage}
+            IconColor={theme.inputValidChkColor}
+            IconType="exclamationcircleo"
+          />
+        </ErrorContainer>
+      ) : (
+        <NotErrorContainer></NotErrorContainer>
+      )}
+      {isLoading ? (
+        <SpinnerContainer>
+          <Spinner
+            visible={isLoading}
+            textContent={'표지 색상 불러오는 중...'}
+          />
+        </SpinnerContainer>
+      ) : (
+        <Container>
+          <FlatList
+            data={formedData(colors, numColumns)}
+            renderItem={renderItem}
+            keyExtractor={item => item.id}
+            numColumns={numColumns}
+            extraData={selectedId}
+          />
+        </Container>
+      )}
     </KeyboardAvoidingScrollView>
   );
 };

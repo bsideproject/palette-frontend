@@ -22,7 +22,7 @@ const TitleTextContainer = styled.Text`
 `;
 
 const BtnContainer = styled.View`
-  width: 95%;
+  padding-right: 5%;
   padding-left: 5%;
   justify-content: center;
   align-items: center;

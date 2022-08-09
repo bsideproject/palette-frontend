@@ -6,7 +6,7 @@ import {
   AddMemo,
   AddMemoColor,
   AddInviteCode,
-  MainPage,
+  CompleteMemo,
 } from '../screens';
 import Home from './Home';
 import {LogBox} from 'react-native';
@@ -49,6 +49,7 @@ const Main = () => {
       <Stack.Screen name="MemoMain" component={MemoMain} />
       <Stack.Screen name="AddMemo" component={AddMemo} />
       <Stack.Screen name="AddMemoColor" component={AddMemoColor} />
+      <Stack.Screen name="CompleteMemo" component={CompleteMemo} />
       <Stack.Screen name="AddInviteCode" component={AddInviteCode} />
     </Stack.Navigator>
   );

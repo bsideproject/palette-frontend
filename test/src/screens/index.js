@@ -11,6 +11,7 @@ import SecondExplain from './SecondExplain';
 import Nickname from './Nickname';
 import ProfileImage from './ProfileImage';
 import Joined from './Joined';
+import CompleteMemo from './CompleteMemo';
 
 export {
   Signin,
@@ -26,4 +27,5 @@ export {
   Nickname,
   ProfileImage,
   Joined,
+  CompleteMemo,
 };
