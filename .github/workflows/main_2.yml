@@ -37,6 +37,11 @@ jobs:
       - name: Install npm dependencies
         run: |
           cd test && npm install
+          
+      # npm-ls 설치
+      - name: Install react-is
+        run: |
+          cd test && npm i --legacy-peer-deps react-is
         
       - name: Grant execute permission for gradlew
         run: cd test/android && chmod +x gradlew 
