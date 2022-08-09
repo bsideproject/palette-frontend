@@ -199,7 +199,7 @@ const Signin = ({navigation}) => {
           </TooltipBox>
         )}
         <LinkContainer>
-          <TouchableOpacity onPress={_handleNavFirstExplain}> 
+          <TouchableOpacity onPress={_handleNavFirstExplain}>
             <LinkText>이용약관</LinkText>
           </TouchableOpacity>
           <View
@@ -212,6 +212,17 @@ const Signin = ({navigation}) => {
           />
           <TouchableOpacity onPress={_handleNavSecondExplain}>
             <LinkText>개인정보 처리방침</LinkText>
+          </TouchableOpacity>
+          <View
+            style={{
+              height: 16,
+              borderRightColor: '#777777',
+              borderRightWidth: 1,
+              marginHorizontal: 12,
+            }}
+          />
+          <TouchableOpacity onPress={() => navigation.navigate('Agree')}>
+            <LinkText>임시 Login Skip</LinkText>
           </TouchableOpacity>
         </LinkContainer>
       </Container>
