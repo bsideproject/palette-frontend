@@ -9,7 +9,7 @@ import Agree from './Agree';
 import FirstExplain from './FirstExplain';
 import SecondExplain from './SecondExplain';
 import Nickname from './Nickname';
-import ProfileImage from './ProfileImage';
+import ProfileImageSet from './ProfileImageSet';
 import Joined from './Joined';
 import CompleteMemo from './CompleteMemo';
 
@@ -25,7 +25,7 @@ export {
   FirstExplain,
   SecondExplain,
   Nickname,
-  ProfileImage,
+  ProfileImageSet,
   Joined,
   CompleteMemo,
 };

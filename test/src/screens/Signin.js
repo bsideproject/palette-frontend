@@ -1,15 +1,14 @@
 import React, {useContext, useEffect, useState} from 'react';
 import styled from 'styled-components/native';
-import {Button, ErrorMessage} from '../components';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {signin} from '../db_connect';
 import {Alert, Text, View, Image, TouchableOpacity} from 'react-native';
 import {UserContext, ProgressContext} from '../contexts';
-import RNKakaoTest from 'react-native-kakao-connect';
 import SocialBtn from '../components/SocialBtn';
 import AsyncStorage from '@react-native-community/async-storage';
 import {ThemeContext} from 'styled-components/native';
+import axios from 'axios';
 import {
   login,
   getProfile as getKakaoProfile,
@@ -56,6 +55,16 @@ const LinkText = styled.Text`
   color: #777777;
 `;
 
+const TooltipBox = styled.View`
+  background-color: black;
+  padding: 6px;
+  border-radius: 3px;
+`;
+const TooltipText = styled.Text`
+  color: white;
+  font-size: 12px;
+`;
+
 const APP_LOGO = require('../../assets/logos/app_logo.png');
 const KAKAO_LOGO = require('../../assets/logos/kakao_logo.png');
 const NAVER_LOGO = require('../../assets/logos/naver_logo.png');
@@ -65,7 +74,6 @@ const Signin = ({navigation}) => {
   const insets = useSafeAreaInsets();
   const {setUser} = useContext(UserContext);
   const {spinner} = useContext(ProgressContext);
-  const [errorMessage, setErrorMessage] = useState('');
   const [prevSignType, setPrevSignType] = useState('');
 
   useEffect(() => {
@@ -77,8 +85,8 @@ const Signin = ({navigation}) => {
 
   //naver-login-ios settings
   // const iosKeys = {
-  //   kConsumerKey: "VC5CPfjRigclJV_TFACU",
-  //   kConsumerSecret: "f7tLFw0AHn",
+  //   kConsumerKey: "w4cSPEHXMDrXw_OcULnX",
+  //   kConsumerSecret: "7dATQfr1oi",
   //   kServiceAppName: "테스트앱(iOS)",
   //   kServiceAppUrlScheme: "testapp" // only for iOS
   // };
@@ -90,8 +98,7 @@ const Signin = ({navigation}) => {
     kServiceAppName: 'com.test',
   };
 
-  const initials = androidKeys;
-  // const initials = Platform.OS === "ios" ? iosKeys : androidKeys;
+  const initials = Platform.OS === 'ios' ? iosKeys : androidKeys;
 
   const getUserProfile = async props => {
     // const profileResult = await getProfile(naverToken.accessToken);
@@ -101,6 +108,7 @@ const Signin = ({navigation}) => {
       return;
     }
     console.log('profileResult', profileResult);
+    getAcessToken({email: profileResult.response.email, socialType: 'naver'});
   };
 
   const _handleNaverSignin = props => {
@@ -129,6 +137,7 @@ const Signin = ({navigation}) => {
     const profile = await getKakaoProfile();
 
     console.log('getProfile --> ', profile);
+    getAcessToken({email: profile.email, socialType: 'kakao'});
     AsyncStorage.setItem('social_type', 'kakao', () => {
       console.log('AsyncStorage Save!');
       // main페이지로 가는 변수관리
@@ -138,6 +147,24 @@ const Signin = ({navigation}) => {
     // setResult(JSON.stringify(token));
   };
 
+  const getAcessToken = ({email, socialType}) => {
+    axios
+      .post('http://61.97.190.252:8082/api/v1/login', {
+        email: email,
+        socialType: socialType,
+      })
+      .then(response => {
+        console.log('소셜로그인 타입 --> ', socialType);
+        console.log('api 결과 --> ', response.data.accessToken);
+      })
+      .catch(error => {
+        console.log('login api error', error);
+      })
+      .then(() => {
+        console.log('login api 실행 완료');
+      });
+  };
+
   const _handleNavFirstExplain = () => {
     navigation.navigate('FirstExplain');
   };
@@ -145,16 +172,6 @@ const Signin = ({navigation}) => {
   const _handleNavSecondExplain = () => {
     navigation.navigate('SecondExplain');
   };
-
-  const TooltipBox = styled.View`
-    background-color: black;
-    padding: 6px;
-    border-radius: 3px;
-  `;
-  const TooltipText = styled.Text`
-    color: white;
-    font-size: 12px;
-  `;
 
   return (
     <KeyboardAwareScrollView

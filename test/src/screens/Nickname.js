@@ -4,6 +4,7 @@ import styled from 'styled-components/native';
 import {TouchableOpacity, View, Text} from 'react-native';
 import {ThemeContext} from 'styled-components/native';
 import Icon from 'react-native-vector-icons/AntDesign';
+import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
 
 const Container = styled.View`
   flex: 1;
@@ -38,6 +39,11 @@ const SubTitleText = styled.Text`
   margin-bottom: 20px;
 `;
 
+const ButtonContainer = styled.View`
+  padding: 0 16px;
+  margin-bottom: 106px;
+`;
+
 const Nickname = ({navigation}) => {
   const [nickname, setNickname] = useState('');
   const theme = useContext(ThemeContext);
@@ -46,8 +52,8 @@ const Nickname = ({navigation}) => {
   const pattern_spc = /[~!@#$%^&*()_+|<>?:{}]/; // 특수문자
 
   const _handleNextButtonPress = () => {
-    navigation.navigate('ProfileImage');
-    
+    navigation.navigate('ProfileImageSet');
+
     // Check Valid Type
     console.log('Set Memo Color Press');
     setIsError(true);
@@ -59,23 +65,45 @@ const Nickname = ({navigation}) => {
     } else if (pattern_spc.test(nickname)) {
       setErrorMessage('특수문자를 제외한 제목을 입력해주세요.');
     } else {
-      navigation.navigate('ProfileImage');
+      navigation.navigate('ProfileImageSet');
     }
   };
 
   return (
     <Container>
-      <TitleContainer>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Icon name={'left'} size={15} color={'black'} />
-        </TouchableOpacity>
-        <TitleText>닉네임 설정</TitleText>
-        <TouchableOpacity>
-          <Icon name={'close'} size={15} color={'black'} />
-        </TouchableOpacity>
-      </TitleContainer>
-      <InnerContainer>
-        <View style={{height: '80%'}}>
+      <KeyboardAvoidingScrollView
+        stickyFooter={
+          <ButtonContainer>
+            <Button
+              title="다음 단계로"
+              onPress={_handleNextButtonPress}
+              containerStyle={{
+                backgroundColor: theme.btnMainColorBg,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+              textStyle={{
+                color: theme.btnWhiteFont,
+                fontSize: 18,
+                fontWeight: '700',
+                fontFamily: theme.fontRegular,
+                textAlign: 'center',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            />
+          </ButtonContainer>
+        }>
+        <TitleContainer>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Icon name={'left'} size={15} color={'black'} />
+          </TouchableOpacity>
+          <TitleText>닉네임 설정</TitleText>
+          <TouchableOpacity>
+            <Icon name={'close'} size={15} color={'black'} />
+          </TouchableOpacity>
+        </TitleContainer>
+        <InnerContainer>
           <SubTitleText>사용하실 닉네임을 알려주세요!</SubTitleText>
           <Input
             value={nickname}
@@ -93,26 +121,8 @@ const Nickname = ({navigation}) => {
               IconType="exclamationcircleo"
             />
           )}
-        </View>
-        <Button
-          title="다음 단계로"
-          onPress={_handleNextButtonPress}
-          containerStyle={{
-            backgroundColor: theme.btnMainColorBg,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-          textStyle={{
-            color: theme.btnWhiteFont,
-            fontSize: 18,
-            fontWeight: '700',
-            fontFamily: theme.fontRegular,
-            textAlign: 'center',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        />
-      </InnerContainer>
+        </InnerContainer>
+      </KeyboardAvoidingScrollView>
     </Container>
   );
 };

@@ -13,7 +13,7 @@ const Navigation = () => {
   useEffect(() => {
     setTimeout(() => {
       SplashScreen.hide();
-    }, 2000);
+    }, 1000);
   });
 
   return (
