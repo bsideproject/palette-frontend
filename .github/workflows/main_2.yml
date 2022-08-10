@@ -46,6 +46,10 @@ jobs:
       - name: Grant execute permission for gradlew
         run: cd test/android && chmod +x gradlew 
         
+      - name: gradlew Clean
+        run: |
+          cd test/android && ./gradlew clean
+        
       - name: Build Android Release & Debug(Kakao.Naver Social Login.08.09)
         run: |
           cd test/android && ./gradlew app:assembleRelease
