@@ -9,6 +9,8 @@ import {Button, ErrorMessage} from '../components';
 import Spinner from 'react-native-loading-spinner-overlay';
 import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
 import {FlatList} from 'react-native-gesture-handler';
+import {useQuery} from '@apollo/client';
+import {COLOR_CODE} from '../apollo/queries';
 
 const Container = styled.View`
   flex: 1;
@@ -93,38 +95,21 @@ const AddMemoColor = ({navigation, route}) => {
   const numColumns = 3;
   const [errorMessage, setErrorMessage] = useState('');
   const [isError, setIsError] = useState(false);
-
-  const testColorData = [
-    {id: '1', color: '#FFFFFF', selected: 'false'},
-    {id: '2', color: '#000000', selected: 'false'},
-    {id: '3', color: '#FF0000', selected: 'false'},
-    {id: '4', color: '#00FF00', selected: 'false'},
-    {id: '5', color: '#0000FF', selected: 'false'},
-    {id: '6', color: '#FFFF00', selected: 'false'},
-    {id: '7', color: '#00FFFF', selected: 'false'},
-    {id: '8', color: '#FF00FF', selected: 'false'},
-    {id: '9', color: '#FE2E9A', selected: 'false'},
-    {id: '10', color: '#6A0888', selected: 'false'},
-    {id: '11', color: '#04B4AE', selected: 'false'},
-    {id: '12', color: '#088A4B', selected: 'false'},
-    {id: '13', color: '#886A08', selected: 'false'},
-    {id: '14', color: '#61210B', selected: 'false'},
-    {id: '15', color: '#F781D8', selected: 'false'},
-    {id: '16', color: '#BE81F7', selected: 'false'},
-    {id: '17', color: '#81DAF5', selected: 'false'},
-    {id: '18', color: '#81F79F', selected: 'false'},
-    {id: '19', color: '#F5DA81', selected: 'false'},
-    {id: '20', color: '#8A0829', selected: 'false'},
-  ];
+  const {loading, error, data} = useQuery(COLOR_CODE);
 
   const getData = async () => {
     // Get From DataBase, Start Spinner
-    // End Spinner
-    setTimeout(() => {
-      setColors(testColorData);
+    console.log('Get Data From QraphQL');
+    // console.log(loading, error, data);
+
+    if (!loading) {
+      readData = [];
+      data['color'].map(item => {
+        readData.push({id: item.order, color: item.hexCode});
+      });
       setIsLoading(false);
-      console.log('End Get Data');
-    }, 1000);
+      setColors(readData);
+    }
   };
 
   const _handleSetCompleteMemo = () => {
@@ -151,7 +136,6 @@ const AddMemoColor = ({navigation, route}) => {
       data.push({
         id: `blank-${numberOfElementsLastRow}`,
         color: '#FFFFFF',
-        selected: 'false',
         empty: true,
       });
       numberOfElementsLastRow = numberOfElementsLastRow + 1;
@@ -189,12 +173,8 @@ const AddMemoColor = ({navigation, route}) => {
   };
 
   useEffect(() => {
-    if (!mounted.current) {
-      mounted.current = true;
-      // Start Spinner
-      getData();
-    }
-  }, [colors]);
+    getData();
+  }, [loading]);
 
   return isLoading ? (
     <SpinnerContainer>
@@ -250,3 +230,28 @@ const AddMemoColor = ({navigation, route}) => {
 };
 
 export default AddMemoColor;
+
+/*
+const testColorData = [
+  {id: '1', color: '#FFFFFF', selected: 'false'},
+  {id: '2', color: '#000000', selected: 'false'},
+  {id: '3', color: '#FF0000', selected: 'false'},
+  {id: '4', color: '#00FF00', selected: 'false'},
+  {id: '5', color: '#0000FF', selected: 'false'},
+  {id: '6', color: '#FFFF00', selected: 'false'},
+  {id: '7', color: '#00FFFF', selected: 'false'},
+  {id: '8', color: '#FF00FF', selected: 'false'},
+  {id: '9', color: '#FE2E9A', selected: 'false'},
+  {id: '10', color: '#6A0888', selected: 'false'},
+  {id: '11', color: '#04B4AE', selected: 'false'},
+  {id: '12', color: '#088A4B', selected: 'false'},
+  {id: '13', color: '#886A08', selected: 'false'},
+  {id: '14', color: '#61210B', selected: 'false'},
+  {id: '15', color: '#F781D8', selected: 'false'},
+  {id: '16', color: '#BE81F7', selected: 'false'},
+  {id: '17', color: '#81DAF5', selected: 'false'},
+  {id: '18', color: '#81F79F', selected: 'false'},
+  {id: '19', color: '#F5DA81', selected: 'false'},
+  {id: '20', color: '#8A0829', selected: 'false'},
+];
+*/

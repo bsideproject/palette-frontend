@@ -10,6 +10,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@apollo/react-hooks": "^4.0.0",
     "@react-native-clipboard/clipboard": "^1.10.0",
     "@react-native-community/async-storage": "^1.12.1",
     "@react-native-seoul/kakao-login": "^4.2.3",
@@ -17,11 +18,15 @@
     "@react-navigation/bottom-tabs": "^6.3.2",
     "@react-navigation/native": "^6.0.11",
     "@react-navigation/stack": "^6.2.2",
+    "apollo-boost": "^0.4.9",
     "axios": "^0.27.2",
+    "graphql": "^16.5.0",
+    "graphql-tag": "^2.12.6",
     "i": "^0.3.7",
     "moment": "^2.29.4",
     "npm": "^4.6.1",
     "react": "17.0.2",
+    "react-apollo": "^3.1.5",
     "react-dom": "^18.2.0",
     "react-is": "^18.2.0",
     "react-native": "0.68.2",
