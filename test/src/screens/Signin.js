@@ -55,13 +55,11 @@ const LinkText = styled.Text`
   color: #777777;
 `;
 
-const TooltipBox = styled.View`
-  background-color: black;
-  padding: 6px;
-  border-radius: 3px;
+const LastLoginBox = styled.View`
+  background-color: white;
 `;
-const TooltipText = styled.Text`
-  color: white;
+const LastLoginText = styled.Text`
+  color: black;
   font-size: 12px;
 `;
 
@@ -130,21 +128,25 @@ const Signin = ({navigation}) => {
   };
 
   const _handleKakaoSignin = async () => {
-    const token = await login();
+    try {
+      const token = await login();
 
-    console.log('카카오 로그인 결과 -> ', JSON.stringify(token));
+      console.log('카카오 로그인 결과 -> ', JSON.stringify(token));
 
-    const profile = await getKakaoProfile();
+      const profile = await getKakaoProfile();
 
-    console.log('getProfile --> ', profile);
-    getAcessToken({email: profile.email, socialType: 'kakao'});
-    AsyncStorage.setItem('social_type', 'kakao', () => {
-      console.log('AsyncStorage Save!');
-      // main페이지로 가는 변수관리
-      // setUser({uid:123});
-    });
-    navigation.navigate('Agree');
-    // setResult(JSON.stringify(token));
+      console.log('getProfile --> ', profile);
+      getAcessToken({email: profile.email, socialType: 'kakao'});
+      AsyncStorage.setItem('social_type', 'kakao', () => {
+        console.log('AsyncStorage Save!');
+        // main페이지로 가는 변수관리
+        // setUser({uid:123});
+      });
+      navigation.navigate('Agree');
+      // setResult(JSON.stringify(token));
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const getAcessToken = ({email, socialType}) => {
@@ -173,6 +175,21 @@ const Signin = ({navigation}) => {
     navigation.navigate('SecondExplain');
   };
 
+  const LastLogin = () => {
+    if (prevSignType !== null) {
+      return (
+        <LastLoginBox>
+          <LastLoginText>
+            마지막 로그인 수단 :{' '}
+            {prevSignType === 'kakao' ? '카카오' : '네이버'}
+          </LastLoginText>
+        </LastLoginBox>
+      );
+    } else {
+      return <></>;
+    }
+  };
+
   return (
     <KeyboardAwareScrollView
       extraScrollHeight={20}
@@ -194,11 +211,6 @@ const Signin = ({navigation}) => {
             Kakao로 로그인
           </Text>
         </SocialBtn>
-        {prevSignType === 'kakao' && (
-          <TooltipBox>
-            <TooltipText>마지막 로그인 계정</TooltipText>
-          </TooltipBox>
-        )}
         <SocialBtn id={'naver'} onPress={() => _handleNaverSignin(initials)}>
           <Image source={NAVER_LOGO} style={{marginRight: 17}} />
           <Text
@@ -210,11 +222,7 @@ const Signin = ({navigation}) => {
             네이버로 로그인
           </Text>
         </SocialBtn>
-        {prevSignType === 'naver' && (
-          <TooltipBox>
-            <TooltipText>마지막 로그인 계정</TooltipText>
-          </TooltipBox>
-        )}
+        <LastLogin />
         <LinkContainer>
           <TouchableOpacity onPress={_handleNavFirstExplain}>
             <LinkText>이용약관</LinkText>
