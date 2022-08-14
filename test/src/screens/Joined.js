@@ -5,6 +5,8 @@ import {ThemeContext} from 'styled-components/native';
 import {Image} from 'react-native';
 import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
 import {UserContext} from '../contexts';
+import AsyncStorage from '@react-native-community/async-storage';
+import axios from 'axios';
 
 const Container = styled.View`
   flex: 1;
@@ -44,14 +46,33 @@ const ButtonContainer = styled.View`
   margin-bottom: 106px;
 `;
 
-const Joined = ({navigation}) => {
+const Joined = ({navigation, route}) => {
   const theme = useContext(ThemeContext);
   const {setUser} = useContext(UserContext);
 
   const JOIN_IMG = require('../../assets/icons/join.png');
 
   const _handleNextButtonPress = () => {
-    setUser({uid: 123});
+    console.log(route.params);
+    axios
+      .post('http://61.97.190.252:8082/api/v1/login', {
+        email: route.params.email,
+        socialType: route.params.socialType,
+      })
+      .then(response => {
+        console.log('api 결과 --> ', response.data.accessToken);
+        AsyncStorage.setItem('refreshToken', 'true', () => {
+          console.log('RefreshToken Save!');
+        });
+        setUser({
+          accessToken: response.data.accessToken,
+          email: route.params.email,
+          socialType: route.params.socialType,
+        });
+      })
+      .catch(error => {
+        console.log('login api error', error);
+      });
   };
 
   return (

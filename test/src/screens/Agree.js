@@ -68,7 +68,7 @@ const ButtonContainer = styled.View`
   margin-bottom: 106px;
 `;
 
-const Agree = ({navigation}) => {
+const Agree = ({navigation, route}) => {
   const [allCheck, setAllCheck] = useState(false);
   const [check1, setCheck1] = useState(false);
   const [check2, setCheck2] = useState(false);
@@ -107,7 +107,7 @@ const Agree = ({navigation}) => {
   };
 
   const _handleNextButtonPress = () => {
-    navigation.navigate('Nickname');
+    navigation.navigate('Nickname', route.params);
   };
 
   const CheckBox = ({check}) => {

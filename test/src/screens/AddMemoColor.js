@@ -9,8 +9,9 @@ import {Button, ErrorMessage} from '../components';
 import Spinner from 'react-native-loading-spinner-overlay';
 import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
 import {FlatList} from 'react-native-gesture-handler';
-import {useQuery} from '@apollo/client';
-import {COLOR_CODE} from '../apollo/queries';
+import {useQuery, useMutation} from '@apollo/client';
+import {COLOR_CODE, REGISTER_MEMO} from '../apollo/queries';
+import {UserContext} from '../contexts';
 
 const Container = styled.View`
   flex: 1;
@@ -88,14 +89,24 @@ const ColorTransParent = styled.View`
 const AddMemoColor = ({navigation, route}) => {
   const [colors, setColors] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedId, setSelectedId] = useState(null);
+  const [selectedColor, setSelectedColor] = useState(null);
   const theme = useContext(ThemeContext);
   const receivedName = route.params.name;
-  const mounted = useRef(false);
   const numColumns = 3;
   const [errorMessage, setErrorMessage] = useState('');
   const [isError, setIsError] = useState(false);
   const {loading, error, data} = useQuery(COLOR_CODE);
+  const {user} = useContext(UserContext);
+  const [registerMemo, registerResult] = useMutation(REGISTER_MEMO, {
+    context: {
+      headers: {
+        authorization: `Bearer ${user.accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    },
+  });
+
+  console.log(user);
 
   const getData = async () => {
     // Get From DataBase, Start Spinner
@@ -113,15 +124,17 @@ const AddMemoColor = ({navigation, route}) => {
   };
 
   const _handleSetCompleteMemo = () => {
-    console.log(receivedName, selectedId);
-    if (selectedId == null) {
+    console.log(receivedName, selectedColor);
+
+    if (selectedColor == null) {
       setErrorMessage('표지 색상을 선택해주세요.');
       setIsError(true);
     } else {
       setIsError(false);
-      navigation.navigate('CompleteMemo', {
-        name: receivedName,
-        colorId: selectedId,
+
+      console.log(receivedName, selectedColor.color);
+      registerMemo({
+        variables: {title: receivedName, color: selectedColor.color},
       });
     }
   };
@@ -157,14 +170,14 @@ const AddMemoColor = ({navigation, route}) => {
     if (item.empty === true) {
       return <ColorTransParent></ColorTransParent>;
     }
-    const borderColor = item.id === selectedId ? 'red' : 'black';
-    const borderWidth = item.id === selectedId ? '3px' : '1px';
-    const borderStyle = item.id === selectedId ? 'dotted' : 'solid';
+    const borderColor = item === selectedColor ? 'red' : 'black';
+    const borderWidth = item === selectedColor ? '3px' : '1px';
+    const borderStyle = item === selectedColor ? 'dotted' : 'solid';
 
     return (
       <Item
         item={item}
-        onPress={() => setSelectedId(item.id)}
+        onPress={() => setSelectedColor(item)}
         borderColor={borderColor}
         borderWidth={borderWidth}
         borderStyle={borderStyle}
@@ -175,6 +188,17 @@ const AddMemoColor = ({navigation, route}) => {
   useEffect(() => {
     getData();
   }, [loading]);
+
+  useEffect(() => {
+    console.log('DATA', registerResult.data);
+    if (registerResult.data?.createDiary.invitationCode) {
+      navigation.navigate('CompleteMemo', {
+        invitationCode: registerResult.data.createDiary.invitationCode,
+      });
+    } else {
+      console.log('Loading or Error', registerResult.data);
+    }
+  }, [registerResult]);
 
   return isLoading ? (
     <SpinnerContainer>
@@ -222,7 +246,7 @@ const AddMemoColor = ({navigation, route}) => {
           renderItem={renderItem}
           keyExtractor={item => item.id}
           numColumns={numColumns}
-          extraData={selectedId}
+          // extraData={selectedColor.id}
         />
       </Container>
     </KeyboardAvoidingScrollView>

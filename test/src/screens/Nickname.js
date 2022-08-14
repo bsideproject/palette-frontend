@@ -44,7 +44,7 @@ const ButtonContainer = styled.View`
   margin-bottom: 106px;
 `;
 
-const Nickname = ({navigation}) => {
+const Nickname = ({navigation, route}) => {
   const [nickname, setNickname] = useState('');
   const theme = useContext(ThemeContext);
   const [errorMessage, setErrorMessage] = useState('');
@@ -52,7 +52,7 @@ const Nickname = ({navigation}) => {
   const pattern_spc = /[~!@#$%^&*()_+|<>?:{}]/; // 특수문자
 
   const _handleNextButtonPress = () => {
-    navigation.navigate('ProfileImageSet');
+    navigation.navigate('ProfileImageSet', route.params);
 
     // Check Valid Type
     console.log('Set Memo Color Press');

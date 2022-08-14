@@ -13,15 +13,13 @@ const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <ApolloProvider client={apolloClient}>
-        <ProgressProvider>
-          <UserProvider>
-            <StatusBar
-              backgroundColor={theme.background}
-              barStyle="dark-content"
-            />
-            <Navigation />
-          </UserProvider>
-        </ProgressProvider>
+        <UserProvider>
+          <StatusBar
+            backgroundColor={theme.background}
+            barStyle="dark-content"
+          />
+          <Navigation />
+        </UserProvider>
       </ApolloProvider>
     </ThemeProvider>
   );

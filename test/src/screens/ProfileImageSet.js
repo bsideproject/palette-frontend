@@ -94,13 +94,13 @@ const ProfileImage = styled.Image`
 const PROFILEIMG_DEFAULT = require('../../assets/icons/profileimg_default.png');
 const UPLOAD = require('../../assets/icons/upload.png');
 
-const ProfileImageSet = ({navigation}) => {
+const ProfileImageSet = ({navigation, route}) => {
   const theme = useContext(ThemeContext);
   const [profileImage, setProfileImage] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
 
   const _handleNextButtonPress = () => {
-    navigation.navigate('Joined');
+    navigation.navigate('Joined', route.params);
   };
 
   const _handleUploadProfileImg = () => {};

@@ -49,7 +49,13 @@ const Main = () => {
       <Stack.Screen name="MemoMain" component={MemoMain} />
       <Stack.Screen name="AddMemo" component={AddMemo} />
       <Stack.Screen name="AddMemoColor" component={AddMemoColor} />
-      <Stack.Screen name="CompleteMemo" component={CompleteMemo} />
+      <Stack.Screen
+        name="CompleteMemo"
+        component={CompleteMemo}
+        options={{
+          headerLeft: false,
+        }}
+      />
       <Stack.Screen name="AddInviteCode" component={AddInviteCode} />
     </Stack.Navigator>
   );

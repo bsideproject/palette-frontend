@@ -246,7 +246,13 @@ const Signin = ({navigation}) => {
               marginHorizontal: 12,
             }}
           />
-          <TouchableOpacity onPress={() => navigation.navigate('Agree')}>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('Agree', {
+                email: 'rmsdyd200@naver.com',
+                socialType: 'naver',
+              })
+            }>
             <LinkText>임시 Login Skip</LinkText>
           </TouchableOpacity>
         </LinkContainer>

@@ -8,6 +8,7 @@ import {Button, Input, ErrorMessage} from '../components';
 import {Image} from 'react-native';
 import {TouchableOpacity} from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
+import {UserContext} from '../contexts';
 
 const Container = styled.View`
   flex: 1;
@@ -104,8 +105,9 @@ const CompleteMemo = ({navigation, route}) => {
   const [name, setName] = useState('');
   const theme = useContext(ThemeContext);
   const MAKE_IMG = require('../../assets/icons/make.png');
-  const INVITE_CODE = 'abc1234';
-  console.log(route.params);
+
+  const {user} = useContext(UserContext);
+  console.log(user);
 
   const _handleRequestSetMemo = () => {
     // Get User_id
@@ -156,10 +158,10 @@ const CompleteMemo = ({navigation, route}) => {
             <Item1Text>새 일기장에 친구를 초대하세요!</Item1Text>
           </InviteItem1>
           <InviteItem2>
-            <Item2Text>초대코드:{INVITE_CODE}</Item2Text>
+            <Item2Text>초대코드: {route.params.invitationCode}</Item2Text>
             <TouchableOpacity
               style={{marginTop: 15}}
-              onPress={() => Clipboard.setString(INVITE_CODE)}>
+              onPress={() => Clipboard.setString(route.params.invitationCode)}>
               <Item3Text>초대코드 복사하기</Item3Text>
             </TouchableOpacity>
           </InviteItem2>
