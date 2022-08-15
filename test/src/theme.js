@@ -7,6 +7,7 @@ const Colors = {
   red: '#FC2F2F',
   main_color: '#0F4CFC',
   tint_color: '#303030',
+  memo_back_ground: '#F1F4FF',
 };
 
 const Fonts = {
@@ -17,6 +18,7 @@ const Fonts = {
 
 export const theme = {
   background: Colors.white,
+  memobackground: Colors.memo_back_ground,
   tintcolor: Colors.tint_color,
   text: Colors.black,
   errorText: Colors.red,

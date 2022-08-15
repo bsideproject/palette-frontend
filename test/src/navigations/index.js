@@ -17,6 +17,7 @@ const Navigation = () => {
   return (
     <NavigationContainer>
       {user.accessToken ? <Main /> : <Auth />}
+      {/* <Main /> */}
     </NavigationContainer>
   );
 };

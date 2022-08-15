@@ -102,10 +102,9 @@ const AddMemoColor = ({navigation, route}) => {
       },
     },
   });
+  //console.log(user);
 
-  console.log(user);
-
-  const getData = async () => {
+  const getData = () => {
     // Get From DataBase, Start Spinner
     console.log('Get Data From QraphQL');
     // console.log(loading, error, data);
