@@ -1,6 +1,6 @@
 import React, {useContext, useState, useEffect} from 'react';
 import styled from 'styled-components/native';
-import {Button} from '../components';
+import {Button} from '@components';
 import {TouchableOpacity, View, Text, Image} from 'react-native';
 import {ThemeContext} from 'styled-components/native';
 import Icon from 'react-native-vector-icons/AntDesign';
@@ -74,8 +74,8 @@ const Agree = ({navigation, route}) => {
   const [check2, setCheck2] = useState(false);
   const theme = useContext(ThemeContext);
 
-  const CHECKBOX_DEFAULT = require('../../assets/icons/checkbox_default.png');
-  const CHECKBOX_SELECTED = require('../../assets/icons/checkbox_selected.png');
+  const CHECKBOX_DEFAULT = require('/assets/icons/checkbox_default.png');
+  const CHECKBOX_SELECTED = require('/assets/icons/checkbox_selected.png');
 
   const toggleAllCheck = () => {
     setAllCheck(prev => {

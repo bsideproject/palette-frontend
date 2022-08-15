@@ -1,10 +1,9 @@
 import React, {useContext, useState} from 'react';
 import {ThemeContext} from 'styled-components/native';
 import styled from 'styled-components/native';
-import {DB} from '../db_connect';
 import {Text} from 'react-native';
 import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
-import {Button, Input, ErrorMessage} from '../components';
+import {Button, Input, ErrorMessage} from '@components';
 
 const Container = styled.View`
   flex: 1;

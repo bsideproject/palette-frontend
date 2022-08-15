@@ -1,10 +1,10 @@
 import React, {useContext} from 'react';
-import {Button} from '../components';
+import {Button} from '@components';
 import styled from 'styled-components/native';
 import {ThemeContext} from 'styled-components/native';
 import {Image} from 'react-native';
 import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
-import {UserContext} from '../contexts';
+import {UserContext} from '@contexts';
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 
@@ -50,7 +50,7 @@ const Joined = ({navigation, route}) => {
   const theme = useContext(ThemeContext);
   const {setUser} = useContext(UserContext);
 
-  const JOIN_IMG = require('../../assets/icons/join.png');
+  const JOIN_IMG = require('/assets/icons/join.png');
 
   const _handleNextButtonPress = () => {
     console.log(route.params);

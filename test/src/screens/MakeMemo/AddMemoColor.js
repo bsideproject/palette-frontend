@@ -1,17 +1,14 @@
 import React, {useContext, useEffect, useState, useRef} from 'react';
 import {ThemeContext} from 'styled-components/native';
 import styled from 'styled-components/native';
-import {DB} from '../db_connect';
-import Icon from 'react-native-vector-icons/AntDesign';
-import {View, Text} from 'react-native';
 import {TouchableOpacity} from 'react-native';
-import {Button, ErrorMessage} from '../components';
 import Spinner from 'react-native-loading-spinner-overlay';
 import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
 import {FlatList} from 'react-native-gesture-handler';
 import {useQuery, useMutation} from '@apollo/client';
-import {COLOR_CODE, REGISTER_MEMO} from '../apollo/queries';
-import {UserContext} from '../contexts';
+import {COLOR_CODE, REGISTER_MEMO} from '@apolloClient/queries';
+import {UserContext} from '@contexts';
+import {Button, ErrorMessage} from '@components';
 
 const Container = styled.View`
   flex: 1;

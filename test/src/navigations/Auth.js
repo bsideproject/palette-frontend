@@ -1,8 +1,15 @@
 import React, {useContext} from 'react';
 import {ThemeContext} from 'styled-components/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import {Signin, Agree, FirstExplain, SecondExplain, Nickname, ProfileImageSet, Joined} from '../screens';
-
+import {
+  Signin,
+  Agree,
+  FirstExplain,
+  SecondExplain,
+  Nickname,
+  ProfileImageSet,
+  Joined,
+} from '@screens';
 
 const Stack = createStackNavigator();
 
@@ -50,7 +57,6 @@ const Auth = () => {
         options={{headerShown: false}}
       />
     </Stack.Navigator>
-    
   );
 };
 

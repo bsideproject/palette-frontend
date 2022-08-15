@@ -1,5 +1,5 @@
 import React, {useContext, useState, useEffect} from 'react';
-import {Button, Input, ErrorMessage} from '../components';
+import {Button, Input, ErrorMessage} from '@components';
 import styled from 'styled-components/native';
 import {TouchableOpacity, View, Text} from 'react-native';
 import {ThemeContext} from 'styled-components/native';

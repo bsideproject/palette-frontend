@@ -1,11 +1,11 @@
 import React from 'react';
 import {StatusBar} from 'react-native';
 import {ThemeProvider} from 'styled-components/native';
-import {theme} from './theme';
-import Navigation from './navigations';
-import {UserProvider, ProgressProvider} from './contexts';
 import {ApolloProvider} from '@apollo/client';
-import {createApolloClient} from './apollo/ApolloClient';
+import {createApolloClient} from '@apolloClient/ApolloClient';
+import {theme} from './theme';
+import Navigation from '@navigations';
+import {UserProvider} from '@contexts';
 
 const apolloClient = createApolloClient();
 

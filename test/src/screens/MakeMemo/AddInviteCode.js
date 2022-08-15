@@ -1,10 +1,9 @@
 import React, {useContext, useState} from 'react';
 import styled from 'styled-components/native';
-import {DB} from '../db_connect';
 import {Text} from 'react-native';
 import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
 import {ThemeContext} from 'styled-components/native';
-import {Button, Input, ErrorMessage} from '../components';
+import {Button, Input, ErrorMessage} from '@components';
 
 const Container = styled.View`
   flex: 1;
@@ -40,10 +39,16 @@ const AddInviteCode = ({navigation}) => {
     console.log('Set Code Invite Check');
     setIsError(true);
 
+    // [TODO] Get Invite Code from GraphQL
     // check Invite Code
     setErrorMessage('유효하지 않은 코드입니다.');
-
-    // navigation.navigate('AddMemoColor', {name: name});
+    if (code == '111111') {
+      setIsError(false);
+      navigation.navigate('CompleteInviteCode', {
+        userName: '반쪽이',
+        memoName: '반쪽 일기',
+      });
+    }
   };
 
   return (

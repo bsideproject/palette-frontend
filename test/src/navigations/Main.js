@@ -7,7 +7,8 @@ import {
   AddMemoColor,
   AddInviteCode,
   CompleteMemo,
-} from '../screens';
+  CompleteInviteCode,
+} from '@screens';
 import Home from './Home';
 import {LogBox} from 'react-native';
 
@@ -24,7 +25,7 @@ const Main = () => {
     <Stack.Navigator
       screenOptions={{
         headerTitleAlign: 'center',
-        headerTintColor: theme.text,
+        headerTintColor: theme.tintcolor,
         headerBackTitleVisible: false,
         headerStyle: {
           backgroundColor: '#FFFFFF',
@@ -56,7 +57,21 @@ const Main = () => {
           headerLeft: false,
         }}
       />
-      <Stack.Screen name="AddInviteCode" component={AddInviteCode} />
+      <Stack.Screen
+        name="AddInviteCode"
+        component={AddInviteCode}
+        options={{
+          title: '초대코드 입력',
+        }}
+      />
+      <Stack.Screen
+        name="CompleteInviteCode"
+        component={CompleteInviteCode}
+        options={{
+          headerLeft: false,
+          title: '초대코드 입력',
+        }}
+      />
     </Stack.Navigator>
   );
 };

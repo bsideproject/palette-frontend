@@ -1,14 +1,12 @@
 import React, {useContext, useState} from 'react';
 import {ThemeContext} from 'styled-components/native';
 import styled from 'styled-components/native';
-import {DB} from '../db_connect';
-import {Text} from 'react-native';
 import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
-import {Button, Input, ErrorMessage} from '../components';
+import {Button, Input, ErrorMessage} from '@components';
 import {Image} from 'react-native';
 import {TouchableOpacity} from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
-import {UserContext} from '../contexts';
+import {UserContext} from '@contexts';
 
 const Container = styled.View`
   flex: 1;
@@ -104,7 +102,7 @@ const Item3Text = styled.Text`
 const CompleteMemo = ({navigation, route}) => {
   const [name, setName] = useState('');
   const theme = useContext(ThemeContext);
-  const MAKE_IMG = require('../../assets/icons/make.png');
+  const MAKE_IMG = require('/assets/icons/make.png');
 
   const {user} = useContext(UserContext);
   console.log(user);

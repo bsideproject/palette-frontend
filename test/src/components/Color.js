@@ -3,7 +3,6 @@ import styled from 'styled-components/native';
 import PropTypes from 'prop-types';
 import Input from './input';
 import Icon from 'react-native-vector-icons/AntDesign';
-import {ImageComponent} from 'react-native';
 
 const Container = styled.View`
   flex: 1;

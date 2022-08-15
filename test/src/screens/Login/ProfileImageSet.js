@@ -1,5 +1,5 @@
 import React, {useContext, useState, useEffect} from 'react';
-import {Button, UploadModal} from '../components';
+import {Button, UploadModal} from '@components';
 import styled from 'styled-components/native';
 import {
   TouchableOpacity,
@@ -91,8 +91,8 @@ const ProfileImage = styled.Image`
   border-radius: 70px;
 `;
 
-const PROFILEIMG_DEFAULT = require('../../assets/icons/profileimg_default.png');
-const UPLOAD = require('../../assets/icons/upload.png');
+const PROFILEIMG_DEFAULT = require('/assets/icons/profileimg_default.png');
+const UPLOAD = require('/assets/icons/upload.png');
 
 const ProfileImageSet = ({navigation, route}) => {
   const theme = useContext(ThemeContext);

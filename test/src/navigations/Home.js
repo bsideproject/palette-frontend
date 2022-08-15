@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {ThemeContext} from 'styled-components/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {MainPage, Setting, MemoMain} from '../screens';
+import {MainPage, Setting} from '@screens';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {TouchableOpacity} from 'react-native';

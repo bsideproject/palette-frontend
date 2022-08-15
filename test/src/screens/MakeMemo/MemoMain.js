@@ -1,9 +1,6 @@
 import React, {useContext, useState} from 'react';
 import styled from 'styled-components/native';
-import {DB} from '../db_connect';
-import {View, Text} from 'react-native';
-import {TouchableOpacity} from 'react-native';
-import {Button, Input, ErrorMessage} from '../components';
+import {Button, Input, ErrorMessage} from '@components';
 import {ThemeContext} from 'styled-components/native';
 
 const Container = styled.View`

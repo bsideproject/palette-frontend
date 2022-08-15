@@ -1,14 +1,12 @@
 import React, {useContext, useEffect} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import Auth from './Auth';
-import {UserContext, ProgressContext} from '../contexts';
 import Main from './Main';
 import SplashScreen from 'react-native-splash-screen';
-import {Spinner} from '../components';
+import {UserContext} from '@contexts';
 
 const Navigation = () => {
   const {user} = useContext(UserContext);
-  const {inProgress} = useContext(ProgressContext);
 
   useEffect(() => {
     setTimeout(() => {
@@ -19,8 +17,6 @@ const Navigation = () => {
   return (
     <NavigationContainer>
       {user.accessToken ? <Main /> : <Auth />}
-      {/* <Main /> */}
-      {inProgress && <Spinner />}
     </NavigationContainer>
   );
 };

@@ -1,8 +1,6 @@
 import React, {useContext, useState} from 'react';
 import {ThemeContext} from 'styled-components/native';
 import styled from 'styled-components/native';
-import {DB} from '../appolloClient';
-import {Text} from 'react-native';
 import {TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 

@@ -2,13 +2,13 @@ import React, {useContext, useEffect, useState} from 'react';
 import styled from 'styled-components/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {signin} from '../db_connect';
 import {Alert, Text, View, Image, TouchableOpacity} from 'react-native';
-import {UserContext, ProgressContext} from '../contexts';
-import SocialBtn from '../components/SocialBtn';
+import {UserContext} from '@contexts';
+import SocialBtn from '@components/SocialBtn';
 import AsyncStorage from '@react-native-community/async-storage';
 import {ThemeContext} from 'styled-components/native';
 import axios from 'axios';
+
 import {
   login,
   getProfile as getKakaoProfile,
@@ -63,15 +63,14 @@ const LastLoginText = styled.Text`
   font-size: 12px;
 `;
 
-const APP_LOGO = require('../../assets/logos/app_logo.png');
-const KAKAO_LOGO = require('../../assets/logos/kakao_logo.png');
-const NAVER_LOGO = require('../../assets/logos/naver_logo.png');
+const APP_LOGO = require('/assets/logos/app_logo.png');
+const KAKAO_LOGO = require('/assets/logos/kakao_logo.png');
+const NAVER_LOGO = require('/assets/logos/naver_logo.png');
 
 const Signin = ({navigation}) => {
   const theme = useContext(ThemeContext);
   const insets = useSafeAreaInsets();
   const {setUser} = useContext(UserContext);
-  const {spinner} = useContext(ProgressContext);
   const [prevSignType, setPrevSignType] = useState('');
 
   useEffect(() => {
