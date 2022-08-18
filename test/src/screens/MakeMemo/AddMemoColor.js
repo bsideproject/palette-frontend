@@ -9,6 +9,7 @@ import {useQuery, useMutation} from '@apollo/client';
 import {COLOR_CODE, REGISTER_MEMO} from '@apolloClient/queries';
 import {UserContext} from '@contexts';
 import {Button, ErrorMessage} from '@components';
+import LinearGradient from 'react-native-linear-gradient';
 
 const Container = styled.View`
   flex: 1;
@@ -16,6 +17,7 @@ const Container = styled.View`
   background-color: ${({theme}) => theme.background};
   padding-right: 5%;
   padding-left: 5%;
+  align-items: center;
   justify-content: space-between;
 `;
 
@@ -32,13 +34,13 @@ const TitleTextContainer = styled.Text`
   width: 100%;
   font-size: 20px;
   font-weight: 400;
-  margin-top: 10%;
+  margin-top: 5%;
   font-family: ${({theme}) => theme.fontRegular};
 `;
 
 const ErrorContainer = styled.View`
   padding-left: 5%;
-  margin-bottom: 10%;
+  margin-bottom: 5%;
   font-family: ${({theme}) => theme.fontRegular};
 `;
 
@@ -64,20 +66,6 @@ const chkColorText = color => {
   }
   return true;
 };
-
-const ColorContainer = styled.View`
-  width: 106px;
-  height: 80px;
-  margin-right: 6;
-  margin-left: 6;
-  margin-bottom: 16;
-  border-width: ${({BorderWidth}) => BorderWidth};
-  border-style: ${({BorderStyle}) => BorderStyle};
-  border-color: ${({BorderColor}) => BorderColor};
-  border-radius: 6px;
-  background-color: ${({theme, MemoColor}) =>
-    chkColorText(MemoColor) ? MemoColor : theme.btnMainColorBg};
-`;
 
 const ColorTransParent = styled.View`
   background-color: 'transparent';
@@ -112,10 +100,16 @@ const AddMemoColor = ({navigation, route}) => {
     if (!loading) {
       readData = [];
       data['color'].map(item => {
-        readData.push({id: item.order, color: item.hexCode});
+        readData.push({
+          id: item.id,
+          order: item.order,
+          startCode: item.startCode,
+          endCode: item.endCode,
+        });
       });
       setIsLoading(false);
       setColors(readData);
+      console.log(readData);
     }
   };
 
@@ -128,9 +122,14 @@ const AddMemoColor = ({navigation, route}) => {
     } else {
       setIsError(false);
 
-      console.log(receivedName, selectedColor.color);
+      console.log('Set Memo: ', receivedName, selectedColor.id);
+      console.log('token: ', user.accessToken);
+
       registerMemo({
-        variables: {title: receivedName, color: selectedColor.color},
+        variables: {
+          title: String(receivedName),
+          colorId: String(selectedColor.id),
+        },
       });
     }
   };
@@ -153,12 +152,26 @@ const AddMemoColor = ({navigation, route}) => {
   };
 
   const Item = ({item, onPress, borderColor, borderWidth, borderStyle}) => (
-    <TouchableOpacity onPress={onPress}>
-      <ColorContainer
-        MemoColor={item.color}
-        BorderColor={borderColor}
-        BorderWidth={borderWidth}
-        BorderStyle={borderStyle}></ColorContainer>
+    <TouchableOpacity
+      onPress={onPress}
+      style={{
+        width: '30%',
+        marginRight: '1.6%',
+        marginLeft: '1.6%',
+        marginBottom: '3%',
+      }}>
+      <LinearGradient
+        colors={[item.startCode, item.endCode]}
+        start={{x: 0, y: 0}}
+        end={{x: 1, y: 0}}
+        style={{
+          height: 80,
+          borderRadius: 6,
+          borderColor: borderColor,
+          borderWidth: borderWidth,
+          borderStyle: borderStyle,
+        }}
+      />
     </TouchableOpacity>
   );
 
@@ -167,7 +180,7 @@ const AddMemoColor = ({navigation, route}) => {
       return <ColorTransParent></ColorTransParent>;
     }
     const borderColor = item === selectedColor ? 'red' : 'black';
-    const borderWidth = item === selectedColor ? '3px' : '1px';
+    const borderWidth = item === selectedColor ? 3 : 0;
     const borderStyle = item === selectedColor ? 'dotted' : 'solid';
 
     return (

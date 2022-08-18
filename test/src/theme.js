@@ -54,4 +54,7 @@ export const theme = {
   fontRegular: Fonts.regular,
   fontBold: Fonts.bold,
   fontLight: Fonts.light,
+
+  // Memo
+  emptyMainBg: Colors.main_color,
 };

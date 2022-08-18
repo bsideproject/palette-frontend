@@ -9,8 +9,13 @@ import Carousel from 'react-native-snap-carousel';
 import {Dimensions} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {FlatList} from 'react-native-gesture-handler';
+import Clipboard from '@react-native-clipboard/clipboard';
+import AutoHeightImage from 'react-native-auto-height-image';
+import {Button} from '@components';
 
+// Time & Date Function
 const checkDate = ts => {
+  // [TODO] UTC Time Convert
   const now = moment().startOf('day');
   const target = moment(ts).startOf('day');
 
@@ -26,62 +31,7 @@ const checkTime = ts => {
   return moment(ts).format('hh:mm A');
 };
 
-const Container = styled.View`
-  flex: 1;
-  flex-direction: row;
-  padding-left: 5%;
-  padding-right: 5%;
-  background-color: ${({theme}) => theme.background};
-`;
-
-const MemoContainer = styled.View`
-  flex: 1;
-  flex-direction: column;
-  margin-top: 10%;
-  border-radius: 6px;
-  background-color: ${({theme}) => theme.btnMainColorBg};
-`;
-
-const Memo_Item1 = styled.View`
-  margin-top: 2%;
-  flex: 1;
-`;
-
-const Item1_Text = styled.Text`
-  font-size: 16px;
-  margin-top: 10;
-  margin-left: 20;
-  color: ${({theme}) => theme.btnWhiteFont};
-  font-family: ${({theme}) => theme.fontRegular};
-`;
-
-const Memo_Item2 = styled.View`
-  justify-content: center;
-  align-items: center;
-  flex: 3;
-`;
-
-const Item2_Text = styled.Text`
-  font-size: 25px;
-  font-weight: 700;
-  color: ${({theme}) => theme.btnWhiteFont};
-  font-family: ${({theme}) => theme.fontRegular};
-`;
-
-const Memo_Item3 = styled.View`
-  flex: 1;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 3%;
-`;
-
-const Item3_Text = styled.Text`
-  font-size: 14px;
-  font-weight: 400;
-  color: ${({theme}) => theme.btnWhiteFont};
-  font-family: ${({theme}) => theme.fontRegular};
-`;
-
+// Spinner
 const SpinnerContainer = styled.Text`
   flex: 1;
   justify-content: center;
@@ -90,35 +40,49 @@ const SpinnerContainer = styled.Text`
   font-family: ${({theme}) => theme.fontRegular};
 `;
 
+// Memo Data Container
 const MemoDataContainer = styled.View`
   flex: 1;
   flex-direction: column;
   background-color: ${({theme}) => theme.memobackground};
+  padding-left: 5%;
+  padding-right: 5%;
 `;
 
-const MemoItemContainer = styled.View`
-  flex: 1;
-  padding-left: 8%;
-  padding-right: 8%;
-  margin-top: 8%;
-`;
-
+// Memo Flex 2 : 3 : 1
 const MemoFlexTop = styled.View`
-  flex: 2;
+  flex: 3;
 `;
 
 const MemoFlexBottom = styled.View`
-  flex: 3;
-  margin-left: 8%;
-  margin-right: 8%;
+  flex: 5;
 `;
 
 const MemoFlexFooter = styled.View`
   flex: 1;
-  margin-left: 8%;
-  margin-right: 8%;
+  margin-bottom: 3%;
 `;
 
+// Memo Empty Container
+const MemoEmpty_Text1 = styled.Text`
+  font-size: 16px;
+  font-weight: 400;
+  margin-top: 3%;
+  text-align: center;
+  color: ${({theme}) => theme.text};
+  font-family: ${({theme}) => theme.fontRegular};
+`;
+
+// Memo Add Container
+const MemoAdd_Text1 = styled.Text`
+  font-size: 50px;
+  font-weight: 400;
+  text-align: center;
+  color: ${({theme}) => theme.text};
+  font-family: ${({theme}) => theme.fontRegular};
+`;
+
+// Memo Item Container
 const MemoDataItem = styled.View`
   flex: 1;
   width: 100%;
@@ -135,15 +99,14 @@ const MemoBtnItem = styled.View`
   border-bottom-left-radius: 5px;
   background-color: ${({theme}) => theme.background};
   margin-bottom: 3%;
-  margin-top: 20%;
-  margin-left: 10%;
-  margin-right: 10%;
+  margin-top: 10%;
+  width: 70%;
 `;
 
 const MemoData_Text1 = styled.Text`
   font-size: 16px;
   font-weight: 400;
-  margin-top: 7%;
+  margin-top: 4%;
   color: ${({theme}) => theme.btnWhiteFont};
   font-family: ${({theme}) => theme.fontRegular};
 `;
@@ -151,7 +114,7 @@ const MemoData_Text1 = styled.Text`
 const MemoData_Text2 = styled.Text`
   font-size: 25px;
   font-weight: 700;
-  margin-top: 5%;
+  margin-top: 1%;
   color: ${({theme}) => theme.btnWhiteFont};
   font-family: ${({theme}) => theme.fontRegular};
 `;
@@ -163,6 +126,7 @@ const MemoData_Text3 = styled.Text`
   font-family: ${({theme}) => theme.fontRegular};
 `;
 
+// Memo Recently
 const MemoRecentItemContainer = styled.View`
   border-radius: 10px;
   flex: 1;
@@ -171,7 +135,7 @@ const MemoRecentItemContainer = styled.View`
   width: 100%;
   height: 60;
   margin-bottom: 5%;
-  background-color: ${({theme}) => theme.background};
+  background-color: ${({color}) => color};
 `;
 
 const MemoRecentItemLeft = styled.View`
@@ -189,8 +153,8 @@ const MemoRecentItemRight = styled.View`
 `;
 
 const MemoRecent_Title = styled.Text`
-  font-size: 16px;
-  font-weight: 700;
+  font-size: 20px;
+  font-weight: 400;
   margin-top: 7%;
   margin-bottom: 5%;
   color: ${({theme}) => theme.text};
@@ -199,14 +163,7 @@ const MemoRecent_Title = styled.Text`
 
 const MemoRecent_Icon = styled.View`
   margin-left: 3%;
-  background-color: ${({color}) => color};
-  border-radius: 50;
-  width: 10%;
-  height: 55%;
-  shadow-offset: 0px 4px;
-  shadow-radius: 20px;
-  shadow-color: rgba(0, 0, 0, 0.7);
-  elevation: 15;
+  width: 40;
 `;
 
 const MemoRecent_Text1 = styled.Text`
@@ -231,66 +188,77 @@ const MemoRecent_Text3 = styled.Text`
 `;
 
 const MemoRecent_Text4 = styled.Text`
-  font-size: 16px;
+  font-size: 25px;
   font-weight: 700;
-  color: ${({theme}) => theme.text};
+  color: #777777;
   font-family: ${({theme}) => theme.fontRegular};
+`;
+
+const BtnContainer = styled.View`
+  justify-content: center;
+  align-items: center;
 `;
 
 const MainPage = ({navigation}) => {
   const theme = useContext(ThemeContext);
-
-  const [memos, setMemos] = useState([]);
-  const [recentDatas, setRecentDatas] = useState([]);
+  const [memos, setMemos] = useState([{isAddContainer: true}]);
+  const [recentData, setRecentData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isEmptyMemo, setIsEmptyMemo] = useState(true);
   const {width, height} = Dimensions.get('screen');
+  const [slideIdx, setSlideIdx] = useState();
+  const PROFILE_IMG_DEFAULT = require('/assets/icons/profile_default_memo.png');
 
   const testMemoData = [
     {
-      user1: '김반쪽',
-      user2: '정은채',
-      memoName: '짜증나는 하루',
-      colorCode: '#00FF00',
+      startColorCode: '#FF0000',
+      endColorCode: '#222222',
+      adminUser: '김반쪽',
+      title: '제주도 한달살이 일기',
+      diaryStatus: 'WAIT',
+      invitationCode: 'ZVABWzCe',
     },
     {
-      user1: '김반쪽',
-      user2: null,
-      memoName: '괌 여행 일기',
-      colorCode: '#0000FF',
+      startColorCode: '#00FF00',
+      endColorCode: '#222222',
+      adminUser: '김반쪽',
+      partnerUser: '홍길동',
+      title: '제주도 두달살이 일기',
+      diaryStatus: 'READY',
     },
     {
-      user1: '김반쪽',
-      user2: '김은지',
-      memoName: '우정 일기',
-      colorCode: '#FF0000',
+      startColorCode: '#0000FF',
+      endColorCode: '#222222',
+      adminUser: '김반쪽',
+      partnerUser: '홍길동',
+      title: '제주도 세달살이 일기',
+      diaryStatus: 'START',
+      dday: 1,
     },
   ];
 
   const testRecentlyData = [
     {
-      title: '괌 여행 첫 날',
-      content: '드디어 출발이다',
-      time: '2022-08-15 12:00',
-      colorCode: '#0000FF',
+      user: {
+        profileImg: 'https://...',
+      },
+      title: '괌여행 첫날',
+      content: '드디어 출발이다..',
+      createdAt: '2022-08-09 22:41:56.045248',
     },
     {
-      title: '우정 일기',
-      content: '왜 잠굼?',
-      time: '2022-06-15 05:30',
-      colorCode: '#FF0000',
+      user: {
+        profileImg: 'https://...',
+      },
+      dday: 3,
+      createdAt: '2022-08-07 12:41:56.045248',
     },
     {
+      user: {
+        profileImg: 'https://...',
+      },
       title: '여행 계획을 세우자',
-      content: '오늘 김반쪽과 만나기로 했다',
-      time: '2022-03-18 19:00',
-      colorCode: '#00FF00',
-    },
-    {
-      title: '스크롤 테스트',
-      content: '내려가니??',
-      time: '2022-02-18 13:00',
-      colorCode: '#0000FF',
+      content: '오늘 김반쪽과 만나기로 했다..',
+      createdAt: '2022-08-03 07:11:36.045248',
     },
   ];
 
@@ -305,8 +273,9 @@ const MainPage = ({navigation}) => {
     //   readData.push({id: item.order, color: item.hexCode});
     // });
 
-    setMemos(testMemoData);
-    setRecentDatas(testRecentlyData);
+    // Diary, Page 분리
+    setMemos(memos.concat(testMemoData));
+    setRecentData(testRecentlyData);
     // setColors(readData);
   };
 
@@ -316,120 +285,246 @@ const MainPage = ({navigation}) => {
   }, []);
 
   useEffect(() => {
-    if (memos.length > 0) {
-      setIsEmptyMemo(false);
-    } else {
-      setIsEmptyMemo(true);
-    }
     setIsLoading(false);
-    console.log(recentDatas);
-  }, [memos, recentDatas]);
+    console.log(memos, recentData);
+  }, [memos, recentData]);
 
-  const Item1 = ({item, onPress}) => (
-    <MemoItemContainer>
-      <LinearGradient
-        colors={[item.colorCode, '#EEEEEE']}
-        style={{width: '100%', height: '100%', borderRadius: 6}}>
-        <MemoDataItem>
-          <MemoData_Text1>
-            {item.user2 == null
-              ? `${item.user1} 님의`
-              : `${item.user1} 님과 ${item.user2}님의`}
-          </MemoData_Text1>
-          <MemoData_Text2>{item.memoName}</MemoData_Text2>
-        </MemoDataItem>
-        <MemoBtnItem>
-          <TouchableOpacity
-            onPress={onPress}
+  const AddContainer = () => {
+    return (
+      <TouchableOpacity
+        onPress={() => navigation.navigate('MemoMain')}
+        style={{
+          width: '100%',
+          height: '80%',
+          marginTop: '8%',
+        }}>
+        <LinearGradient
+          colors={[theme.emptyMainBg, '#EEEEEE']}
+          style={{
+            width: '100%',
+            height: '100%',
+            borderRadius: 6,
+            borderStyle: 'dashed',
+            borderWidth: 2,
+            justifyContent: 'center',
+          }}>
+          <MemoAdd_Text1>+</MemoAdd_Text1>
+        </LinearGradient>
+      </TouchableOpacity>
+    );
+  };
+
+  const MemoStatusContainer = item => {
+    switch (item.diaryStatus) {
+      case 'WAIT':
+        return (
+          <LinearGradient
+            colors={[item.startColorCode, item.endColorCode]}
             style={{
               width: '100%',
-              height: '100%',
-              alignItems: 'center',
-              justifyContent: 'center',
+              height: '80%',
+              marginTop: '8%',
+              borderRadius: 6,
             }}>
-            <MemoData_Text3>교환일기 시작</MemoData_Text3>
+            <MemoDataItem>
+              <MemoData_Text1>{item.adminUser}님의</MemoData_Text1>
+              <MemoData_Text2>{item.title}</MemoData_Text2>
+              <MemoBtnItem>
+                <TouchableOpacity
+                  onPress={() => Clipboard.setString(item.invitationCode)}>
+                  <MemoData_Text3 style={{textDecorationLine: 'underline'}}>
+                    초대코드 복사하기
+                  </MemoData_Text3>
+                </TouchableOpacity>
+              </MemoBtnItem>
+            </MemoDataItem>
+          </LinearGradient>
+        );
+      case 'READY':
+        return (
+          <LinearGradient
+            colors={[item.startColorCode, item.endColorCode]}
+            style={{
+              width: '100%',
+              height: '80%',
+              marginTop: '8%',
+              borderRadius: 6,
+            }}>
+            <MemoDataItem>
+              <MemoData_Text1>
+                {item.adminUser}님과 {item.partnerUser}님의
+              </MemoData_Text1>
+              <MemoData_Text2>{item.title}</MemoData_Text2>
+              <MemoBtnItem>
+                <MemoData_Text3>진행중인 교환일기가 없어요!</MemoData_Text3>
+              </MemoBtnItem>
+            </MemoDataItem>
+          </LinearGradient>
+        );
+      case 'START':
+        return (
+          <TouchableOpacity
+            onPress={() => {}}
+            style={{
+              width: '100%',
+              height: '80%',
+              marginTop: '8%',
+            }}>
+            <LinearGradient
+              colors={[item.startColorCode, item.endColorCode]}
+              style={{width: '100%', height: '100%', borderRadius: 6}}>
+              <MemoDataItem>
+                <MemoData_Text1>
+                  {item.adminUser}님과 {item.partnerUser}님의
+                </MemoData_Text1>
+                <MemoData_Text2>{item.title}</MemoData_Text2>
+                <MemoBtnItem>
+                  <MemoData_Text3>D-{item.dday}</MemoData_Text3>
+                </MemoBtnItem>
+              </MemoDataItem>
+            </LinearGradient>
           </TouchableOpacity>
-        </MemoBtnItem>
-      </LinearGradient>
-    </MemoItemContainer>
-  );
+        );
+    }
+  };
 
-  const Item2 = ({item, onPress}) => (
-    <MemoRecentItemContainer>
-      <MemoRecent_Icon color={item.colorCode}></MemoRecent_Icon>
-      <MemoRecentItemLeft>
-        <MemoRecent_Text1>{item.title}</MemoRecent_Text1>
-        <MemoRecent_Text2>{item.content}</MemoRecent_Text2>
-      </MemoRecentItemLeft>
+  // [TODO] Go To History Page, Gradient Color Code
+  const Item1 = ({item}) =>
+    item.isAddContainer ? AddContainer() : MemoStatusContainer(item);
+
+  const RecentContent = item => {
+    if (item.dday) {
+      return (
+        <MemoRecentItemLeft
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+          }}>
+          <Icon
+            name="lock"
+            size={30}
+            color="#777777"
+            style={{marginRight: 3}}
+          />
+          <MemoRecent_Text4>D-{item.dday}</MemoRecent_Text4>
+        </MemoRecentItemLeft>
+      );
+    } else {
+      return (
+        <MemoRecentItemLeft>
+          <MemoRecent_Text1>{item.title}</MemoRecent_Text1>
+          <MemoRecent_Text2>{item.content}</MemoRecent_Text2>
+        </MemoRecentItemLeft>
+      );
+    }
+  };
+
+  const Item2 = ({item}) => (
+    //[TODO] Item.user.profileImg using
+    <MemoRecentItemContainer
+      color={item.dday ? theme.memobackground : theme.background}>
+      <MemoRecent_Icon>
+        <AutoHeightImage
+          width={40}
+          maxHeight={60}
+          source={PROFILE_IMG_DEFAULT}
+          style={{
+            borderRadius: 50,
+          }}
+        />
+      </MemoRecent_Icon>
+      {RecentContent(item)}
       <MemoRecentItemRight>
-        <MemoRecent_Text3>{checkDate(item.time)}</MemoRecent_Text3>
-        <MemoRecent_Text3>{checkTime(item.time)}</MemoRecent_Text3>
+        <MemoRecent_Text3>{checkDate(item.createdAt)}</MemoRecent_Text3>
+        <MemoRecent_Text3>{checkTime(item.createdAt)}</MemoRecent_Text3>
       </MemoRecentItemRight>
     </MemoRecentItemContainer>
   );
 
   const renderItem1 = ({item}) => {
-    return <Item1 item={item} onPress={() => {}} />;
+    return <Item1 item={item} />;
   };
 
   const renderItem2 = ({item}) => {
-    return <Item2 item={item} onPress={() => {}} />;
+    return <Item2 item={item} />;
+  };
+
+  const renderBtnFooter = sliderIdx => {
+    if (sliderIdx > 0 && memos[sliderIdx].diaryStatus == 'READY') {
+      return (
+        <BtnContainer>
+          <Button
+            title="새 교환 일기 시작"
+            onPress={() => {}}
+            containerStyle={{
+              backgroundColor: theme.btnMainColorBg,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+            textStyle={{
+              color: theme.btnWhiteFont,
+              fontSize: 18,
+              fontWeight: '700',
+              fontFamily: theme.fontRegular,
+              textAlign: 'center',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          />
+        </BtnContainer>
+      );
+    } else if (sliderIdx > 0 && memos[sliderIdx].diaryStatus == 'START') {
+      return (
+        <BtnContainer>
+          <Button
+            title="오늘 일기 쓰기"
+            onPress={() => {}}
+            containerStyle={{
+              backgroundColor: theme.btnMainColorBg,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+            textStyle={{
+              color: theme.btnWhiteFont,
+              fontSize: 18,
+              fontWeight: '700',
+              fontFamily: theme.fontRegular,
+              textAlign: 'center',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          />
+        </BtnContainer>
+      );
+    }
   };
 
   return isLoading ? (
     <SpinnerContainer>
       <Spinner visible={isLoading} textContent={'유저 데이터 로딩 중...'} />
     </SpinnerContainer>
-  ) : isEmptyMemo ? (
-    <Container>
-      <TouchableOpacity
-        onPress={() => navigation.navigate('MemoMain')}
-        style={{width: '100%', height: '35%'}}>
-        <MemoContainer>
-          <Memo_Item1>
-            <Item1_Text>
-              김 반쪽님의 일기&nbsp;
-              <Icon name="star" size={18} color={'#F3B949'} />
-            </Item1_Text>
-          </Memo_Item1>
-          <Memo_Item2>
-            <Item2_Text>일기를 시작해 보세요!</Item2_Text>
-          </Memo_Item2>
-          <Memo_Item3>
-            <Item3_Text>새 일기장 만들기 또는 초대 코드 입력</Item3_Text>
-          </Memo_Item3>
-        </MemoContainer>
-      </TouchableOpacity>
-    </Container>
   ) : (
     <MemoDataContainer>
       <MemoFlexTop>
         <Carousel
           data={memos}
           renderItem={renderItem1}
-          sliderWidth={width}
-          itemWidth={width}
+          sliderWidth={width * 0.9}
+          itemWidth={width * 0.9}
+          firstItem={1}
+          onBeforeSnapToItem={slideIndex => setSlideIdx(slideIndex)}
         />
       </MemoFlexTop>
       <MemoFlexBottom>
-        <MemoRecent_Title>Recently</MemoRecent_Title>
-        <FlatList
-          data={testRecentlyData}
-          renderItem={renderItem2}
-          numColumns={1}
-        />
+        <MemoRecent_Title>최근 반쪽</MemoRecent_Title>
+        {recentData.length == 0 ? (
+          <MemoEmpty_Text1>최근 작성한 교환일기가 없어요</MemoEmpty_Text1>
+        ) : (
+          <FlatList data={recentData} renderItem={renderItem2} numColumns={1} />
+        )}
       </MemoFlexBottom>
-      <MemoFlexFooter>
-        <TouchableOpacity
-          onPress={() => {}}
-          style={{
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginTop: '5%',
-          }}>
-          <MemoData_Text3>더 보기 ∨</MemoData_Text3>
-        </TouchableOpacity>
-      </MemoFlexFooter>
+      <MemoFlexFooter>{renderBtnFooter(slideIdx)}</MemoFlexFooter>
     </MemoDataContainer>
   );
 };
