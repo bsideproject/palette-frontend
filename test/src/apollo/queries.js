@@ -58,4 +58,3 @@ export const UPDATE_PROFILE = gql`
     }
   }
 `;
-
