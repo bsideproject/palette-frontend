@@ -13,7 +13,6 @@ import AddMemoColor from './MakeMemo/AddMemoColor';
 import AddInviteCode from './MakeMemo/AddInviteCode';
 import CompleteMemo from './MakeMemo/CompleteMemo';
 import CompleteInviteCode from './MakeMemo/CompleteInviteCode';
-import WriteDiary from './WriteDiary';
 // Main Page
 import MainPage from './MainPage';
 import Setting from './Setting';
@@ -34,5 +33,4 @@ export {
   Joined,
   CompleteMemo,
   CompleteInviteCode,
-  WriteDiary,
 };

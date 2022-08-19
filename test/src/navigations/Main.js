@@ -9,7 +9,6 @@ import {
   AddInviteCode,
   CompleteMemo,
   CompleteInviteCode,
-  WriteDiary,
 } from '@screens';
 import Home from './Home';
 import {LogBox} from 'react-native';
@@ -74,14 +73,7 @@ const Main = () => {
           title: '초대코드 입력',
         }}
       />
-      <Stack.Screen
-        name="WriteDiary"
-        component={WriteDiary}
-        options={{
-          headerRight: () => <Text>저장</Text>,
-          headerTitle: '오늘의 일기',
-        }}
-      />
+      
     </Stack.Navigator>
   );
 };
