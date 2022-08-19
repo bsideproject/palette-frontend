@@ -1,4 +1,4 @@
-import React, {useContext, useEffect} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import Auth from './Auth';
 import Main from './Main';
@@ -12,12 +12,12 @@ const Navigation = () => {
     setTimeout(() => {
       SplashScreen.hide();
     }, 1000);
-  });
+  }, []);
 
   return (
     <NavigationContainer>
-      {/* {user.accessToken ? <Main /> : <Auth />} */}
-      <Main />
+      {user.accessToken ? <Main /> : <Auth />}
+      {/* <Main /> */}
     </NavigationContainer>
   );
 };

@@ -5,6 +5,7 @@ import {MainPage, Setting} from '@screens';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {TouchableOpacity} from 'react-native';
+import {UserContext} from '../contexts';
 
 const TabIcon = ({name, focused}) => {
   const theme = useContext(ThemeContext);
@@ -21,11 +22,12 @@ const Tab = createBottomTabNavigator();
 const Home = ({navigation, route}) => {
   const theme = useContext(ThemeContext);
   const [curScreenName, SetScreenName] = useState('Home');
+  const {user} = useContext(UserContext);
 
   useEffect(() => {
     const screenName = getFocusedRouteNameFromRoute(route) || 'Home';
     if (screenName == 'Home') {
-      SetScreenName('OO님의 반쪽 일기장');
+      SetScreenName(`${user.nickname}님의 반쪽 일기장`);
     } else if (screenName == 'Setting') {
       SetScreenName('환경 설정');
     }

@@ -5,6 +5,9 @@ import {TouchableOpacity, View, Text, Image} from 'react-native';
 import {ThemeContext} from 'styled-components/native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
+import {useMutation} from '@apollo/client';
+import {UPDATE_PROFILE} from '@apolloClient/queries';
+import AsyncStorage from '@react-native-community/async-storage';
 
 const Container = styled.View`
   flex: 1;
@@ -14,22 +17,6 @@ const Container = styled.View`
 
 const InnerContainer = styled.View`
   padding: 0 16px;
-`;
-
-const TitleContainer = styled.View`
-  justify-content: space-between;
-  align-items: center;
-  flex-direction: row;
-  border-bottom-color: #eeeeee;
-  border-bottom-width: 1px;
-  width: 100%;
-  height: 60px;
-  padding: 0 24px;
-`;
-
-const TitleText = styled.Text`
-  font-family: ${({theme}) => theme.fontBold};
-  font-size: 16px;
 `;
 
 const WelcomeContainer = styled.View`
@@ -68,11 +55,20 @@ const ButtonContainer = styled.View`
   margin-bottom: 106px;
 `;
 
-const Agree = ({navigation, route}) => {
+const Agree = ({navigation}) => {
   const [allCheck, setAllCheck] = useState(false);
   const [check1, setCheck1] = useState(false);
   const [check2, setCheck2] = useState(false);
   const theme = useContext(ThemeContext);
+  const [accessToken, setAccessToken] = useState(null);
+  const [updateProfile, updateResult] = useMutation(UPDATE_PROFILE, {
+    context: {
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    },
+  });
 
   const CHECKBOX_DEFAULT = require('/assets/icons/checkbox_default.png');
   const CHECKBOX_SELECTED = require('/assets/icons/checkbox_selected.png');
@@ -107,7 +103,10 @@ const Agree = ({navigation, route}) => {
   };
 
   const _handleNextButtonPress = () => {
-    navigation.navigate('Nickname', route.params);
+    updateProfile({
+      variables: {agreeWithTerms: true},
+    });
+    navigation.navigate('Nickname');
   };
 
   const CheckBox = ({check}) => {
@@ -117,6 +116,18 @@ const Agree = ({navigation, route}) => {
       <Image source={CHECKBOX_DEFAULT} style={{marginRight: 10}} />
     );
   };
+
+  useEffect(() => {
+    AsyncStorage.getItem('access_token', (err, result) => {
+      setAccessToken(result);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!!updateResult.data) {
+      console.log('UPDATE_PROFILE GRAPHQL RESULT DATA 약관동의', updateResult.data);
+    }
+  }, [updateResult]);
 
   useEffect(() => {
     if (check1 && check2) {
@@ -152,15 +163,6 @@ const Agree = ({navigation, route}) => {
             />
           </ButtonContainer>
         }>
-        <TitleContainer>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Icon name={'left'} size={15} color={'black'} />
-          </TouchableOpacity>
-          <TitleText>약관동의</TitleText>
-          <TouchableOpacity>
-            <Icon name={'close'} size={15} color={'black'} />
-          </TouchableOpacity>
-        </TitleContainer>
         <InnerContainer>
           <WelcomeContainer>
             <WelcomeText>만나서 반갑습니다 :)</WelcomeText>

@@ -1,5 +1,5 @@
 import React, {useContext, useState, useEffect} from 'react';
-import {Button} from '@components';
+import {Button} from '../components';
 import styled from 'styled-components/native';
 import {
   TouchableOpacity,
@@ -14,9 +14,6 @@ import {ThemeContext} from 'styled-components/native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
-import {useMutation} from '@apollo/client';
-import {UPDATE_PROFILE} from '@apolloClient/queries';
-import AsyncStorage from '@react-native-community/async-storage';
 
 const Container = styled.View`
   flex: 1;
@@ -78,29 +75,16 @@ const ProfileImage = styled.Image`
   border-radius: 70px;
 `;
 
-const PROFILEIMG_DEFAULT = require('/assets/icons/profileimg_default.png');
-const UPLOAD = require('/assets/icons/upload.png');
+const PROFILEIMG_DEFAULT = require('../../assets/icons/profileimg_default.png');
+const UPLOAD = require('../../assets/icons/upload.png');
 
-const ProfileImageSet = ({navigation}) => {
+const WriteDiary = ({navigation, route}) => {
   const theme = useContext(ThemeContext);
   const [profileImage, setProfileImage] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
-  const [accessToken, setAccessToken] = useState(null);
-  const [updateProfile, updateResult] = useMutation(UPDATE_PROFILE, {
-    context: {
-      headers: {
-        authorization: `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-      },
-    },
-  });
 
   const _handleNextButtonPress = () => {
-    // 추후 예정작업 이미지 업로드api response 값 = url
-    // updateProfile({
-    //   variables: {profileImg: "url"},
-    // });
-    navigation.navigate('Joined');
+    navigation.navigate('Joined', route.params);
   };
 
   const _handleLaunchImageLibrary = () => {
@@ -123,20 +107,26 @@ const ProfileImageSet = ({navigation}) => {
     });
   };
 
-  useEffect(() => {
-    AsyncStorage.getItem('access_token', (err, result) => {
-      setAccessToken(result);
-    });
-  }, []);
+  const _handleLaunchCamera = () => {
+    // 카메라 기능
+    const camera_options = {
+      saveToPhotos: true,
+      mediaType: 'photo',
+      includeBase64: false,
+    };
 
-  useEffect(() => {
-    if (!!updateResult.data) {
-      console.log(
-        'UPDATE_PROFILE GRAPHQL RESULT DATA 프로필설정',
-        updateResult.data,
-      );
-    } 
-  }, [updateResult]);
+    launchCamera(camera_options, response => {
+      if (response.didCancel) {
+        console.log('취소');
+      } else if (response.error) {
+        alert('에러 발생');
+      } else {
+        console.log('카메라 결과물 ===> ', response);
+        setProfileImage(response.assets[0].uri);
+      }
+    });
+  };
+
 
   const ConditionProfileImage = () => {
     return profileImage !== '' ? (
@@ -148,47 +138,19 @@ const ProfileImageSet = ({navigation}) => {
 
   return (
     <Container>
-      <KeyboardAvoidingScrollView
-        stickyFooter={
-          <ButtonContainer>
-            <Button
-              title="다음 단계로"
-              onPress={_handleNextButtonPress}
-              containerStyle={{
-                backgroundColor: theme.btnMainColorBg,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-              textStyle={{
-                color: theme.btnWhiteFont,
-                fontSize: 18,
-                fontWeight: '700',
-                fontFamily: theme.fontRegular,
-                textAlign: 'center',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            />
-          </ButtonContainer>
-        }>
-        <InnerContainer>
-          <SubTitleText>사용하실 프로필 사진을 설정해주세요!</SubTitleText>
-          <ProfileImageContainer>
-            <ConditionProfileImage />
-            <UploadProfileImgContainer
-              onPress={() => _handleLaunchImageLibrary()}>
-              <UploadBtnContainer>
-                <Image source={UPLOAD} style={{marginRight: 10}} />
-                <UploadBtnText>
-                  {!!profileImage ? '사진 다시 올리기' : '사진 올리기'}
-                </UploadBtnText>
-              </UploadBtnContainer>
-            </UploadProfileImgContainer>
-          </ProfileImageContainer>
-        </InnerContainer>
-      </KeyboardAvoidingScrollView>
+      <InnerContainer>
+        <ProfileImageContainer>
+          <ConditionProfileImage />
+          <UploadProfileImgContainer onPress={()=>{}}>
+            <UploadBtnContainer>
+              <Image source={UPLOAD} style={{marginRight: 10}} />
+              <UploadBtnText>사진 올리기</UploadBtnText>
+            </UploadBtnContainer>
+          </UploadProfileImgContainer>
+        </ProfileImageContainer>
+      </InnerContainer>
     </Container>
   );
 };
 
-export default ProfileImageSet;
+export default WriteDiary;

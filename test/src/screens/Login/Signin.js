@@ -8,7 +8,8 @@ import SocialBtn from '@components/SocialBtn';
 import AsyncStorage from '@react-native-community/async-storage';
 import {ThemeContext} from 'styled-components/native';
 import axios from 'axios';
-
+import {useQuery} from '@apollo/client';
+import {GET_PROFILE} from '@apolloClient/queries';
 import {
   login,
   getProfile as getKakaoProfile,
@@ -19,6 +20,7 @@ import {
   NaverLogin,
   getProfile as getNaverProfile,
 } from '@react-native-seoul/naver-login';
+import {responsePathAsArray} from 'graphql';
 
 const Container = styled.View`
   flex: 1;
@@ -59,8 +61,10 @@ const LastLoginBox = styled.View`
   background-color: white;
 `;
 const LastLoginText = styled.Text`
-  color: black;
-  font-size: 12px;
+  font-family: ${({theme}) => theme.fontLight};
+  color: #777777;
+  font-size: 14px;
+  margin-top: 16px;
 `;
 
 const APP_LOGO = require('/assets/logos/app_logo.png');
@@ -72,6 +76,17 @@ const Signin = ({navigation}) => {
   const insets = useSafeAreaInsets();
   const {setUser} = useContext(UserContext);
   const [prevSignType, setPrevSignType] = useState('');
+  const [accessToken, setAccessToken] = useState(null);
+  const [socialType, setSocialType] = useState('');
+  const [isRegistered, setIsRegistered] = useState(false);
+  const {loading, error, data} = useQuery(GET_PROFILE, {
+    context: {
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    },
+  });
 
   useEffect(() => {
     AsyncStorage.getItem('social_type', (err, result) => {
@@ -79,6 +94,26 @@ const Signin = ({navigation}) => {
       setPrevSignType(result);
     });
   }, []);
+
+  useEffect(() => {
+    if (!loading) {
+      // Get From DataBase
+      if (!!data && isRegistered) {
+        if (data.myProfile.nickname === '') {
+          //닉네임 설정을 안한 회원
+          navigation.navigate('Nickname');
+        } else {
+          //최종 로그인
+          setUser({
+            accessToken: accessToken,
+            email: data.myProfile.email,
+            socialType: socialType,
+            nickname: data.myProfile.nickname,
+          });
+        }
+      }
+    }
+  }, [loading]);
 
   //naver-login-ios settings
   // const iosKeys = {
@@ -104,24 +139,30 @@ const Signin = ({navigation}) => {
       Alert.alert('로그인 실패', profileResult.message);
       return;
     }
-    console.log('profileResult', profileResult);
-    getAcessToken({email: profileResult.response.email, socialType: 'naver'});
+    console.log('profileResult email--> ', profileResult.response.email);
+    console.log('profileResult birthday--> ', profileResult.response.birthday);
+    console.log(
+      'profileResult birthyear--> ',
+      profileResult.response.birthyear,
+    );
+    console.log('profileResult gender--> ', profileResult.response.gender);
+    return profileResult.response.email;
   };
 
   const _handleNaverSignin = props => {
     return new Promise((resolve, reject) => {
-      NaverLogin.login(props, (err, token) => {
+      NaverLogin.login(props, async (err, token) => {
         console.log(`\n\n  Token is fetched  :: ${JSON.stringify(token)} \n\n`);
         if (err) {
           reject(err);
           return;
         }
-        getUserProfile(token);
+        const naverEmail = await getUserProfile(token);
         resolve(token);
-        AsyncStorage.setItem('social_type', 'naver', () => {
-          console.log('AsyncStorage Save!');
+        getAccessToken({
+          email: naverEmail,
+          socialType: 'naver',
         });
-        navigation.navigate('Agree');
       });
     });
   };
@@ -134,29 +175,43 @@ const Signin = ({navigation}) => {
 
       const profile = await getKakaoProfile();
 
-      console.log('getProfile --> ', profile);
-      getAcessToken({email: profile.email, socialType: 'kakao'});
-      AsyncStorage.setItem('social_type', 'kakao', () => {
-        console.log('AsyncStorage Save!');
-        // main페이지로 가는 변수관리
-        // setUser({uid:123});
-      });
-      navigation.navigate('Agree');
+      console.log('getProfile email--> ', profile.email);
+      console.log('getProfile birthday--> ', profile.birthday);
+      console.log('getProfile birthyear--> ', profile.birthyear);
+      console.log('getProfile gender--> ', profile.gender);
+      getAccessToken({email: profile.email, socialType: 'kakao'});
       // setResult(JSON.stringify(token));
     } catch (error) {
       console.log(error);
     }
   };
 
-  const getAcessToken = ({email, socialType}) => {
-    axios
-      .post('http://61.97.190.252:8082/api/v1/login', {
+  const getAccessToken = async ({email, socialType}) => {
+    await axios
+      .post('http://61.97.190.252:8080/api/v1/login', {
         email: email,
         socialType: socialType,
       })
       .then(response => {
-        console.log('소셜로그인 타입 --> ', socialType);
-        console.log('api 결과 --> ', response.data.accessToken);
+        console.log('access_token 값 --> ', response.data.accessToken);
+        // console.log('refresh token 값 ==> ', response.headers['set-cookie'][0]);
+
+        AsyncStorage.setItem('access_token', response.data.accessToken, () => {
+          console.log('AsyncStorage access_token Save!');
+          setAccessToken(response.data.accessToken);
+        });
+        AsyncStorage.setItem('social_type', socialType, () => {
+          console.log('AsyncStorage social_type Save!');
+          setSocialType(socialType);
+        });
+        AsyncStorage.setItem('email', email, () => {
+          console.log('AsyncStorage email Save!');
+        });
+        setIsRegistered(response.data.isRegistered);
+        if (!response.data.isRegistered) {
+          //데이터베이스에 회원이 존재 하지 않는 경우
+          navigation.navigate('Agree');
+        }
       })
       .catch(error => {
         console.log('login api error', error);
@@ -199,7 +254,10 @@ const Signin = ({navigation}) => {
           <SubTitle>함께 완성하는</SubTitle>
         </SubTitleContainer>
         <Image source={APP_LOGO} style={{marginBottom: 58}} />
-        <SocialBtn id={'kakao'} onPress={_handleKakaoSignin}>
+        <SocialBtn
+          id={'kakao'}
+          onPress={_handleKakaoSignin}
+          style={{marginBottom: 20}}>
           <Image source={KAKAO_LOGO} style={{marginRight: 15}} />
           <Text
             style={{
@@ -245,13 +303,7 @@ const Signin = ({navigation}) => {
               marginHorizontal: 12,
             }}
           />
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate('Agree', {
-                email: 'rmsdyd200@naver.com',
-                socialType: 'naver',
-              })
-            }>
+          <TouchableOpacity onPress={() => navigation.navigate('Agree')}>
             <LinkText>임시 Login Skip</LinkText>
           </TouchableOpacity>
         </LinkContainer>

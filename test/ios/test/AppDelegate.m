@@ -3,6 +3,7 @@
 #import <React/RCTBridge.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
+#import "RNSplashScreen.h" // 추가
 
 #ifdef FB_SONARKIT_ENABLED
 #import <FlipperKit/FlipperClient.h>
@@ -22,7 +23,6 @@ static void InitializeFlipper(UIApplication *application) {
   [client start];
 }
 #endif
-#import "RNSplashScreen.h" // 추가
 
 @implementation AppDelegate
 

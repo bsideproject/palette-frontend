@@ -19,6 +19,21 @@ const Auth = () => {
   return (
     <Stack.Navigator
       screenOptions={{
+        headerTitleAlign: 'center',
+        headerTintColor: theme.text,
+        headerBackTitleVisible: false,
+        headerStyle: {
+          backgroundColor: '#FFFFFF',
+          borderBottomWidth: 1,
+          borderBottomColor: '#EEEEEE',
+          height: 60,
+        },
+        headerTitleStyle: {
+          color: '#111111',
+          fontSize: 16,
+          fontWeight: '700',
+          fontFamily: theme.fontRegular,
+        },
         cardStyle: {backgroundColor: theme.backgroundColor},
       }}>
       <Stack.Screen
@@ -29,32 +44,45 @@ const Auth = () => {
       <Stack.Screen
         name="Agree"
         component={Agree}
-        options={{headerShown: false}}
+        options={{
+          headerTitle: '약관동의',
+        }}
       />
       <Stack.Screen
         name="FirstExplain"
         component={FirstExplain}
-        options={{headerShown: false}}
+        options={{
+          headerTitle: '이용약관',
+        }}
       />
       <Stack.Screen
         name="SecondExplain"
         component={SecondExplain}
-        options={{headerShown: false}}
+        options={{
+          headerTitle: '개인정보 취급방침',
+        }}
       />
       <Stack.Screen
         name="Nickname"
         component={Nickname}
-        options={{headerShown: false}}
+        options={{
+          headerTitle: '닉네임 설정',
+        }}
       />
       <Stack.Screen
         name="ProfileImageSet"
         component={ProfileImageSet}
-        options={{headerShown: false}}
+        options={{
+          headerTitle: '프로필 사진 설정',
+        }}
       />
       <Stack.Screen
         name="Joined"
         component={Joined}
-        options={{headerShown: false}}
+        options={{
+          headerLeft: false,
+          headerTitle: '회원가입 완료',
+        }}
       />
     </Stack.Navigator>
   );

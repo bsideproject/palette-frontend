@@ -71,5 +71,10 @@
   <string>$(PRODUCT_NAME) would like to save photos to your photo gallery</string>
   <key>NSMicrophoneUsageDescription</key>
   <string>$(PRODUCT_NAME) would like to use your microphone (for videos)</string>
+  <key>LSApplicationQueriesSchemes</key>
+  <array>
+      <string>naversearchapp</string>
+      <string>naversearchthirdlogin</string>
+    </array>
 </dict>
 </plist>

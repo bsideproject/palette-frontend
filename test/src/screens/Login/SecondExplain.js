@@ -10,22 +10,6 @@ const Container = styled.View`
   flex-direction: column;
 `;
 
-const TitleContainer = styled.View`
-  justify-content: space-between;
-  align-items: center;
-  flex-direction: row;
-  border-bottom-color: #eeeeee;
-  border-bottom-width: 1px;
-  width: 100%;
-  height: 60px;
-  padding: 0 24px;
-`;
-
-const TitleText = styled.Text`
-  font-family: ${({theme}) => theme.fontBold};
-  font-size: 16px;
-`;
-
 const ExplainContainer = styled.View`
   padding: 34px 16px 0 16px;
 `;
@@ -42,15 +26,6 @@ const SecondExplain = ({navigation}) => {
 
   return (
     <Container>
-      <TitleContainer>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Icon name={'left'} size={15} color={'black'} />
-        </TouchableOpacity>
-        <TitleText>개인정보 취급방침</TitleText>
-        <TouchableOpacity>
-          <Icon name={'close'} size={15} color={'black'} />
-        </TouchableOpacity>
-      </TitleContainer>
       <ExplainContainer>
         <ExplainText>
           회사는 반쪽일기 서비스 제공을 위해 회원가입 시 또는 서비스

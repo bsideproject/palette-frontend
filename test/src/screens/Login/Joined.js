@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 import {Button} from '@components';
 import styled from 'styled-components/native';
 import {ThemeContext} from 'styled-components/native';
@@ -7,6 +7,8 @@ import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-
 import {UserContext} from '@contexts';
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
+import {useQuery} from '@apollo/client';
+import {GET_PROFILE} from '@apolloClient/queries';
 
 const Container = styled.View`
   flex: 1;
@@ -20,21 +22,6 @@ const InnerContainer = styled.View`
   align-items: center;
 `;
 
-const TitleContainer = styled.View`
-  justify-content: center;
-  align-items: center;
-  flex-direction: row;
-  border-bottom-color: #eeeeee;
-  border-bottom-width: 1px;
-  width: 100%;
-  height: 60px;
-`;
-
-const TitleText = styled.Text`
-  font-family: ${({theme}) => theme.fontBold};
-  font-size: 16px;
-`;
-
 const SubTitleText = styled.Text`
   font-family: ${({theme}) => theme.fontRegular};
   font-size: 20px;
@@ -46,34 +33,62 @@ const ButtonContainer = styled.View`
   margin-bottom: 106px;
 `;
 
-const Joined = ({navigation, route}) => {
+const Joined = ({navigation}) => {
   const theme = useContext(ThemeContext);
-  const {setUser} = useContext(UserContext);
+  const [email, setEmail] = useState('');
+  const [socialType, setSocialType] = useState('');
+  const [accessToken, setAccessToken] = useState(null);
+  const {setUser, user} = useContext(UserContext);
+  const {loading, error, data} = useQuery(GET_PROFILE, {
+    context: {
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    },
+  });
 
   const JOIN_IMG = require('/assets/icons/join.png');
 
   const _handleNextButtonPress = () => {
-    console.log(route.params);
     axios
-      .post('http://61.97.190.252:8082/api/v1/login', {
-        email: route.params.email,
-        socialType: route.params.socialType,
+      .post('http://61.97.190.252:8080/api/v1/login', {
+        email: email,
+        socialType: socialType,
       })
       .then(response => {
-        console.log('api 결과 --> ', response.data.accessToken);
-        AsyncStorage.setItem('refreshToken', 'true', () => {
-          console.log('RefreshToken Save!');
-        });
-        setUser({
-          accessToken: response.data.accessToken,
-          email: route.params.email,
-          socialType: route.params.socialType,
+        AsyncStorage.setItem('access_token', response.data.accessToken, () => {
+          console.log('Joined AsyncStorage access_token Save!');
+          setAccessToken(prevState => response.data.accessToken);
         });
       })
       .catch(error => {
         console.log('login api error', error);
       });
   };
+
+  useEffect(() => {
+    AsyncStorage.getItem('email', (err, result) => {
+      setEmail(result);
+    });
+    AsyncStorage.getItem('social_type', (err, result) => {
+      setSocialType(result);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!loading) {
+      if (!!data) {
+        console.log('Joined Get Data From GraphQL');
+        setUser({
+          accessToken: accessToken,
+          email: data.myProfile.email,
+          socialType: socialType,
+          nickname: data.myProfile.nickname,
+        });
+      }
+    }
+  }, [loading, accessToken]);
 
   return (
     <Container>
@@ -100,9 +115,6 @@ const Joined = ({navigation, route}) => {
             />
           </ButtonContainer>
         }>
-        <TitleContainer>
-          <TitleText>회원가입 완료</TitleText>
-        </TitleContainer>
         <InnerContainer>
           <Image source={JOIN_IMG} style={{marginTop: 150, marginBottom: 40}} />
           <SubTitleText>회원가입을 축하합니다 :)</SubTitleText>

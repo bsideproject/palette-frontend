@@ -19,3 +19,43 @@ export const REGISTER_MEMO = gql`
     }
   }
 `;
+
+export const GET_PROFILE = gql`
+  query {
+    myProfile {
+      id
+      email
+      nickname
+      profileImg
+      diaries {
+        title
+        invitationCode
+        color
+      }
+    }
+  }
+`;
+
+export const UPDATE_PROFILE = gql`
+  mutation EditMyProfile(
+    $nickname: String
+    $agreeWithTerms: Boolean
+    $profileImg: String
+  ) {
+    editMyProfile(
+      editMyProfileInput: {
+        nickname: $nickname
+        agreeWithTerms: $agreeWithTerms
+        profileImg: $profileImg
+      }
+    ) {
+      id
+      email
+      nickname
+      profileImg
+      agreeWithTerms
+      createdAt
+    }
+  }
+`;
+
