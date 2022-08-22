@@ -127,8 +127,8 @@ const AddMemoColor = ({navigation, route}) => {
 
       registerMemo({
         variables: {
-          title: String(receivedName),
-          colorId: String(selectedColor.id),
+          title: receivedName,
+          colorId: selectedColor.id,
         },
       });
     }

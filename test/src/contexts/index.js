@@ -1,2 +1,4 @@
 import {UserContext, UserProvider} from './User';
-export {UserContext, UserProvider};
+import {HistoryModalContext, HistoryModalProvider} from './HistoryModal';
+
+export {UserContext, UserProvider, HistoryModalContext, HistoryModalProvider};

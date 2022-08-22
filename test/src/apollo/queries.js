@@ -13,9 +13,22 @@ export const COLOR_CODE = gql`
 `;
 
 export const REGISTER_MEMO = gql`
-  mutation CreateDiary($title: String!, $colorId: String!) {
+  mutation CreateDiary($title: String!, $colorId: Long!) {
     createDiary(createDiaryInput: {title: $title, colorId: $colorId}) {
       invitationCode
+    }
+  }
+`;
+
+export const SET_INVITE_CODE = gql`
+  mutation SetInviteCode($InviteCode: String!) {
+    inviteDiary(inviteDiaryInput: {invitationCode: $InviteCode}) {
+      adminUser {
+        nickname
+      }
+      diary {
+        title
+      }
     }
   }
 `;

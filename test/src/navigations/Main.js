@@ -1,6 +1,8 @@
 import React, {useContext, useEffect} from 'react';
 import {ThemeContext} from 'styled-components/native';
 import {createStackNavigator} from '@react-navigation/stack';
+import Icon from 'react-native-vector-icons/Ionicons';
+import {TouchableOpacity} from 'react-native';
 import {Text} from 'react-native';
 import {
   MemoMain,
@@ -9,14 +11,19 @@ import {
   AddInviteCode,
   CompleteMemo,
   CompleteInviteCode,
+  SetMemoPeriod,
+  History,
+  setModalDisplay,
 } from '@screens';
 import Home from './Home';
 import {LogBox} from 'react-native';
+import {HistoryModalContext} from '@contexts';
 
 const Stack = createStackNavigator();
 
 const Main = () => {
   const theme = useContext(ThemeContext);
+  const {setHistoryModalVisible} = useContext(HistoryModalContext);
 
   useEffect(() => {
     LogBox.ignoreLogs(['Animated: `useNativeDriver`']);
@@ -49,6 +56,30 @@ const Main = () => {
         options={{headerShown: false}}
       />
       <Stack.Screen name="MemoMain" component={MemoMain} />
+      <Stack.Screen
+        name="SetMemoPeriod"
+        component={SetMemoPeriod}
+        options={{
+          title: '교환일기 설정하기',
+        }}
+      />
+      <Stack.Screen
+        name="History"
+        component={History}
+        options={{
+          title: '히스토리',
+          headerRight: () => (
+            <TouchableOpacity onPress={() => setHistoryModalVisible(true)}>
+              <Icon
+                name={'ellipsis-vertical-sharp'}
+                size={18}
+                color={'black'}
+                style={{marginRight: 20}}
+              />
+            </TouchableOpacity>
+          ),
+        }}
+      />
       <Stack.Screen name="AddMemo" component={AddMemo} />
       <Stack.Screen name="AddMemoColor" component={AddMemoColor} />
       <Stack.Screen
@@ -73,7 +104,6 @@ const Main = () => {
           title: '초대코드 입력',
         }}
       />
-      
     </Stack.Navigator>
   );
 };

@@ -6,6 +6,7 @@ import {createApolloClient} from '@apolloClient/ApolloClient';
 import {theme} from './theme';
 import Navigation from '@navigations';
 import {UserProvider} from '@contexts';
+import {HistoryModalProvider} from './contexts';
 
 const apolloClient = createApolloClient();
 
@@ -14,11 +15,13 @@ const App = () => {
     <ThemeProvider theme={theme}>
       <ApolloProvider client={apolloClient}>
         <UserProvider>
-          <StatusBar
-            backgroundColor={theme.background}
-            barStyle="dark-content"
-          />
-          <Navigation />
+          <HistoryModalProvider>
+            <StatusBar
+              backgroundColor={theme.background}
+              barStyle="dark-content"
+            />
+            <Navigation />
+          </HistoryModalProvider>
         </UserProvider>
       </ApolloProvider>
     </ThemeProvider>

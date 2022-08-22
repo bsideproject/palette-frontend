@@ -11,7 +11,9 @@ import LinearGradient from 'react-native-linear-gradient';
 import {FlatList} from 'react-native-gesture-handler';
 import Clipboard from '@react-native-clipboard/clipboard';
 import AutoHeightImage from 'react-native-auto-height-image';
+import Icon_Ionicons from 'react-native-vector-icons/Ionicons';
 import {Button} from '@components';
+import {utcToKst} from '~/src/utils';
 
 // Time & Date Function
 const checkDate = ts => {
@@ -21,14 +23,14 @@ const checkDate = ts => {
 
   // Today Check
   if (now.diff(target, 'day') > 0) {
-    return moment(ts).format('MM/DD');
+    return moment(utcToKst(ts)).format('MM/DD');
   } else {
     return 'Today';
   }
 };
 
 const checkTime = ts => {
-  return moment(ts).format('hh:mm A');
+  return moment(utcToKst(ts)).format('hh:mm A');
 };
 
 // Spinner
@@ -51,23 +53,23 @@ const MemoDataContainer = styled.View`
 
 // Memo Flex 2 : 3 : 1
 const MemoFlexTop = styled.View`
-  flex: 3;
+  flex: 4;
 `;
 
 const MemoFlexBottom = styled.View`
-  flex: 5;
+  flex: 6;
 `;
 
 const MemoFlexFooter = styled.View`
   flex: 1;
-  margin-bottom: 3%;
+  margin-bottom: 5%;
 `;
 
 // Memo Empty Container
 const MemoEmpty_Text1 = styled.Text`
   font-size: 16px;
   font-weight: 400;
-  margin-top: 3%;
+  margin-top: 15%;
   text-align: center;
   color: ${({theme}) => theme.text};
   font-family: ${({theme}) => theme.fontRegular};
@@ -93,20 +95,15 @@ const MemoBtnItem = styled.View`
   flex: 1;
   align-items: center;
   justify-content: center;
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
-  border-bottom-right-radius: 5px;
-  border-bottom-left-radius: 5px;
-  background-color: ${({theme}) => theme.background};
-  margin-bottom: 3%;
-  margin-top: 10%;
+  margin-bottom: 5%;
+  margin-top: 5%;
   width: 70%;
 `;
 
 const MemoData_Text1 = styled.Text`
   font-size: 16px;
   font-weight: 400;
-  margin-top: 4%;
+  margin-top: 5%;
   color: ${({theme}) => theme.btnWhiteFont};
   font-family: ${({theme}) => theme.fontRegular};
 `;
@@ -114,15 +111,15 @@ const MemoData_Text1 = styled.Text`
 const MemoData_Text2 = styled.Text`
   font-size: 25px;
   font-weight: 700;
-  margin-top: 1%;
+  margin-top: 3%;
   color: ${({theme}) => theme.btnWhiteFont};
   font-family: ${({theme}) => theme.fontRegular};
 `;
 
 const MemoData_Text3 = styled.Text`
-  font-size: 16px;
-  font-weight: 400;
-  color: ${({theme}) => theme.text};
+  font-size: 18px;
+  font-weight: 700;
+  color: ${({theme}) => theme.whiteFont};
   font-family: ${({theme}) => theme.fontRegular};
 `;
 
@@ -153,9 +150,9 @@ const MemoRecentItemRight = styled.View`
 `;
 
 const MemoRecent_Title = styled.Text`
-  font-size: 20px;
-  font-weight: 400;
-  margin-top: 7%;
+  font-size: 16px;
+  font-weight: 700;
+  margin-top: 3%;
   margin-bottom: 5%;
   color: ${({theme}) => theme.text};
   font-family: ${({theme}) => theme.fontRegular};
@@ -197,6 +194,10 @@ const MemoRecent_Text4 = styled.Text`
 const BtnContainer = styled.View`
   justify-content: center;
   align-items: center;
+`;
+
+const Text_underline = styled.Text`
+  text-decoration-line: underline;
 `;
 
 const MainPage = ({navigation}) => {
@@ -265,18 +266,14 @@ const MainPage = ({navigation}) => {
   const getData = () => {
     // Get From DataBase, Start Spinner
     // console.log('Get Data From QraphQL');
-    // console.log(checkDate('2021-12-24 12:00:01'));
-    // console.log(checkTime('2021-12-24 12:00:01'));
-    // console.log(checkDate('2022-08-15 12:00:01'));
-    // readData = [];
-    // data['color'].map(item => {
-    //   readData.push({id: item.order, color: item.hexCode});
-    // });
 
     // Diary, Page 분리
     setMemos(memos.concat(testMemoData));
     setRecentData(testRecentlyData);
-    // setColors(readData);
+
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
   };
 
   // Get Query from QraphQL
@@ -284,32 +281,27 @@ const MainPage = ({navigation}) => {
     getData();
   }, []);
 
-  useEffect(() => {
-    setIsLoading(false);
-    console.log(memos, recentData);
-  }, [memos, recentData]);
-
   const AddContainer = () => {
     return (
       <TouchableOpacity
         onPress={() => navigation.navigate('MemoMain')}
         style={{
+          backgroundColor: '#EEEEEE',
           width: '100%',
           height: '80%',
           marginTop: '8%',
+          borderRadius: 6,
+          borderColor: '#FFFFFF',
+          borderStyle: 'solid',
+          borderWidth: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          shadowColor: 'rgba(0, 0, 0, 0.16)',
+          shadowOffset: '0px 4px',
+          shadowRadius: '8px',
+          elevation: 15,
         }}>
-        <LinearGradient
-          colors={[theme.emptyMainBg, '#EEEEEE']}
-          style={{
-            width: '100%',
-            height: '100%',
-            borderRadius: 6,
-            borderStyle: 'dashed',
-            borderWidth: 2,
-            justifyContent: 'center',
-          }}>
-          <MemoAdd_Text1>+</MemoAdd_Text1>
-        </LinearGradient>
+        <Icon name="plus" size={35} color="#111111" />
       </TouchableOpacity>
     );
   };
@@ -332,8 +324,14 @@ const MainPage = ({navigation}) => {
               <MemoBtnItem>
                 <TouchableOpacity
                   onPress={() => Clipboard.setString(item.invitationCode)}>
-                  <MemoData_Text3 style={{textDecorationLine: 'underline'}}>
-                    초대코드 복사하기
+                  <MemoData_Text3>
+                    <Text_underline>초대코드 복사하기</Text_underline>
+                    &nbsp;&nbsp;
+                    <Icon_Ionicons
+                      name={'copy-outline'}
+                      size={18}
+                      color={'white'}
+                    />
                   </MemoData_Text3>
                 </TouchableOpacity>
               </MemoBtnItem>
@@ -356,7 +354,9 @@ const MainPage = ({navigation}) => {
               </MemoData_Text1>
               <MemoData_Text2>{item.title}</MemoData_Text2>
               <MemoBtnItem>
-                <MemoData_Text3>진행중인 교환일기가 없어요!</MemoData_Text3>
+                <MemoData_Text3>
+                  <Text_underline>진행중인 교환일기가 없어요!</Text_underline>
+                </MemoData_Text3>
               </MemoBtnItem>
             </MemoDataItem>
           </LinearGradient>
@@ -364,7 +364,7 @@ const MainPage = ({navigation}) => {
       case 'START':
         return (
           <TouchableOpacity
-            onPress={() => {}}
+            onPress={() => navigation.navigate('History', item)}
             style={{
               width: '100%',
               height: '80%',
@@ -379,7 +379,9 @@ const MainPage = ({navigation}) => {
                 </MemoData_Text1>
                 <MemoData_Text2>{item.title}</MemoData_Text2>
                 <MemoBtnItem>
-                  <MemoData_Text3>D-{item.dday}</MemoData_Text3>
+                  <MemoData_Text3 style={{fontSize: 24}}>
+                    D-{item.dday}
+                  </MemoData_Text3>
                 </MemoBtnItem>
               </MemoDataItem>
             </LinearGradient>
@@ -456,7 +458,9 @@ const MainPage = ({navigation}) => {
         <BtnContainer>
           <Button
             title="새 교환 일기 시작"
-            onPress={() => {}}
+            onPress={() =>
+              navigation.navigate('SetMemoPeriod', memos[sliderIdx])
+            }
             containerStyle={{
               backgroundColor: theme.btnMainColorBg,
               alignItems: 'center',

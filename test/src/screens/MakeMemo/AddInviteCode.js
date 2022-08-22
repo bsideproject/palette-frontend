@@ -1,8 +1,11 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 import styled from 'styled-components/native';
 import {Text} from 'react-native';
+import {UserContext} from '@contexts';
 import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
 import {ThemeContext} from 'styled-components/native';
+import {useMutation} from '@apollo/client';
+import {SET_INVITE_CODE} from '@apolloClient/queries';
 import {Button, Input, ErrorMessage} from '@components';
 
 const Container = styled.View`
@@ -31,25 +34,49 @@ const BtnContainer = styled.View`
 const AddInviteCode = ({navigation}) => {
   const [code, setCode] = useState('');
   const theme = useContext(ThemeContext);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('유효하지 않은 코드입니다.');
   const [isError, setIsError] = useState(false);
+  const {user} = useContext(UserContext);
+  const [setInviteCode, inviteCodeResult] = useMutation(SET_INVITE_CODE, {
+    context: {
+      headers: {
+        authorization: `Bearer ${user.accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    },
+  });
 
   const _handleSetInviteComplete = () => {
-    // Check Valid Type
-    console.log('Set Code Invite Check');
-    setIsError(true);
-
-    // [TODO] Get Invite Code from GraphQL
-    // check Invite Code
-    setErrorMessage('유효하지 않은 코드입니다.');
-    if (code == '111111') {
-      setIsError(false);
-      navigation.navigate('CompleteInviteCode', {
-        userName: '반쪽이',
-        memoName: '반쪽 일기',
-      });
-    }
+    // Set Invite Code
+    setInviteCode({
+      variables: {
+        InviteCode: code,
+      },
+    });
   };
+
+  useEffect(() => {
+    //console.log('DATA', inviteCodeResult.data);
+    if (inviteCodeResult.data?.inviteDiary.adminUser) {
+      // [TODO] Invite Code Status
+      console.log(inviteCodeResult.data);
+      let isError = false;
+
+      // Error Status
+      if (isError) {
+        setIsError(true);
+        return;
+      } else {
+        // If Success
+        navigation.navigate('CompleteInviteCode', {
+          userName: inviteCodeResult.data.inviteDiary.adminUser.nickname,
+          memoName: inviteCodeResult.data.inviteDiary.diary.title,
+        });
+      }
+    } else {
+      console.log('Loading or Error', inviteCodeResult.data);
+    }
+  }, [inviteCodeResult]);
 
   return (
     <KeyboardAvoidingScrollView

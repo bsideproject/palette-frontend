@@ -8,6 +8,7 @@ const Colors = {
   main_color: '#0F4CFC',
   tint_color: '#303030',
   memo_back_ground: '#F1F4FF',
+  side_color: '#F3B949',
 };
 
 const Fonts = {
@@ -22,6 +23,9 @@ export const theme = {
   tintcolor: Colors.tint_color,
   text: Colors.black,
   errorText: Colors.red,
+
+  mainColor: Colors.main_color,
+  sideColor: Colors.side_color,
 
   // Image
   imgBackground: Colors.grey_0,
@@ -42,6 +46,7 @@ export const theme = {
   // Font
   mainFont: Colors.main_color,
   grayFont: Colors.grey_1,
+  whiteFont: Colors.white,
 
   // ErrorMessage
   inputValidChkColor: Colors.red,
