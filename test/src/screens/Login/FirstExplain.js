@@ -1,8 +1,6 @@
 import React, {useContext, useState, useEffect} from 'react';
 import styled from 'styled-components/native';
-import {TouchableOpacity, View, Text} from 'react-native';
 import {ThemeContext} from 'styled-components/native';
-import Icon from 'react-native-vector-icons/AntDesign';
 
 const Container = styled.View`
   flex: 1;

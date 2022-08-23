@@ -5,8 +5,7 @@ import {TouchableOpacity} from 'react-native';
 import Spinner from 'react-native-loading-spinner-overlay';
 import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
 import {FlatList} from 'react-native-gesture-handler';
-import {useQuery, useMutation} from '@apollo/client';
-import {COLOR_CODE, REGISTER_MEMO} from '@apolloClient/queries';
+import {USE_QUERY, USE_MUTATION} from '@apolloClient/queries';
 import {UserContext} from '@contexts';
 import {Button, ErrorMessage} from '@components';
 import LinearGradient from 'react-native-linear-gradient';
@@ -71,23 +70,11 @@ const AddMemoColor = ({navigation, route}) => {
   const [errorMessage, setErrorMessage] = useState('');
   const [isError, setIsError] = useState(false);
   const {user} = useContext(UserContext);
-  const {loading, error, data} = useQuery(COLOR_CODE, {
-    context: {
-      headers: {
-        authorization: `Bearer ${user.accessToken}`,
-        'Content-Type': 'application/json',
-      },
-    },
-  });
-  const [registerMemo, registerResult] = useMutation(REGISTER_MEMO, {
-    context: {
-      headers: {
-        authorization: `Bearer ${user.accessToken}`,
-        'Content-Type': 'application/json',
-      },
-    },
-  });
-  //console.log(user);
+  const {loading, error, data} = USE_QUERY('COLOR_CODE', user.accessToken);
+  const [registerMemo, registerResult] = USE_MUTATION(
+    'REGISTER_MEMO',
+    user.accessToken,
+  );
 
   const getData = () => {
     // Get From DataBase, Start Spinner
@@ -95,7 +82,7 @@ const AddMemoColor = ({navigation, route}) => {
     // console.log(loading, error, data);
 
     if (!loading) {
-      readData = [];
+      let readData = [];
       data['colors'].map(item => {
         readData.push({
           id: item.id,
@@ -176,7 +163,8 @@ const AddMemoColor = ({navigation, route}) => {
     if (item.empty === true) {
       return <ColorTransParent></ColorTransParent>;
     }
-    const borderColor = item === selectedColor ? theme.Error : theme.dark010;
+    const borderColor =
+      item === selectedColor ? theme.pointColor : theme.dark010;
     const borderWidth = item === selectedColor ? 3 : 0;
     const borderStyle = item === selectedColor ? 'dotted' : 'solid';
 

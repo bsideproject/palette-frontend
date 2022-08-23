@@ -1,7 +1,8 @@
 import {gql} from '@apollo/client';
+import {useQuery, useMutation} from '@apollo/client';
 
 // Query
-export const COLOR_CODE = gql`
+const COLOR_CODE = gql`
   query ColorCode {
     colors {
       id
@@ -12,7 +13,7 @@ export const COLOR_CODE = gql`
   }
 `;
 
-export const REGISTER_MEMO = gql`
+const REGISTER_MEMO = gql`
   mutation CreateDiary($title: String!, $colorId: Long!) {
     createDiary(createDiaryInput: {title: $title, colorId: $colorId}) {
       invitationCode
@@ -20,7 +21,7 @@ export const REGISTER_MEMO = gql`
   }
 `;
 
-export const SET_INVITE_CODE = gql`
+const SET_INVITE_CODE = gql`
   mutation SetInviteCode($InviteCode: String!) {
     inviteDiary(inviteDiaryInput: {invitationCode: $InviteCode}) {
       adminUser {
@@ -33,7 +34,7 @@ export const SET_INVITE_CODE = gql`
   }
 `;
 
-export const GET_PROFILE = gql`
+const GET_PROFILE = gql`
   query {
     myProfile {
       id
@@ -48,7 +49,7 @@ export const GET_PROFILE = gql`
   }
 `;
 
-export const UPDATE_PROFILE = gql`
+const UPDATE_PROFILE = gql`
   mutation EditMyProfile(
     $nickname: String
     $agreeWithTerms: Boolean
@@ -70,3 +71,43 @@ export const UPDATE_PROFILE = gql`
     }
   }
 `;
+
+const REGISTER_DIARY_PERIOD = gql`
+  mutation RegisterDiaryDate($diaryId: Long!, $period: Long!) {
+    updateDiaryDate(diaryDateInput: {diaryId: $diaryId, period: $period}) {
+      historyId
+    }
+  }
+`;
+
+// ---------------------------------------------------------
+const QUERY_ARRAY = {
+  COLOR_CODE: COLOR_CODE,
+  REGISTER_MEMO: REGISTER_MEMO,
+  SET_INVITE_CODE: SET_INVITE_CODE,
+  GET_PROFILE: GET_PROFILE,
+  UPDATE_PROFILE: UPDATE_PROFILE,
+  REGISTER_DIARY_PERIOD: REGISTER_DIARY_PERIOD,
+};
+
+export const USE_QUERY = (Query, Token) => {
+  return useQuery(QUERY_ARRAY[Query], {
+    context: {
+      headers: {
+        authorization: `Bearer ${Token}`,
+        'Content-Type': 'application/json',
+      },
+    },
+  });
+};
+
+export const USE_MUTATION = (Query, Token) => {
+  return useMutation(QUERY_ARRAY[Query], {
+    context: {
+      headers: {
+        authorization: `Bearer ${Token}`,
+        'Content-Type': 'application/json',
+      },
+    },
+  });
+};

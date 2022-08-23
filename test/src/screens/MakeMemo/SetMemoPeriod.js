@@ -1,12 +1,9 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {ThemeContext} from 'styled-components/native';
 import styled from 'styled-components/native';
-import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
-import {Button, Input, ErrorMessage} from '@components';
-import {Image} from 'react-native';
-import {TouchableOpacity} from 'react-native';
-import Clipboard from '@react-native-clipboard/clipboard';
+import {Button} from '@components';
 import {UserContext} from '@contexts';
+import {USE_MUTATION} from '@apolloClient/queries';
 
 const SetMemoFlexTop = styled.View`
   justify-content: center;
@@ -58,12 +55,33 @@ const Container = styled.View`
 
 const SetMemoPeriod = ({navigation, route}) => {
   const theme = useContext(ThemeContext);
+  const {user} = useContext(UserContext);
+  const [updateDiaryPeriod, updateDiaryPeriodResult] = USE_MUTATION(
+    'REGISTER_DIARY_PERIOD',
+    user.accessToken,
+  );
 
   const _handleSetMemoPeriod = period => {
     console.log(route.params);
     console.log(period);
-    navigation.navigate('Home');
+
+    // [TODO] Read Diary Id
+    updateDiaryPeriod({
+      variables: {
+        diaryId: 1,
+        period: period,
+      },
+    });
   };
+
+  useEffect(() => {
+    console.log('DATA', updateDiaryPeriodResult.data);
+    if (updateDiaryPeriodResult.data?.updateDiaryDate.historyId) {
+      navigation.navigate('Home');
+    } else {
+      console.log('Loading or Error', updateDiaryPeriodResult.data);
+    }
+  }, [updateDiaryPeriodResult]);
 
   const periodBtnContainer = period => {
     return (

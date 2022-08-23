@@ -3,7 +3,6 @@ import {ThemeContext} from 'styled-components/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {TouchableOpacity} from 'react-native';
-import {Text} from 'react-native';
 import {
   MemoMain,
   AddMemo,

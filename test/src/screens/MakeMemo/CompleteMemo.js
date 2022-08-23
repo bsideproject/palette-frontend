@@ -2,7 +2,7 @@ import React, {useContext, useState} from 'react';
 import {ThemeContext} from 'styled-components/native';
 import styled from 'styled-components/native';
 import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
-import {Button, Input, ErrorMessage} from '@components';
+import {Button} from '@components';
 import {Image} from 'react-native';
 import {TouchableOpacity} from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';

@@ -8,8 +8,7 @@ import SocialBtn from '@components/SocialBtn';
 import AsyncStorage from '@react-native-community/async-storage';
 import {ThemeContext} from 'styled-components/native';
 import axios from 'axios';
-import {useQuery} from '@apollo/client';
-import {GET_PROFILE} from '@apolloClient/queries';
+import {USE_QUERY} from '@apolloClient/queries';
 import {
   login,
   getProfile as getKakaoProfile,
@@ -79,14 +78,7 @@ const Signin = ({navigation}) => {
   const [accessToken, setAccessToken] = useState(null);
   const [socialType, setSocialType] = useState('');
   const [isRegistered, setIsRegistered] = useState(false);
-  const {loading, error, data} = useQuery(GET_PROFILE, {
-    context: {
-      headers: {
-        authorization: `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-      },
-    },
-  });
+  const {loading, error, data} = USE_QUERY('GET_PROFILE', accessToken);
 
   useEffect(() => {
     AsyncStorage.getItem('social_type', (err, result) => {

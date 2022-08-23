@@ -5,8 +5,7 @@ import {TouchableOpacity, View, Text} from 'react-native';
 import {ThemeContext} from 'styled-components/native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
-import {useMutation} from '@apollo/client';
-import {UPDATE_PROFILE} from '@apolloClient/queries';
+import {USE_MUTATION} from '@apolloClient/queries';
 import AsyncStorage from '@react-native-community/async-storage';
 
 const Container = styled.View`
@@ -38,14 +37,10 @@ const Nickname = ({navigation}) => {
   const [isError, setIsError] = useState(false);
   const pattern_spc = /[~!@#$%^&*()_+|<>?:{}\s]/; // 특수문자
   const [accessToken, setAccessToken] = useState(null);
-  const [updateProfile, updateResult] = useMutation(UPDATE_PROFILE, {
-    context: {
-      headers: {
-        authorization: `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-      },
-    },
-  });
+  const [updateProfile, updateResult] = USE_MUTATION(
+    'UPDATE_PROFILE',
+    accessToken,
+  );
 
   const _handleNextButtonPress = () => {
     // Check Valid Type

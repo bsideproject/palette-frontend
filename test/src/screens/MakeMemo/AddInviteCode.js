@@ -4,8 +4,7 @@ import {Text} from 'react-native';
 import {UserContext} from '@contexts';
 import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
 import {ThemeContext} from 'styled-components/native';
-import {useMutation} from '@apollo/client';
-import {SET_INVITE_CODE} from '@apolloClient/queries';
+import {USE_MUTATION} from '@apolloClient/queries';
 import {Button, Input, ErrorMessage} from '@components';
 
 const Container = styled.View`
@@ -37,16 +36,10 @@ const AddInviteCode = ({navigation}) => {
   const [errorMessage, setErrorMessage] = useState('유효하지 않은 코드입니다.');
   const [isError, setIsError] = useState(false);
   const {user} = useContext(UserContext);
-  const [setInviteCode, inviteCodeResult] = useMutation(SET_INVITE_CODE, {
-    context: {
-      headers: {
-        authorization: `Bearer ${user.accessToken}`,
-        'Content-Type': 'application/json',
-      },
-    },
-  });
-
-  console.log(user.accessToken);
+  const [setInviteCode, inviteCodeResult] = USE_MUTATION(
+    'SET_INVITE_CODE',
+    user.accessToken,
+  );
 
   const _handleSetInviteComplete = () => {
     // Set Invite Code

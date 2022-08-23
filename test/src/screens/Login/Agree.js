@@ -5,8 +5,7 @@ import {TouchableOpacity, View, Text, Image} from 'react-native';
 import {ThemeContext} from 'styled-components/native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
-import {useMutation} from '@apollo/client';
-import {UPDATE_PROFILE} from '@apolloClient/queries';
+import {USE_MUTATION} from '@apolloClient/queries';
 import AsyncStorage from '@react-native-community/async-storage';
 
 const Container = styled.View`
@@ -61,14 +60,10 @@ const Agree = ({navigation}) => {
   const [check2, setCheck2] = useState(false);
   const theme = useContext(ThemeContext);
   const [accessToken, setAccessToken] = useState(null);
-  const [updateProfile, updateResult] = useMutation(UPDATE_PROFILE, {
-    context: {
-      headers: {
-        authorization: `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-      },
-    },
-  });
+  const [updateProfile, updateResult] = USE_MUTATION(
+    'UPDATE_PROFILE',
+    accessToken,
+  );
 
   const CHECKBOX_DEFAULT = require('/assets/icons/checkbox_default.png');
   const CHECKBOX_SELECTED = require('/assets/icons/checkbox_selected.png');

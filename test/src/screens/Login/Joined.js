@@ -7,8 +7,7 @@ import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-
 import {UserContext} from '@contexts';
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
-import {useQuery} from '@apollo/client';
-import {GET_PROFILE} from '@apolloClient/queries';
+import {USE_QUERY} from '@apolloClient/queries';
 
 const Container = styled.View`
   flex: 1;
@@ -39,15 +38,7 @@ const Joined = ({navigation}) => {
   const [socialType, setSocialType] = useState('');
   const [accessToken, setAccessToken] = useState(null);
   const {setUser, user} = useContext(UserContext);
-  const {loading, error, data} = useQuery(GET_PROFILE, {
-    context: {
-      headers: {
-        authorization: `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-      },
-    },
-  });
-
+  const {loading, error, data} = USE_QUERY('GET_PROFILE', accessToken);
   const JOIN_IMG = require('/assets/icons/join.png');
 
   const _handleNextButtonPress = () => {

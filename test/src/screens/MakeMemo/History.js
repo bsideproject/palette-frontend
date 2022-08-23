@@ -1,12 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {ThemeContext} from 'styled-components/native';
 import styled from 'styled-components/native';
-import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
-import {Button, Input, ErrorMessage} from '@components';
-import {Image, Text, View} from 'react-native';
 import {TouchableOpacity, Pressable, ScrollView} from 'react-native';
-import Clipboard from '@react-native-clipboard/clipboard';
-import {UserContext} from '@contexts';
 import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {HistoryModalContext} from '@contexts';
