@@ -119,7 +119,7 @@ const Signin = ({navigation}) => {
   const androidKeys = {
     kConsumerKey: 'w4cSPEHXMDrXw_OcULnX',
     kConsumerSecret: '7dATQfr1oi',
-    kServiceAppName: 'com.test',
+    kServiceAppName: 'com.diary',
   };
 
   const initials = Platform.OS === 'ios' ? iosKeys : androidKeys;

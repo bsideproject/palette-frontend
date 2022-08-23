@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PaletteFrontEnd</string>
+    <string name="app_name">Half Diary</string>
     <!-- <string name="kakao_app_key">491be74871673dcbb70ca7f18d0e2e63</string> 근용님이 추가하신 부분 natvie app key code -->
     <string name="kakao_app_key">6dd3380b99398220239e6eb3a28cfbff</string>
     <string name="kakao_scheme">kakao491be74871673dcbb70ca7f18d0e2e63</string>

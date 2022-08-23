@@ -13,9 +13,9 @@ target 'test' do
   )
 
 
-#  target 'PaletteFrontEndTests' do
+#  target 'HalfDiaryTests' do
 #    inherit! :complete
-#    # Pods for PaletteFrontEnding
+#    # Pods for HalfDiarying
 #  end
 
   # Enables Flipper.
