@@ -7,7 +7,7 @@ const Container = styled.View`
 `;
 
 const ProfileImage = styled.Image`
-  background-color: ${({theme}) => theme.imgBackground};
+  background-color: ${({theme}) => theme.light010};
   width: 100px;
   height: 100px;
   border-radius: 50px;

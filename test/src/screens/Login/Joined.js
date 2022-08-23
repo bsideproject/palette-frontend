@@ -12,7 +12,7 @@ import {GET_PROFILE} from '@apolloClient/queries';
 
 const Container = styled.View`
   flex: 1;
-  background-color: ${({theme}) => theme.background};
+  background-color: ${({theme}) => theme.fullWhite};
   flex-direction: column;
 `;
 
@@ -93,18 +93,21 @@ const Joined = ({navigation}) => {
   return (
     <Container>
       <KeyboardAvoidingScrollView
+        containerStyle={{
+          backgroundColor: theme.fullWhite,
+        }}
         stickyFooter={
           <ButtonContainer>
             <Button
               title="가입 완료"
               onPress={_handleNextButtonPress}
               containerStyle={{
-                backgroundColor: theme.btnMainColorBg,
+                backgroundColor: theme.pointColor,
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
               textStyle={{
-                color: theme.btnWhiteFont,
+                color: theme.white,
                 fontSize: 18,
                 fontWeight: '700',
                 fontFamily: theme.fontRegular,

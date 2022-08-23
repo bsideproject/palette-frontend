@@ -44,7 +44,7 @@ const DateConvertDD = ts => {
 
 const Container = styled.View`
   flex: 1;
-  background-color: ${({theme}) => theme.background};
+  background-color: ${({theme}) => theme.fullWhite};
   flex-direction: column;
   height: 100%;
   justify-content: center;
@@ -66,8 +66,9 @@ const StyledModalContainer = styled.View`
   width: 190px;
   height: 150px;
   border-radius: 6px;
-  border: 1px solid #e4e4e4;
-  background-color: #fefefe;
+  border: 1px solid
+  border-color: ${({theme}) => theme.light020};
+  background-color: ${({theme}) => theme.white};
   shadow-offset: 0px 4px;
   shadow-radius: 20px;
   shadow-color: rgba(0, 0, 0, 0.08);
@@ -85,12 +86,12 @@ const StyledModalButton = styled.TouchableOpacity`
 const StyledModalText = styled.Text`
   font-size: 16px;
   font-weight: 400;
-  color: ${({theme}) => theme.text};
+  color: ${({theme}) => theme.dark010};
   font-family: ${({theme}) => theme.fontRegular};
 `;
 
 const HorizentalLine = styled.View`
-  background-color: #e4e4e4;
+  background-color: ${({theme}) => theme.light020};
   width: 100%;
   height: 1px;
 `;
@@ -108,7 +109,7 @@ const ModalIcon = styled.View`
 
 const ExitModalContainer = styled.View`
   flex-direction: column;
-  background-color: #fefefe;
+  background-color: ${({theme}) => theme.white};
   shadow-offset: 0px 2px;
   shadow-radius: 8px;
   shadow-color: rgba(0, 0, 0, 0.16);
@@ -130,7 +131,7 @@ const ExitModalMid = styled.View`
 
 const ExitModalBottom = styled.TouchableOpacity`
   flex: 2;
-  background-color: ${({theme}) => theme.mainColor};
+  background-color: ${({theme}) => theme.pointColor};
   border-bottom-left-radius: 16px;
   border-bottom-right-radius: 16px;
   justify-content: center;
@@ -140,21 +141,21 @@ const ExitModalBottom = styled.TouchableOpacity`
 const ExitModalTxt1 = styled.Text`
   font-size: 18px;
   font-weight: 700;
-  color: ${({theme}) => theme.text};
+  color: ${({theme}) => theme.dark010};
   font-family: ${({theme}) => theme.fontRegular};
 `;
 
 const ExitModalTxt2 = styled.Text`
   font-size: 16px;
   font-weight: 400;
-  color: #777777;
+  color: ${({theme}) => theme.dark020};
   font-family: ${({theme}) => theme.fontRegular};
 `;
 
 const ExitModalTxt3 = styled.Text`
   font-size: 16px;
   font-weight: 700;
-  color: #fefefe;
+  color: ${({theme}) => theme.white};
   font-family: ${({theme}) => theme.fontRegular};
 `;
 
@@ -170,7 +171,7 @@ const HistoryTitleContainer = styled.View`
 const HistoryTitleTxt = styled.Text`
   font-size: 22px;
   font-weight: 600;
-  color: ${({theme}) => theme.text};
+  color: ${({theme}) => theme.dark010};
   font-family: ${({theme}) => theme.fontRegular};
 `;
 
@@ -184,7 +185,7 @@ const HistoryDateContainer = styled.View`
 const HistoryDateBox = styled.View`
   border-radius: 6px;
   border: 1px solid;
-  border-color: ${({theme}) => theme.mainColor};
+  border-color: ${({theme}) => theme.pointColor};
   width: 100%
   height: 30%;
   justify-content: center;
@@ -194,7 +195,7 @@ const HistoryDateBox = styled.View`
 const HistoryDateTxt = styled.Text`
   font-size: 14px;
   font-weight: 600;
-  color: ${({theme}) => theme.mainColor};
+  color: ${({theme}) => theme.pointColor};
   text-align: center;
 `;
 
@@ -204,7 +205,7 @@ const HistoryDateItemContainer = styled.View`
 
 const HistoryDateSelBar = styled.View`
   width: 90%;
-  background-color: ${({theme}) => theme.mainColor};
+  background-color: ${({theme}) => theme.pointColor};
   height: 3px;
 `;
 
@@ -213,14 +214,13 @@ const HistoryDateNotSelBar = styled.View``;
 const HistoryDateItemTxt = styled.Text`
   font-size: 14px;
   font-weight: 600;
-  color: ${({theme, selected}) =>
-    selected ? theme.whiteFont : theme.grayFont};
+  color: ${({theme, selected}) => (selected ? theme.white : theme.dark030)};
   text-align: center;
 `;
 
 const HistoryContentContainer = styled.View`
   width: 100%;
-  background-color: ${({theme}) => theme.memobackground};
+  background-color: ${({theme}) => theme.homeColor};
   flex: 7;
 `;
 
@@ -228,7 +228,7 @@ const HistoryContentRemainTimeTxt = styled.Text`
   margin-top: 5%;
   font-size: 14px;
   font-weight: 600;
-  color: ${({theme}) => theme.text};
+  color: ${({theme}) => theme.dark010};
   text-align: center;
 `;
 
@@ -254,7 +254,7 @@ const HistoryPeriodBar = styled.View`
 
 const HistoryPeriodBarCircle = styled.View`
   border-color: ${({theme, isAdmin}) =>
-    isAdmin ? theme.mainColor : theme.sideColor};
+    isAdmin ? theme.pointColor : theme.subColor1};
   width: 14px;
   height: 14px;
   border-width: 3px;
@@ -263,7 +263,7 @@ const HistoryPeriodBarCircle = styled.View`
 
 const HistoryPeriodBarLine = styled.View`
   background-color: ${({theme, isAdmin}) =>
-    isAdmin ? theme.mainColor : theme.sideColor};
+    isAdmin ? theme.pointColor : theme.subColor1};
   width: 3px;
   height: 80%;
 `;
@@ -271,7 +271,7 @@ const HistoryPeriodBarLine = styled.View`
 const HistoryItemBox = styled.View`
   flex: 15;
   flex-direction: row;
-  background-color: ${({theme}) => theme.background};
+  background-color: ${({theme}) => theme.fullWhite};
   border-radius: 10px;
   padding-top: 3%;
   padding-bottom: 3%;
@@ -290,7 +290,7 @@ const HistoryItemBoxDateInMMM = styled.View`
 const HistoryItemBoxDateInMMMTxt = styled.Text`
   font-size: 12px;
   font-weight: 400;
-  color: #777777;
+  color: ${({theme}) => theme.dark020};
   text-align: center;
 `;
 
@@ -303,7 +303,7 @@ const HistoryItemBoxDateInDD = styled.View`
 const HistoryItemBoxDateInDDTxt = styled.Text`
   font-size: 22px;
   font-weight: 300;
-  color: #000000;
+  color: ${({theme}) => theme.dark010};
   text-align: center;
 `;
 
@@ -319,7 +319,7 @@ const HistoryItemBoxInTitle = styled.View`
 const HistoryItemBoxInTitleTxt = styled.Text`
   font-size: 16px;
   font-weight: 700;
-  color: ${({theme}) => theme.grayFont};
+  color: ${({theme}) => theme.dark030};
   text-align: left;
 `;
 
@@ -330,7 +330,7 @@ const HistoryItemBoxInContent = styled.View`
 const HistoryItemBoxInContentTxt = styled.Text`
   font-size: 14px;
   font-weight: 400;
-  color: ${({theme}) => theme.grayFont};
+  color: ${({theme}) => theme.dark030};
   text-align: left;
 `;
 
@@ -339,7 +339,7 @@ const HistoryItemBoxInImg = styled.View`
 `;
 
 const VerticalLine = styled.View`
-  background-color: #e4e4e4;
+  background-color: ${({theme}) => theme.light020};
   width: 1px;
   height: 100%;
   justify-content: center;
@@ -525,7 +525,8 @@ const History = ({navigation, route}) => {
         <TouchableOpacity
           onPress={() => setSelDiary(item)}
           style={{
-            backgroundColor: item == selDiary ? theme.mainColor : '#E4E4E4',
+            backgroundColor:
+              item == selDiary ? theme.pointColor : theme.light020,
             borderRadius: 10,
             width: 86,
             height: 56,
@@ -656,7 +657,7 @@ const History = ({navigation, route}) => {
                 <Icon
                   name={'exit-outline'}
                   size={20}
-                  color={'black'}
+                  color={theme.dark010}
                   style={{justifyContent: 'center'}}
                 />
               </ModalIcon>
@@ -675,7 +676,7 @@ const History = ({navigation, route}) => {
                 <Icon
                   name={'pencil-outline'}
                   size={20}
-                  color={'black'}
+                  color={theme.dark010}
                   style={{justifyContent: 'center'}}
                 />
               </ModalIcon>
@@ -694,7 +695,7 @@ const History = ({navigation, route}) => {
                 <Icon
                   name={'color-palette-outline'}
                   size={20}
-                  color={'black'}
+                  color={theme.dark010}
                   style={{justifyContent: 'center'}}
                 />
               </ModalIcon>
@@ -723,7 +724,7 @@ const History = ({navigation, route}) => {
               <Icon
                 name={'close'}
                 size={20}
-                color={'black'}
+                color={theme.dark010}
                 style={{justifyContent: 'center'}}
               />
             </TouchableOpacity>

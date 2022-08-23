@@ -6,7 +6,7 @@ import {ThemeContext} from 'styled-components/native';
 const Container = styled.View`
   flex: 1;
   flex-direction: row;
-  background-color: ${({theme}) => theme.background};
+  background-color: ${({theme}) => theme.fullWhite};
   justify-content: center;
   align-items: center;
 `;
@@ -41,15 +41,15 @@ const MemoMain = ({navigation}) => {
           <Button
             title="새 일기장 만들기"
             onPress={_handleMoveAddPage}
-            IconColor={theme.btnWhiteFont}
+            IconColor={theme.white}
             IconType="book"
             containerStyle={{
-              backgroundColor: theme.btnMainColorBg,
+              backgroundColor: theme.pointColor,
               alignItems: 'center',
               justifyContent: 'center',
             }}
             textStyle={{
-              color: theme.btnWhiteFont,
+              color: theme.white,
               fontSize: 18,
               fontWeight: '700',
               fontFamily: theme.fontRegular,
@@ -64,17 +64,17 @@ const MemoMain = ({navigation}) => {
           <Button
             title="초대코드 입력하기"
             onPress={_handleMoveInvitePage}
-            IconColor={theme.btnMainColorBg}
+            IconColor={theme.pointColor}
             IconType="mail"
             containerStyle={{
-              backgroundColor: theme.btnWhiteColorBg,
-              borderColor: theme.btnMainColorBg,
+              backgroundColor: theme.white,
+              borderColor: theme.pointColor,
               borderWidth: 1,
               alignItems: 'center',
               justifyContent: 'center',
             }}
             textStyle={{
-              color: theme.btnMainFont,
+              color: theme.pointColor,
               fontSize: 18,
               fontWeight: '700',
               fontFamily: theme.fontRegular,

@@ -36,14 +36,14 @@ const Main = () => {
         headerTintColor: theme.tintcolor,
         headerBackTitleVisible: false,
         headerStyle: {
-          backgroundColor: '#FFFFFF',
+          backgroundColor: theme.fullWhite,
           borderBottomWidth: 1,
-          borderBottomColor: '#EEEEEE',
+          borderBottomColor: theme.light010,
           height: 60,
         },
         title: '일기장 만들기',
         headerTitleStyle: {
-          color: '#111111',
+          color: theme.dark010,
           fontSize: 16,
           fontWeight: '700',
           fontFamily: theme.fontRegular,

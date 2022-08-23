@@ -5,7 +5,7 @@ import {Button, Input, ErrorMessage} from '@components';
 
 const Container = styled.View`
   flex: 1;
-  background-color: ${({theme}) => theme.background};
+  background-color: ${({theme}) => theme.fullWhite};
   flex-direction: column;
   width: 100%;
   height: 100%;

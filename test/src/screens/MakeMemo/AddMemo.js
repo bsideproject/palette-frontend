@@ -7,7 +7,7 @@ import {Button, Input, ErrorMessage} from '@components';
 
 const Container = styled.View`
   flex: 1;
-  background-color: ${({theme}) => theme.background};
+  background-color: ${({theme}) => theme.fullWhite};
   flex-direction: column;
   padding-right: 5%;
   padding-left: 5%;
@@ -54,18 +54,21 @@ const AddMemo = ({navigation}) => {
 
   return (
     <KeyboardAvoidingScrollView
+      containerStyle={{
+        backgroundColor: theme.fullWhite,
+      }}
       stickyFooter={
         <BtnContainer>
           <Button
             title="다음 단계로"
             onPress={_handleSetMemoColorPress}
             containerStyle={{
-              backgroundColor: theme.btnMainColorBg,
+              backgroundColor: theme.pointColor,
               alignItems: 'center',
               justifyContent: 'center',
             }}
             textStyle={{
-              color: theme.btnWhiteFont,
+              color: theme.white,
               fontSize: 18,
               fontWeight: '700',
               fontFamily: theme.fontRegular,
@@ -93,7 +96,7 @@ const AddMemo = ({navigation}) => {
         {isError && (
           <ErrorMessage
             message={errorMessage}
-            IconColor={theme.inputValidChkColor}
+            IconColor={theme.error}
             IconType="exclamationcircleo"
           />
         )}

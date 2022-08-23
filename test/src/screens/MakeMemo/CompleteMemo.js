@@ -10,7 +10,7 @@ import {UserContext} from '@contexts';
 
 const Container = styled.View`
   flex: 1;
-  background-color: ${({theme}) => theme.background};
+  background-color: ${({theme}) => theme.fullWhite};
   flex-direction: column;
   padding-right: 5%;
   padding-left: 5%;
@@ -59,7 +59,7 @@ const InviteContainer = styled.View`
   margin-bottom: 10%;
   shadow-offset: 0px 4px;
   shadow-radius: 8px;
-  background-color: #fefefe;
+  background-color: ${({theme}) => theme.white};
   shadow-color: rgba(0, 0, 0, 0.8);
   elevation: 15;
 `;
@@ -73,7 +73,7 @@ const InviteItem1 = styled.View`
 
 const Item1Text = styled.Text`
   font-size: 18px;
-  color: #777777;
+  color: ${({theme}) => theme.dark020};
   font-family: ${({theme}) => theme.fontRegular};
 `;
 
@@ -87,14 +87,14 @@ const InviteItem2 = styled.View`
 const Item2Text = styled.Text`
   font-size: 16px;
   font-weight: 700;
-  color: ${({theme}) => theme.btnMainFont};
+  color: ${({theme}) => theme.pointColor};
   font-family: ${({theme}) => theme.fontRegular};
 `;
 
 const Item3Text = styled.Text`
   font-size: 16px;
   font-weight: 700;
-  color: #777777;
+  color: ${({theme}) => theme.dark020};
   text-decoration-line: underline;
   font-family: ${({theme}) => theme.fontRegular};
 `;
@@ -120,18 +120,21 @@ const CompleteMemo = ({navigation, route}) => {
 
   return (
     <KeyboardAvoidingScrollView
+      containerStyle={{
+        backgroundColor: theme.fullWhite,
+      }}
       stickyFooter={
         <BtnContainer>
           <Button
             title="다음 단계로"
             onPress={_handleRequestSetMemo}
             containerStyle={{
-              backgroundColor: theme.btnMainColorBg,
+              backgroundColor: theme.pointColor,
               alignItems: 'center',
               justifyContent: 'center',
             }}
             textStyle={{
-              color: theme.btnWhiteFont,
+              color: theme.white,
               fontSize: 18,
               fontWeight: '700',
               fontFamily: theme.fontRegular,

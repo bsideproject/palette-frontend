@@ -26,7 +26,7 @@ const Container = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
-  background-color: ${({theme}) => theme.background};
+  background-color: ${({theme}) => theme.fullWhite};
   padding: 0 20px;
   padding-top: ${({insets: {top}}) => top}px;
   padding-bottom: ${({insets: {bottom}}) => bottom}px;
@@ -54,15 +54,15 @@ const LinkText = styled.Text`
   font-family: ${({theme}) => theme.fontRegular};
   font-size: 16px;
   text-decoration-line: underline;
-  color: #777777;
+  color: ${({theme}) => theme.dark020};
 `;
 
 const LastLoginBox = styled.View`
-  background-color: white;
+  background-color: ${({theme}) => theme.white};
 `;
 const LastLoginText = styled.Text`
   font-family: ${({theme}) => theme.fontLight};
-  color: #777777;
+  color: ${({theme}) => theme.dark020};
   font-size: 14px;
   margin-top: 16px;
 `;
@@ -261,7 +261,7 @@ const Signin = ({navigation}) => {
           <Image source={KAKAO_LOGO} style={{marginRight: 15}} />
           <Text
             style={{
-              color: 'black',
+              color: theme.dark010,
               fontFamily: theme.fontBold,
               fontSize: 18,
             }}>
@@ -272,7 +272,7 @@ const Signin = ({navigation}) => {
           <Image source={NAVER_LOGO} style={{marginRight: 17}} />
           <Text
             style={{
-              color: 'white',
+              color: theme.white,
               fontFamily: theme.fontBold,
               fontSize: 18,
             }}>
@@ -287,7 +287,7 @@ const Signin = ({navigation}) => {
           <View
             style={{
               height: 16,
-              borderRightColor: '#777777',
+              borderRightColor: theme.dark020,
               borderRightWidth: 1,
               marginHorizontal: 12,
             }}
@@ -298,7 +298,7 @@ const Signin = ({navigation}) => {
           <View
             style={{
               height: 16,
-              borderRightColor: '#777777',
+              borderRightColor: theme.dark020,
               borderRightWidth: 1,
               marginHorizontal: 12,
             }}

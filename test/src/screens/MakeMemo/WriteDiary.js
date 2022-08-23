@@ -17,7 +17,7 @@ import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 
 const Container = styled.View`
   flex: 1;
-  background-color: ${({theme}) => theme.background};
+  background-color: ${({theme}) => theme.fullWhite};
   flex-direction: column;
 `;
 
@@ -41,7 +41,7 @@ const ProfileImageContainer = styled.View`
   align-items: center;
   width: 100%;
   height: 310px;
-  background-color: #eeeeee;
+  background-color: ${({theme}) => theme.light010};
   border-radius: 6px;
   padding: 0 30px;
 `;
@@ -49,7 +49,7 @@ const ProfileImageContainer = styled.View`
 const UploadProfileImgContainer = styled.TouchableOpacity`
   border: 1px solid #0b2838;
   border-radius: 6px;
-  background-color: #ffffff;
+  background-color: ${({theme}) => theme.fullWhite};
   width: 100%;
   height: 50px;
   margin-top: 36px;
@@ -69,7 +69,7 @@ const UploadBtnText = styled.Text`
 
 const ProfileImage = styled.Image`
   margin-top: 44px;
-  background-color: ${({theme}) => theme.background};
+  background-color: ${({theme}) => theme.fullWhite};
   width: 140px;
   height: 140px;
   border-radius: 70px;
@@ -127,7 +127,6 @@ const WriteDiary = ({navigation, route}) => {
     });
   };
 
-
   const ConditionProfileImage = () => {
     return profileImage !== '' ? (
       <ProfileImage source={{uri: profileImage}} />
@@ -141,7 +140,7 @@ const WriteDiary = ({navigation, route}) => {
       <InnerContainer>
         <ProfileImageContainer>
           <ConditionProfileImage />
-          <UploadProfileImgContainer onPress={()=>{}}>
+          <UploadProfileImgContainer onPress={() => {}}>
             <UploadBtnContainer>
               <Image source={UPLOAD} style={{marginRight: 10}} />
               <UploadBtnText>사진 올리기</UploadBtnText>

@@ -10,7 +10,7 @@ import {UserContext} from '@contexts';
 
 const Container = styled.View`
   flex: 1;
-  background-color: ${({theme}) => theme.background};
+  background-color: ${({theme}) => theme.fullWhite};
   flex-direction: column;
   padding-right: 5%;
   padding-left: 5%;
@@ -42,7 +42,7 @@ const TxtStyle = styled.Text`
   width: 100%;
   font-size: 18px;
   font-weight: 400;
-  color: ${({theme}) => theme.grayFont};
+  color: ${({theme}) => theme.dark030};
   font-family: ${({theme}) => theme.fontRegular};
 `;
 
@@ -50,7 +50,7 @@ const InviteTxtStyle = styled.Text`
   width: 100%;
   font-size: 18px;
   font-weight: 700;
-  color: ${({theme}) => theme.mainFont};
+  color: ${({theme}) => theme.pointColor};
   font-family: ${({theme}) => theme.fontRegular};
 `;
 
@@ -68,18 +68,21 @@ const CompleteInviteCode = ({navigation, route}) => {
 
   return (
     <KeyboardAvoidingScrollView
+      containerStyle={{
+        backgroundColor: theme.fullWhite,
+      }}
       stickyFooter={
         <BtnContainer>
           <Button
             title="확인"
             onPress={_handleRequestSetMemo}
             containerStyle={{
-              backgroundColor: theme.btnMainColorBg,
+              backgroundColor: theme.pointColor,
               alignItems: 'center',
               justifyContent: 'center',
             }}
             textStyle={{
-              color: theme.btnWhiteFont,
+              color: theme.white,
               fontSize: 18,
               fontWeight: '700',
               fontFamily: theme.fontRegular,

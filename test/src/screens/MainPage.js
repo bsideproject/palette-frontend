@@ -46,7 +46,7 @@ const SpinnerContainer = styled.Text`
 const MemoDataContainer = styled.View`
   flex: 1;
   flex-direction: column;
-  background-color: ${({theme}) => theme.memobackground};
+  background-color: ${({theme}) => theme.homeColor};
   padding-left: 5%;
   padding-right: 5%;
 `;
@@ -71,7 +71,7 @@ const MemoEmpty_Text1 = styled.Text`
   font-weight: 400;
   margin-top: 15%;
   text-align: center;
-  color: ${({theme}) => theme.text};
+  color: ${({theme}) => theme.dark010};
   font-family: ${({theme}) => theme.fontRegular};
 `;
 
@@ -80,7 +80,7 @@ const MemoAdd_Text1 = styled.Text`
   font-size: 50px;
   font-weight: 400;
   text-align: center;
-  color: ${({theme}) => theme.text};
+  color: ${({theme}) => theme.dark010};
   font-family: ${({theme}) => theme.fontRegular};
 `;
 
@@ -104,7 +104,7 @@ const MemoData_Text1 = styled.Text`
   font-size: 16px;
   font-weight: 400;
   margin-top: 5%;
-  color: ${({theme}) => theme.btnWhiteFont};
+  color: ${({theme}) => theme.white};
   font-family: ${({theme}) => theme.fontRegular};
 `;
 
@@ -112,14 +112,14 @@ const MemoData_Text2 = styled.Text`
   font-size: 25px;
   font-weight: 700;
   margin-top: 3%;
-  color: ${({theme}) => theme.btnWhiteFont};
+  color: ${({theme}) => theme.white};
   font-family: ${({theme}) => theme.fontRegular};
 `;
 
 const MemoData_Text3 = styled.Text`
   font-size: 18px;
   font-weight: 700;
-  color: ${({theme}) => theme.whiteFont};
+  color: ${({theme}) => theme.white};
   font-family: ${({theme}) => theme.fontRegular};
 `;
 
@@ -154,7 +154,7 @@ const MemoRecent_Title = styled.Text`
   font-weight: 700;
   margin-top: 3%;
   margin-bottom: 5%;
-  color: ${({theme}) => theme.text};
+  color: ${({theme}) => theme.dark010};
   font-family: ${({theme}) => theme.fontRegular};
 `;
 
@@ -166,28 +166,28 @@ const MemoRecent_Icon = styled.View`
 const MemoRecent_Text1 = styled.Text`
   font-size: 16px;
   font-weight: 700;
-  color: ${({theme}) => theme.text};
+  color: ${({theme}) => theme.dark010};
   font-family: ${({theme}) => theme.fontRegular};
 `;
 
 const MemoRecent_Text2 = styled.Text`
   font-size: 14px;
   font-weight: 400;
-  color: ${({theme}) => theme.grayFont};
+  color: ${({theme}) => theme.dark030};
   font-family: ${({theme}) => theme.fontRegular};
 `;
 
 const MemoRecent_Text3 = styled.Text`
   font-size: 12px;
   font-weight: 400;
-  color: ${({theme}) => theme.grayFont};
+  color: ${({theme}) => theme.dark030};
   font-family: ${({theme}) => theme.fontRegular};
 `;
 
 const MemoRecent_Text4 = styled.Text`
   font-size: 25px;
   font-weight: 700;
-  color: #777777;
+  color: ${({theme}) => theme.dark020};
   font-family: ${({theme}) => theme.fontRegular};
 `;
 
@@ -286,12 +286,12 @@ const MainPage = ({navigation}) => {
       <TouchableOpacity
         onPress={() => navigation.navigate('MemoMain')}
         style={{
-          backgroundColor: '#EEEEEE',
+          backgroundColor: theme.light010,
           width: '100%',
           height: '80%',
           marginTop: '8%',
           borderRadius: 6,
-          borderColor: '#FFFFFF',
+          borderColor: theme.fullWhite,
           borderStyle: 'solid',
           borderWidth: 1,
           justifyContent: 'center',
@@ -301,7 +301,7 @@ const MainPage = ({navigation}) => {
           shadowRadius: '8px',
           elevation: 15,
         }}>
-        <Icon name="plus" size={35} color="#111111" />
+        <Icon name="plus" size={35} color={theme.dark010} />
       </TouchableOpacity>
     );
   };
@@ -330,7 +330,7 @@ const MainPage = ({navigation}) => {
                     <Icon_Ionicons
                       name={'copy-outline'}
                       size={18}
-                      color={'white'}
+                      color={theme.white}
                     />
                   </MemoData_Text3>
                 </TouchableOpacity>
@@ -406,7 +406,7 @@ const MainPage = ({navigation}) => {
           <Icon
             name="lock"
             size={30}
-            color="#777777"
+            color={theme.dark020}
             style={{marginRight: 3}}
           />
           <MemoRecent_Text4>D-{item.dday}</MemoRecent_Text4>
@@ -424,8 +424,7 @@ const MainPage = ({navigation}) => {
 
   const Item2 = ({item}) => (
     //[TODO] Item.user.profileImg using
-    <MemoRecentItemContainer
-      color={item.dday ? theme.memobackground : theme.background}>
+    <MemoRecentItemContainer color={item.dday ? theme.homeColor : theme.white}>
       <MemoRecent_Icon>
         <AutoHeightImage
           width={40}
@@ -462,12 +461,12 @@ const MainPage = ({navigation}) => {
               navigation.navigate('SetMemoPeriod', memos[sliderIdx])
             }
             containerStyle={{
-              backgroundColor: theme.btnMainColorBg,
+              backgroundColor: theme.pointColor,
               alignItems: 'center',
               justifyContent: 'center',
             }}
             textStyle={{
-              color: theme.btnWhiteFont,
+              color: theme.white,
               fontSize: 18,
               fontWeight: '700',
               fontFamily: theme.fontRegular,
@@ -485,12 +484,12 @@ const MainPage = ({navigation}) => {
             title="오늘 일기 쓰기"
             onPress={() => {}}
             containerStyle={{
-              backgroundColor: theme.btnMainColorBg,
+              backgroundColor: theme.pointColor,
               alignItems: 'center',
               justifyContent: 'center',
             }}
             textStyle={{
-              color: theme.btnWhiteFont,
+              color: theme.white,
               fontSize: 18,
               fontWeight: '700',
               fontFamily: theme.fontRegular,

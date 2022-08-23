@@ -14,7 +14,7 @@ import LinearGradient from 'react-native-linear-gradient';
 const Container = styled.View`
   flex: 1;
   flex-direction: row;
-  background-color: ${({theme}) => theme.background};
+  background-color: ${({theme}) => theme.fullWhite};
   padding-right: 5%;
   padding-left: 5%;
   align-items: center;
@@ -57,16 +57,6 @@ const BtnContainer = styled.View`
   margin-bottom: 30%;
 `;
 
-const chkColorText = color => {
-  if (color.charAt(0) != '#') {
-    return false;
-  }
-  if (color.length != 7) {
-    return false;
-  }
-  return true;
-};
-
 const ColorTransParent = styled.View`
   background-color: 'transparent';
 `;
@@ -80,8 +70,15 @@ const AddMemoColor = ({navigation, route}) => {
   const numColumns = 3;
   const [errorMessage, setErrorMessage] = useState('');
   const [isError, setIsError] = useState(false);
-  const {loading, error, data} = useQuery(COLOR_CODE);
   const {user} = useContext(UserContext);
+  const {loading, error, data} = useQuery(COLOR_CODE, {
+    context: {
+      headers: {
+        authorization: `Bearer ${user.accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    },
+  });
   const [registerMemo, registerResult] = useMutation(REGISTER_MEMO, {
     context: {
       headers: {
@@ -99,7 +96,7 @@ const AddMemoColor = ({navigation, route}) => {
 
     if (!loading) {
       readData = [];
-      data['color'].map(item => {
+      data['colors'].map(item => {
         readData.push({
           id: item.id,
           order: item.order,
@@ -143,7 +140,7 @@ const AddMemoColor = ({navigation, route}) => {
     ) {
       data.push({
         id: `blank-${numberOfElementsLastRow}`,
-        color: '#FFFFFF',
+        color: theme.dark010,
         empty: true,
       });
       numberOfElementsLastRow = numberOfElementsLastRow + 1;
@@ -179,7 +176,7 @@ const AddMemoColor = ({navigation, route}) => {
     if (item.empty === true) {
       return <ColorTransParent></ColorTransParent>;
     }
-    const borderColor = item === selectedColor ? 'red' : 'black';
+    const borderColor = item === selectedColor ? theme.Error : theme.dark010;
     const borderWidth = item === selectedColor ? 3 : 0;
     const borderStyle = item === selectedColor ? 'dotted' : 'solid';
 
@@ -215,18 +212,21 @@ const AddMemoColor = ({navigation, route}) => {
     </SpinnerContainer>
   ) : (
     <KeyboardAvoidingScrollView
+      containerStyle={{
+        backgroundColor: theme.fullWhite,
+      }}
       stickyFooter={
         <BtnContainer>
           <Button
             title="다음 단계로"
             onPress={_handleSetCompleteMemo}
             containerStyle={{
-              backgroundColor: theme.btnMainColorBg,
+              backgroundColor: theme.pointColor,
               alignItems: 'center',
               justifyContent: 'center',
             }}
             textStyle={{
-              color: theme.btnWhiteFont,
+              color: theme.white,
               fontSize: 18,
               fontWeight: '700',
               fontFamily: theme.fontRegular,
@@ -242,7 +242,7 @@ const AddMemoColor = ({navigation, route}) => {
         <ErrorContainer>
           <ErrorMessage
             message={errorMessage}
-            IconColor={theme.inputValidChkColor}
+            IconColor={theme.error}
             IconType="exclamationcircleo"
           />
         </ErrorContainer>

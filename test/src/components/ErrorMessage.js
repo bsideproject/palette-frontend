@@ -9,7 +9,7 @@ const StyledText = styled.Text`
   height: 20px;
   margin-left: 2%;
   line-height: 20px;
-  color: ${({theme}) => theme.errorText};
+  color: ${({theme}) => theme.error};
 `;
 
 const ErrorMessage = ({message, IconColor, IconType}) => {

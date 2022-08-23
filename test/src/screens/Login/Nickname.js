@@ -11,7 +11,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 
 const Container = styled.View`
   flex: 1;
-  background-color: ${({theme}) => theme.background};
+  background-color: ${({theme}) => theme.fullWhite};
   flex-direction: column;
 `;
 
@@ -75,25 +75,31 @@ const Nickname = ({navigation}) => {
 
   useEffect(() => {
     if (!!updateResult.data) {
-      console.log('UPDATE_PROFILE GRAPHQL RESULT DATA 닉네임설정', updateResult.data);
+      console.log(
+        'UPDATE_PROFILE GRAPHQL RESULT DATA 닉네임설정',
+        updateResult.data,
+      );
     }
   }, [updateResult]);
 
   return (
     <Container>
       <KeyboardAvoidingScrollView
+        containerStyle={{
+          backgroundColor: theme.fullWhite,
+        }}
         stickyFooter={
           <ButtonContainer>
             <Button
               title="다음 단계로"
               onPress={_handleNextButtonPress}
               containerStyle={{
-                backgroundColor: theme.btnMainColorBg,
+                backgroundColor: theme.pointColor,
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
               textStyle={{
-                color: theme.btnWhiteFont,
+                color: theme.white,
                 fontSize: 18,
                 fontWeight: '700',
                 fontFamily: theme.fontRegular,
@@ -118,7 +124,7 @@ const Nickname = ({navigation}) => {
           {isError && (
             <ErrorMessage
               message={errorMessage}
-              IconColor={theme.inputValidChkColor}
+              IconColor={theme.error}
               IconType="exclamationcircleo"
             />
           )}

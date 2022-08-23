@@ -6,7 +6,7 @@ import Icon from 'react-native-vector-icons/AntDesign';
 
 const Container = styled.View`
   flex: 1;
-  background-color: ${({theme}) => theme.background};
+  background-color: ${({theme}) => theme.fullWhite};
   flex-direction: column;
 `;
 
@@ -17,7 +17,7 @@ const ExplainContainer = styled.View`
 const ExplainText = styled.Text`
   font-family: ${({theme}) => theme.fontLight};
   font-size: 14px;
-  color: #777777;
+  color: ${({theme}) => theme.dark020};
   margin-bottom: 20px;
 `;
 

@@ -37,7 +37,10 @@ const Home = ({navigation, route}) => {
   return (
     <Tab.Navigator
       tabBarOptions={
-        ({tabStyle: {borderTopWidth: 1}, style: {borderTopColor: '#EEEEEE'}},
+        ({
+          tabStyle: {borderTopWidth: 1},
+          style: {borderTopColor: theme.light020},
+        },
         {showLabel: false})
       }
       screenOptions={{
@@ -46,15 +49,15 @@ const Home = ({navigation, route}) => {
           height: 60,
         },
         headerTitleStyle: {
-          color: '#111111',
+          color: theme.dark010,
           fontSize: 16,
           fontWeight: '700',
           fontFamily: theme.fontRegular,
         },
         headerStyle: {
-          backgroundColor: '#FFFFFF',
+          backgroundColor: theme.fullWhite,
           borderBottomWidth: 1,
-          borderBottomColor: '#EEEEEE',
+          borderBottomColor: theme.light020,
           height: 60,
         },
         title: curScreenName,

@@ -17,7 +17,7 @@ const App = () => {
         <UserProvider>
           <HistoryModalProvider>
             <StatusBar
-              backgroundColor={theme.background}
+              backgroundColor={theme.fullWhite}
               barStyle="dark-content"
             />
             <Navigation />

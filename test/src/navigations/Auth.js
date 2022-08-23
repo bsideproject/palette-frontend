@@ -23,13 +23,13 @@ const Auth = () => {
         headerTintColor: theme.text,
         headerBackTitleVisible: false,
         headerStyle: {
-          backgroundColor: '#FFFFFF',
+          backgroundColor: theme.fullWhite,
           borderBottomWidth: 1,
-          borderBottomColor: '#EEEEEE',
+          borderBottomColor: theme.light020,
           height: 60,
         },
         headerTitleStyle: {
-          color: '#111111',
+          color: theme.dark010,
           fontSize: 16,
           fontWeight: '700',
           fontFamily: theme.fontRegular,

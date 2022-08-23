@@ -3,7 +3,7 @@ import {gql} from '@apollo/client';
 // Query
 export const COLOR_CODE = gql`
   query ColorCode {
-    color {
+    colors {
       id
       startCode
       endCode
@@ -43,7 +43,6 @@ export const GET_PROFILE = gql`
       diaries {
         title
         invitationCode
-        color
       }
     }
   }

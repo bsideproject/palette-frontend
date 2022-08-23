@@ -10,22 +10,18 @@ const Container = styled.View`
 `;
 
 const StyledInput = styled.TextInput.attrs(({theme}) => ({
-  placeholderTextColor: theme.inputPlaceholder,
+  placeholderTextColor: theme.dark030,
 }))`
   background-color: ${({theme, editable}) =>
-    editable ? theme.inputBackground : theme.inputDisabled};
-  color: ${({theme}) => theme.text};
+    editable ? theme.white : theme.dark040};
+  color: ${({theme}) => theme.dark010};
   padding: 20px 10px;
   font-size: 14px;
   font-weight: 400;
   font-family: ${({theme}) => theme.fontRegular};
   border: 1px solid
     ${({theme, isFocused, isError}) =>
-      isFocused
-        ? isError
-          ? theme.inputValidChkColor
-          : theme.text
-        : theme.inputBorder};
+      isFocused ? (isError ? theme.error : theme.dark010) : theme.dark030};
   border-radius: 6px;
 `;
 

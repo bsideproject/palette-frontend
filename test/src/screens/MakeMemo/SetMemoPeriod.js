@@ -23,7 +23,7 @@ const SetMemoTxt_1 = styled.Text`
   font-size: 20px;
   font-family: ${({theme}) => theme.fontRegular};
   font-weight: 400;
-  color: ${({theme}) => theme.text};
+  color: ${({theme}) => theme.dark010};
 `;
 
 const SetMemoTxt_2 = styled.Text`
@@ -31,7 +31,7 @@ const SetMemoTxt_2 = styled.Text`
   font-size: 14px;
   font-family: ${({theme}) => theme.fontRegular};
   font-weight: 400;
-  color: ${({theme}) => theme.inputValidChkColor};
+  color: ${({theme}) => theme.error};
 `;
 
 const SetMemmoMargin = styled.View`
@@ -47,7 +47,7 @@ const BtnContainer = styled.View`
 
 const Container = styled.View`
   flex: 1;
-  background-color: ${({theme}) => theme.background};
+  background-color: ${({theme}) => theme.fullWhite};
   flex-direction: column;
   padding-right: 5%;
   padding-left: 5%;
@@ -65,6 +65,30 @@ const SetMemoPeriod = ({navigation, route}) => {
     navigation.navigate('Home');
   };
 
+  const periodBtnContainer = period => {
+    return (
+      <Button
+        title={`${period}일`}
+        onPress={() => _handleSetMemoPeriod(period)}
+        containerStyle={{
+          backgroundColor: theme.fullWhite,
+          borderWidth: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+        textStyle={{
+          color: theme.dark010,
+          fontSize: 18,
+          fontWeight: '700',
+          fontFamily: theme.fontRegular,
+          textAlign: 'center',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      />
+    );
+  };
+
   return (
     <Container>
       <SetMemoFlexTop>
@@ -75,90 +99,10 @@ const SetMemoPeriod = ({navigation, route}) => {
         <SetMemoTxt_2>상대방의 일기를 볼 수 없습니다</SetMemoTxt_2>
       </SetMemoFlexTop>
       <SetMemoFlexBottom>
-        <BtnContainer>
-          <Button
-            title="3일"
-            onPress={() => _handleSetMemoPeriod(3)}
-            containerStyle={{
-              backgroundColor: theme.background,
-              borderWidth: 1,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-            textStyle={{
-              color: theme.text,
-              fontSize: 18,
-              fontWeight: '700',
-              fontFamily: theme.fontRegular,
-              textAlign: 'center',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          />
-        </BtnContainer>
-        <BtnContainer>
-          <Button
-            title="7일"
-            onPress={() => _handleSetMemoPeriod(7)}
-            containerStyle={{
-              backgroundColor: theme.background,
-              borderWidth: 1,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-            textStyle={{
-              color: theme.text,
-              fontSize: 18,
-              fontWeight: '700',
-              fontFamily: theme.fontRegular,
-              textAlign: 'center',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          />
-        </BtnContainer>
-        <BtnContainer>
-          <Button
-            title="15일"
-            onPress={() => _handleSetMemoPeriod(15)}
-            containerStyle={{
-              backgroundColor: theme.background,
-              borderWidth: 1,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-            textStyle={{
-              color: theme.text,
-              fontSize: 18,
-              fontWeight: '700',
-              fontFamily: theme.fontRegular,
-              textAlign: 'center',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          />
-        </BtnContainer>
-        <BtnContainer>
-          <Button
-            title="30일"
-            onPress={() => _handleSetMemoPeriod(30)}
-            containerStyle={{
-              backgroundColor: theme.background,
-              borderWidth: 1,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-            textStyle={{
-              color: theme.text,
-              fontSize: 18,
-              fontWeight: '700',
-              fontFamily: theme.fontRegular,
-              textAlign: 'center',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          />
-        </BtnContainer>
+        <BtnContainer>{periodBtnContainer(3)}</BtnContainer>
+        <BtnContainer>{periodBtnContainer(7)}</BtnContainer>
+        <BtnContainer>{periodBtnContainer(15)}</BtnContainer>
+        <BtnContainer>{periodBtnContainer(30)}</BtnContainer>
       </SetMemoFlexBottom>
     </Container>
   );

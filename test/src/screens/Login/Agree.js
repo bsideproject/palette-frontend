@@ -11,7 +11,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 
 const Container = styled.View`
   flex: 1;
-  background-color: ${({theme}) => theme.background};
+  background-color: ${({theme}) => theme.fullWhite};
   flex-direction: column;
 `;
 
@@ -125,7 +125,10 @@ const Agree = ({navigation}) => {
 
   useEffect(() => {
     if (!!updateResult.data) {
-      console.log('UPDATE_PROFILE GRAPHQL RESULT DATA 약관동의', updateResult.data);
+      console.log(
+        'UPDATE_PROFILE GRAPHQL RESULT DATA 약관동의',
+        updateResult.data,
+      );
     }
   }, [updateResult]);
 
@@ -140,19 +143,22 @@ const Agree = ({navigation}) => {
   return (
     <Container>
       <KeyboardAvoidingScrollView
+        containerStyle={{
+          backgroundColor: theme.fullWhite,
+        }}
         stickyFooter={
           <ButtonContainer pointerEvents={check1 && check2 ? 'auto' : 'none'}>
             <Button
               title="다음 단계로"
               onPress={_handleNextButtonPress}
               containerStyle={{
-                backgroundColor: theme.btnMainColorBg,
+                backgroundColor: theme.pointColor,
                 alignItems: 'center',
                 justifyContent: 'center',
                 opacity: check1 && check2 ? 1 : 0.5,
               }}
               textStyle={{
-                color: theme.btnWhiteFont,
+                color: theme.white,
                 fontSize: 18,
                 fontWeight: '700',
                 fontFamily: theme.fontRegular,
@@ -167,7 +173,7 @@ const Agree = ({navigation}) => {
           <WelcomeContainer>
             <WelcomeText>만나서 반갑습니다 :)</WelcomeText>
             <View style={{flexDirection: 'row'}}>
-              <WelcomeText style={{color: '#3077FF'}}>이용약관</WelcomeText>
+              <WelcomeText style={{color: theme.success}}>이용약관</WelcomeText>
               <WelcomeText>을 확인해 주세요</WelcomeText>
             </View>
           </WelcomeContainer>
@@ -183,7 +189,7 @@ const Agree = ({navigation}) => {
                 height: 1,
                 marginTop: 24,
                 marginBottom: 19,
-                backgroundColor: '#EEEEEE',
+                backgroundColor: theme.light010,
               }}
             />
             <AgreeTextContainer>
@@ -194,7 +200,7 @@ const Agree = ({navigation}) => {
                 <AgreeText>이용약관</AgreeText>
               </View>
               <TouchableOpacity onPress={_handleNavFirstExplain}>
-                <Icon name={'right'} size={15} color={'black'} />
+                <Icon name={'right'} size={15} color={theme.dark010} />
               </TouchableOpacity>
             </AgreeTextContainer>
             <AgreeTextContainer>
@@ -205,7 +211,7 @@ const Agree = ({navigation}) => {
                 <AgreeText>개인정보 취급방침</AgreeText>
               </View>
               <TouchableOpacity onPress={_handleNavSecondExplain}>
-                <Icon name={'right'} size={15} color={'black'} />
+                <Icon name={'right'} size={15} color={theme.dark010} />
               </TouchableOpacity>
             </AgreeTextContainer>
           </AgreeContainer>

@@ -14,10 +14,12 @@ const Navigation = () => {
     }, 1000);
   }, []);
 
+  console.log('token', user.accessToken);
+
   return (
     <NavigationContainer>
-      {/* {user.accessToken ? <Main /> : <Auth />} */}
-      <Main />
+      {user.accessToken ? <Main /> : <Auth />}
+      {/* <Main /> */}
     </NavigationContainer>
   );
 };

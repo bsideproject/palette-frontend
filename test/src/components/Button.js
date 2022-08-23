@@ -16,7 +16,7 @@ const Container = styled.View`
 const Title = styled.Text`
   font-size: 18px;
   line-height: 26px;
-  color: ${({theme}) => theme.btnTitle};
+  color: ${({theme}) => theme.white};
 `;
 
 const Button = ({
