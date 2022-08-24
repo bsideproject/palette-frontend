@@ -3,6 +3,8 @@
 buildscript {
     ext.kotlin_version = "1.4.32"
     ext {
+        googlePlayServicesVersion = "+"
+        firebaseMessagingVersion = "21.1.0"
         buildToolsVersion = "30.0.2"
         minSdkVersion = 21
         compileSdkVersion = 30
@@ -20,7 +22,7 @@ buildscript {
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-
+        classpath 'com.google.gms:google-services:4.3.13'
     }
 }
 
@@ -38,7 +40,7 @@ allprojects {
         }
 
         google()
-         mavenCentral()
+        mavenCentral()
         maven { url 'https://devrepo.kakao.com/nexus/content/groups/public/' }
         maven { url 'https://www.jitpack.io' }
     }
