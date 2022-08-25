@@ -457,16 +457,21 @@ const MainPage = ({navigation}) => {
         <BtnContainer>
           <Button
             title="새 교환 일기 시작"
+            IconType="plus"
+            IconColor={theme.pointColor}
             onPress={() =>
               navigation.navigate('SetMemoPeriod', memos[sliderIdx])
             }
             containerStyle={{
-              backgroundColor: theme.pointColor,
+              backgroundColor: theme.white,
+              borderWidth: 1,
+              borderColor: theme.pointColor,
+              borderStyle: 'dashed',
               alignItems: 'center',
               justifyContent: 'center',
             }}
             textStyle={{
-              color: theme.white,
+              color: theme.pointColor,
               fontSize: 18,
               fontWeight: '700',
               fontFamily: theme.fontRegular,

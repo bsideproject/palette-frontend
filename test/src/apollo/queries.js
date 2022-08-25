@@ -80,6 +80,19 @@ const REGISTER_DIARY_PERIOD = gql`
   }
 `;
 
+const ADD_FCM_TOKEN = gql`
+  mutation AddFCMToken($token: String!) {
+    addFcmToken(addFcmTokenInput: {token: $token}) {
+      id
+      email
+      nickname
+      profileImg
+      agreeWithTerms
+      createdAt
+    }
+  }
+`;
+
 // ---------------------------------------------------------
 const QUERY_ARRAY = {
   COLOR_CODE: COLOR_CODE,
@@ -88,6 +101,7 @@ const QUERY_ARRAY = {
   GET_PROFILE: GET_PROFILE,
   UPDATE_PROFILE: UPDATE_PROFILE,
   REGISTER_DIARY_PERIOD: REGISTER_DIARY_PERIOD,
+  ADD_FCM_TOKEN: ADD_FCM_TOKEN,
 };
 
 export const USE_QUERY = (Query, Token) => {

@@ -502,8 +502,10 @@ const History = ({navigation, route}) => {
         setExitModalVisible(true);
         break;
       case 'MODIFY':
+        navigation.navigate('EditDiaryTitle', selDiary);
         break;
       case 'COLOR':
+        navigation.navigate('EditDiaryColor', selDiary);
         break;
     }
     setHistoryModalVisible(false);

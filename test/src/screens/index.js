@@ -13,8 +13,11 @@ import AddMemoColor from './MakeMemo/AddMemoColor';
 import AddInviteCode from './MakeMemo/AddInviteCode';
 import CompleteMemo from './MakeMemo/CompleteMemo';
 import CompleteInviteCode from './MakeMemo/CompleteInviteCode';
-import SetMemoPeriod from './MakeMemo/SetMemoPeriod';
-import History from './MakeMemo/History';
+// History
+import History from './History/History';
+import SetMemoPeriod from './History/SetMemoPeriod';
+import EditDiaryColor from './History/EditDiaryColor';
+import EditDiaryTitle from './History/EditDiaryTitle';
 // Main Page
 import MainPage from './MainPage';
 import Setting from './Setting';
@@ -37,4 +40,6 @@ export {
   CompleteInviteCode,
   SetMemoPeriod,
   History,
+  EditDiaryColor,
+  EditDiaryTitle,
 };

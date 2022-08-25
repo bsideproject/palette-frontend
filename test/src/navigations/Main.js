@@ -12,7 +12,8 @@ import {
   CompleteInviteCode,
   SetMemoPeriod,
   History,
-  setModalDisplay,
+  EditDiaryColor,
+  EditDiaryTitle,
 } from '@screens';
 import Home from './Home';
 import {LogBox} from 'react-native';
@@ -101,6 +102,20 @@ const Main = () => {
         options={{
           headerLeft: false,
           title: '초대코드 입력',
+        }}
+      />
+      <Stack.Screen
+        name="EditDiaryColor"
+        component={EditDiaryColor}
+        options={{
+          title: '일기장 편집',
+        }}
+      />
+      <Stack.Screen
+        name="EditDiaryTitle"
+        component={EditDiaryTitle}
+        options={{
+          title: '일기장 편집',
         }}
       />
     </Stack.Navigator>

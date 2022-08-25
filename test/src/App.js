@@ -5,8 +5,7 @@ import {ApolloProvider} from '@apollo/client';
 import {createApolloClient} from '@apolloClient/ApolloClient';
 import {theme} from './theme';
 import Navigation from '@navigations';
-import {UserProvider} from '@contexts';
-import {HistoryModalProvider} from './contexts';
+import {UserProvider, HistoryModalProvider} from '@contexts';
 import {
   requestUserPermission,
   NotificationListner,

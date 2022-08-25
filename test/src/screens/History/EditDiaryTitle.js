@@ -28,7 +28,7 @@ const BtnContainer = styled.View`
   margin-bottom: 30%;
 `;
 
-const AddMemo = ({navigation}) => {
+const EditDiaryTitle = ({navigation, route}) => {
   const [name, setName] = useState('');
   const theme = useContext(ThemeContext);
   const [errorMessage, setErrorMessage] = useState('');
@@ -48,7 +48,10 @@ const AddMemo = ({navigation}) => {
       setErrorMessage('특수문자를 제외한 제목을 입력해주세요.');
     } else {
       setIsError(false);
-      navigation.navigate('AddMemoColor', {name: name});
+
+      console.log('Receive Data: ', route.params, name);
+      // [TODO] : Edit Diary Title Using GraphQL
+      navigation.goBack();
     }
   };
 
@@ -60,7 +63,7 @@ const AddMemo = ({navigation}) => {
       stickyFooter={
         <BtnContainer>
           <Button
-            title="다음 단계로"
+            title="이름 수정하기"
             onPress={_handleSetMemoColorPress}
             containerStyle={{
               backgroundColor: theme.pointColor,
@@ -105,4 +108,4 @@ const AddMemo = ({navigation}) => {
   );
 };
 
-export default AddMemo;
+export default EditDiaryTitle;

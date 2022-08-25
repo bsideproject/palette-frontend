@@ -4,6 +4,7 @@ import styled from 'styled-components/native';
 import {Button} from '@components';
 import {UserContext} from '@contexts';
 import {USE_MUTATION} from '@apolloClient/queries';
+import Modal from 'react-native-modal';
 
 const SetMemoFlexTop = styled.View`
   justify-content: center;

@@ -7,7 +7,7 @@ import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-
 import {UserContext} from '@contexts';
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
-import {USE_QUERY} from '@apolloClient/queries';
+import {USE_QUERY, USE_MUTATION} from '@apolloClient/queries';
 
 const Container = styled.View`
   flex: 1;
@@ -40,6 +40,10 @@ const Joined = ({navigation}) => {
   const {setUser, user} = useContext(UserContext);
   const {loading, error, data} = USE_QUERY('GET_PROFILE', accessToken);
   const JOIN_IMG = require('/assets/icons/join.png');
+  const [addFcmToken, addFcmTokenResult] = USE_MUTATION(
+    'ADD_FCM_TOKEN',
+    accessToken,
+  );
 
   const _handleNextButtonPress = () => {
     axios
@@ -71,15 +75,30 @@ const Joined = ({navigation}) => {
     if (!loading) {
       if (!!data) {
         console.log('Joined Get Data From GraphQL');
-        setUser({
-          accessToken: accessToken,
-          email: data.myProfile.email,
-          socialType: socialType,
-          nickname: data.myProfile.nickname,
+        AsyncStorage.getItem('fcmtoken', (err, result) => {
+          console.log('fcm token: ', result);
+          addFcmToken({
+            variables: {
+              token: result,
+            },
+          });
         });
       }
     }
   }, [loading, accessToken]);
+
+  useEffect(() => {
+    if (addFcmTokenResult.data?.addFcmToken) {
+      //최종 로그인
+      console.log('Login Success');
+      setUser({
+        accessToken: accessToken,
+        email: data.myProfile.email,
+        socialType: socialType,
+        nickname: data.myProfile.nickname,
+      });
+    }
+  }, [addFcmTokenResult]);
 
   return (
     <Container>

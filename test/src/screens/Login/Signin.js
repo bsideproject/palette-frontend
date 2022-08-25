@@ -8,7 +8,7 @@ import SocialBtn from '@components/SocialBtn';
 import AsyncStorage from '@react-native-community/async-storage';
 import {ThemeContext} from 'styled-components/native';
 import axios from 'axios';
-import {USE_QUERY} from '@apolloClient/queries';
+import {USE_QUERY, USE_MUTATION} from '@apolloClient/queries';
 import {
   login,
   getProfile as getKakaoProfile,
@@ -79,6 +79,10 @@ const Signin = ({navigation}) => {
   const [socialType, setSocialType] = useState('');
   const [isRegistered, setIsRegistered] = useState(false);
   const {loading, error, data} = USE_QUERY('GET_PROFILE', accessToken);
+  const [addFcmToken, addFcmTokenResult] = USE_MUTATION(
+    'ADD_FCM_TOKEN',
+    accessToken,
+  );
 
   useEffect(() => {
     AsyncStorage.getItem('social_type', (err, result) => {
@@ -95,17 +99,31 @@ const Signin = ({navigation}) => {
           //닉네임 설정을 안한 회원
           navigation.navigate('Nickname');
         } else {
-          //최종 로그인
-          setUser({
-            accessToken: accessToken,
-            email: data.myProfile.email,
-            socialType: socialType,
-            nickname: data.myProfile.nickname,
+          AsyncStorage.getItem('fcmtoken', (err, result) => {
+            console.log('fcm token: ', result);
+            addFcmToken({
+              variables: {
+                token: result,
+              },
+            });
           });
         }
       }
     }
   }, [loading]);
+
+  useEffect(() => {
+    if (addFcmTokenResult.data?.addFcmToken) {
+      //최종 로그인
+      console.log('Login Success');
+      setUser({
+        accessToken: accessToken,
+        email: data.myProfile.email,
+        socialType: socialType,
+        nickname: data.myProfile.nickname,
+      });
+    }
+  }, [addFcmTokenResult]);
 
   //naver-login-ios settings
   // const iosKeys = {

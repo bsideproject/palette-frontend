@@ -2,11 +2,12 @@ import React, {useContext, useState} from 'react';
 import {ThemeContext} from 'styled-components/native';
 import styled from 'styled-components/native';
 import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
-import {Button} from '@components';
+import {Button, PushModal} from '@components';
 import {Image} from 'react-native';
 import {TouchableOpacity} from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {UserContext} from '@contexts';
+import Modal from 'react-native-modal';
 
 const Container = styled.View`
   flex: 1;
@@ -102,6 +103,7 @@ const Item3Text = styled.Text`
 const CompleteMemo = ({navigation, route}) => {
   const [name, setName] = useState('');
   const theme = useContext(ThemeContext);
+  const [pushModalVisible, setPushModalVisible] = useState(false);
   const MAKE_IMG = require('/assets/icons/make.png');
 
   const {user} = useContext(UserContext);
@@ -112,9 +114,13 @@ const CompleteMemo = ({navigation, route}) => {
     let memoName = route.params.name;
     let memoColorId = route.params.colorId;
     console.log(memoName, memoColorId);
-    // Insert To DB
 
-    // Go to Main Page
+    // [TODO] If Alarm On -> MoveMain Page / Off -> SetPushModal
+    // Set Push Modal
+    setPushModalVisible(true);
+  };
+
+  const _handleMoveMainPage = () => {
     navigation.navigate('Home');
   };
 
@@ -168,6 +174,23 @@ const CompleteMemo = ({navigation, route}) => {
           </InviteItem2>
         </InviteContainer>
       </Container>
+
+      <Modal
+        isVisible={pushModalVisible}
+        useNativeDriver={true}
+        onRequestClose={() => setPushModalVisible(false)}
+        hideModalContentWhileAnimating={true}
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          flexDirection: 'row',
+        }}>
+        <PushModal
+          onPressExit={setPushModalVisible}
+          onPressEnd={_handleMoveMainPage}
+        />
+      </Modal>
     </KeyboardAvoidingScrollView>
   );
 };
