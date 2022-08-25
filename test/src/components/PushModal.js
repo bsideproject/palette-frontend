@@ -21,7 +21,7 @@ const PushModalContainer = styled.View`
 `;
 
 const PushModalMid = styled.View`
-  margin-top: 7%;
+  margin-top: 5%;
   flex: 7;
   align-items: center;
   margin-bottom: 3%;
@@ -58,7 +58,7 @@ const PushModalTxt3 = styled.Text`
 `;
 
 const PushModalMargin = styled.View`
-  margin-top: 5%;
+  margin-top: 3%;
 `;
 
 const BottomTxtContainer = styled.View`
@@ -92,7 +92,7 @@ const PushModal = ({onPressExit, onPressEnd}) => {
     <Conatiner>
       <PushModalContainer>
         <PushModalMid>
-          <PushModalTxt1>잠깐!</PushModalTxt1>
+          <PushModalTxt1>잠깐! ✋</PushModalTxt1>
           <PushModalTxt1>일기장 알림이 꺼져있어요!</PushModalTxt1>
           <PushModalMargin />
           <PushModalTxt2>
