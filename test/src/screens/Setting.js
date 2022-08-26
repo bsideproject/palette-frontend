@@ -6,6 +6,7 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
 import {UserContext} from '@contexts';
+import {USE_MUTATION} from '@apolloClient/queries';
 import {View, TouchableOpacity, PermissionsAndroid} from 'react-native';
 import {
   BallIndicator,
@@ -73,6 +74,10 @@ const PROFILE_DEFAULT = require('/assets/icons/default_profile.png');
 const Setting = ({navigation}) => {
   const theme = useContext(ThemeContext);
   const {setUser, user} = useContext(UserContext);
+  const [deleteFcmToken, deleteFcmTokenResult] = USE_MUTATION(
+    'DELETE_FCM_TOKEN',
+    user.accessToken,
+  );
 
   useEffect(() => {
     PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.CAMERA).then(
@@ -104,6 +109,16 @@ const Setting = ({navigation}) => {
     }
   };
 
+  const _handleDeleteFcmToken = () => {
+    AsyncStorage.getItem('fcmtoken', (err, result) => {
+      deleteFcmToken({
+        variables: {
+          token: result,
+        },
+      });
+    });
+  };
+
   const _handleLogout = () => {
     //로그아웃 함수
     AsyncStorage.getItem('refresh_token', async (err, result) => {
@@ -116,9 +131,11 @@ const Setting = ({navigation}) => {
           })
           .then(response => {
             console.log('로그아웃', response);
+            _handleDeleteFcmToken();
             AsyncStorage.removeItem('refresh_token');
             AsyncStorage.removeItem('access_token');
             AsyncStorage.removeItem('email');
+            AsyncStorage.removeItem('fcmtoken');
             setUser({
               accessToken: null,
               email: null,

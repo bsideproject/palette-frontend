@@ -20,6 +20,7 @@ import {
   getProfile as getNaverProfile,
 } from '@react-native-seoul/naver-login';
 import {responsePathAsArray} from 'graphql';
+import {requestUserPermission} from '../../push/PushNotification_helper';
 
 const Container = styled.View`
   flex: 1;
@@ -95,6 +96,8 @@ const Signin = ({navigation}) => {
       console.log('이전 로그인 했던 플랫폼 --> ', result);
       setPrevSignType(result);
     });
+    // FCM Token
+    requestUserPermission();
   }, []);
 
   useEffect(() => {

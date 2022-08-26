@@ -16,7 +16,6 @@ const apolloClient = createApolloClient();
 
 const App = () => {
   useEffect(() => {
-    requestUserPermission();
     NotificationListner();
     createChannel();
   }, []);

@@ -93,6 +93,12 @@ const ADD_FCM_TOKEN = gql`
   }
 `;
 
+const DELETE_FCM_TOKEN = gql`
+  mutation DeleteFCMToken($token: String!) {
+    deleteFcmToken(deleteFcmTokenInput: {token: $token})
+  }
+`;
+
 // ---------------------------------------------------------
 const QUERY_ARRAY = {
   COLOR_CODE: COLOR_CODE,
@@ -102,6 +108,7 @@ const QUERY_ARRAY = {
   UPDATE_PROFILE: UPDATE_PROFILE,
   REGISTER_DIARY_PERIOD: REGISTER_DIARY_PERIOD,
   ADD_FCM_TOKEN: ADD_FCM_TOKEN,
+  DELETE_FCM_TOKEN: DELETE_FCM_TOKEN,
 };
 
 export const USE_QUERY = (Query, Token) => {
