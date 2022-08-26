@@ -78,18 +78,49 @@ const Signin = ({navigation}) => {
   const [accessToken, setAccessToken] = useState(null);
   const [socialType, setSocialType] = useState('');
   const [isRegistered, setIsRegistered] = useState(false);
-  const {loading, error, data} = USE_QUERY('GET_PROFILE', accessToken);
+  const [autoLogin, setAutoLogin] = useState(false);
+  const {loading, error, data, refetch} = USE_QUERY('GET_PROFILE', accessToken);
   const [addFcmToken, addFcmTokenResult] = USE_MUTATION(
     'ADD_FCM_TOKEN',
     accessToken,
   );
 
   useEffect(() => {
+    AsyncStorage.getItem('access_token', (err, result) => {
+      if (!!result) {
+        setAccessToken(result);
+      }
+    });
     AsyncStorage.getItem('social_type', (err, result) => {
       console.log('이전 로그인 했던 플랫폼 --> ', result);
       setPrevSignType(result);
     });
   }, []);
+
+  useEffect(() => {
+    if (!!accessToken && !autoLogin) {
+      setTimeout(async () => {
+        await refetch()
+          .then(data => {
+            console.log('refetch data', data);
+            setUser({
+              accessToken: accessToken,
+              email: data.data.myProfile.email,
+              socialType: socialType,
+              nickname: data.data.myProfile.nickname,
+              profileImg: data.data.myProfile.profileImg,
+            });
+          })
+          .catch(error => {
+            console.log('refetch error', error.networkError.statusCode);
+            if (error.networkError.statusCode === 401) {
+              refreshFunc();
+            }
+          })
+          .then(() => console.log('refetch success'));
+      }, 10);
+    }
+  }, [accessToken, autoLogin]);
 
   useEffect(() => {
     if (!loading) {
@@ -121,6 +152,7 @@ const Signin = ({navigation}) => {
         email: data.myProfile.email,
         socialType: socialType,
         nickname: data.myProfile.nickname,
+        profileImg: data.myProfile.profileImg,
       });
     }
   }, [addFcmTokenResult]);
@@ -203,8 +235,18 @@ const Signin = ({navigation}) => {
         socialType: socialType,
       })
       .then(response => {
-        console.log('access_token 값 --> ', response.data.accessToken);
-        // console.log('refresh token 값 ==> ', response.headers['set-cookie'][0]);
+        console.log('login data', response.data.socialTypes);
+        if (!response.data.isRegistered) {
+          //데이터베이스에 회원이 존재 하지 않는 경우
+          setAutoLogin(prev => !prev);
+        }
+        AsyncStorage.setItem(
+          'refresh_token',
+          response.headers['set-cookie'][0].split(' ')[0],
+          () => {
+            console.log('AsyncStorage refresh_token Save!');
+          },
+        );
 
         AsyncStorage.setItem('access_token', response.data.accessToken, () => {
           console.log('AsyncStorage access_token Save!');
@@ -237,6 +279,44 @@ const Signin = ({navigation}) => {
 
   const _handleNavSecondExplain = () => {
     navigation.navigate('SecondExplain');
+  };
+
+  const refreshFunc = () => {
+    //토큰 갱신 함수
+    AsyncStorage.getItem('refresh_token', async (err, result) => {
+      if (!!result) {
+        await axios
+          .post('http://61.97.190.252:8080/api/v1/token', {
+            headers: {
+              Cookie: result,
+            },
+          })
+          .then(response => {
+            console.log('토큰 갱신', response.data);
+            setAccessToken(response.data.accessToken);
+            AsyncStorage.setItem(
+              'access_token',
+              response.data.accessToken,
+              () => {
+                console.log('refresh and save access_token');
+              },
+            );
+            AsyncStorage.setItem(
+              'refresh_token',
+              response.headers['set-cookie'][0].split(' ')[0],
+              () => {
+                console.log('refresh and refresh_token save');
+              },
+            );
+          })
+          .catch(error => {
+            console.log('refresh token api error', error);
+          })
+          .then(() => {
+            console.log('refresh token api 실행 완료');
+          });
+      }
+    });
   };
 
   const LastLogin = () => {
@@ -304,17 +384,6 @@ const Signin = ({navigation}) => {
           />
           <TouchableOpacity onPress={_handleNavSecondExplain}>
             <LinkText>개인정보 처리방침</LinkText>
-          </TouchableOpacity>
-          <View
-            style={{
-              height: 16,
-              borderRightColor: theme.dark020,
-              borderRightWidth: 1,
-              marginHorizontal: 12,
-            }}
-          />
-          <TouchableOpacity onPress={() => navigation.navigate('Agree')}>
-            <LinkText>임시 Login Skip</LinkText>
           </TouchableOpacity>
         </LinkContainer>
       </Container>

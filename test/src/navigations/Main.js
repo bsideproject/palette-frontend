@@ -2,7 +2,7 @@ import React, {useContext, useEffect} from 'react';
 import {ThemeContext} from 'styled-components/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {TouchableOpacity} from 'react-native';
+import {TouchableOpacity, Text} from 'react-native';
 import {
   MemoMain,
   AddMemo,
@@ -14,6 +14,8 @@ import {
   History,
   EditDiaryColor,
   EditDiaryTitle,
+  setModalDisplay,
+  WriteDiary,
 } from '@screens';
 import Home from './Home';
 import {LogBox} from 'react-native';
@@ -116,6 +118,13 @@ const Main = () => {
         component={EditDiaryTitle}
         options={{
           title: '일기장 편집',
+        }}
+      />
+      <Stack.Screen
+        name="WriteDiary"
+        component={WriteDiary}
+        options={{
+          title: '오늘의 일기',
         }}
       />
     </Stack.Navigator>

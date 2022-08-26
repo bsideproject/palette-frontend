@@ -16,6 +16,7 @@ import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {USE_MUTATION} from '@apolloClient/queries';
 import AsyncStorage from '@react-native-community/async-storage';
+import axios from 'axios';
 
 const Container = styled.View`
   flex: 1;
@@ -77,25 +78,48 @@ const ProfileImage = styled.Image`
   border-radius: 70px;
 `;
 
-const PROFILEIMG_DEFAULT = require('/assets/icons/profileimg_default.png');
+const PROFILEIMG_DEFAULT = require('/assets/icons/set_profileImg.png');
 const UPLOAD = require('/assets/icons/upload.png');
 
 const ProfileImageSet = ({navigation}) => {
   const theme = useContext(ThemeContext);
   const [profileImage, setProfileImage] = useState('');
-  const [modalVisible, setModalVisible] = useState(false);
   const [accessToken, setAccessToken] = useState(null);
+  const [uploadImage, setUploadImage] = useState(null);
   const [updateProfile, updateResult] = USE_MUTATION(
     'UPDATE_PROFILE',
     accessToken,
   );
 
-  const _handleNextButtonPress = () => {
-    // 추후 예정작업 이미지 업로드api response 값 = url
-    // updateProfile({
-    //   variables: {profileImg: "url"},
-    // });
-    navigation.navigate('Joined');
+  const _handleNextButtonPress = async () => {
+    if (!!uploadImage) {
+      await axios
+        .post('http://61.97.190.252:8080/api/v1/upload', uploadImage, {
+          headers: {
+            authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'multipart/form-data',
+          },
+        })
+        .then(async response => {
+          console.log('result=======>', response.data);
+          //유저 프로필 이미지 업로드
+          await updateProfile({
+            variables: {profileImg: response.data.url},
+          });
+
+          navigation.navigate('Joined');
+        })
+        .catch(error => {
+          const errorData = JSON.parse(JSON.stringify(error));
+          console.log('profile image upload api error', errorData.status);
+        })
+        .then(() => {
+          console.log('profile image upload api 실행 완료');
+        });
+    } else {
+      //등록 프로필 이미지 없는 경우
+      navigation.navigate('Joined');
+    }
   };
 
   const _handleLaunchImageLibrary = () => {
@@ -113,7 +137,15 @@ const ProfileImageSet = ({navigation}) => {
         alert('에러 발생');
       } else {
         console.log('사진첩 결과물 ===> ', response);
-        setProfileImage(response.assets[0].uri);
+        setProfileImage(() => response.assets[0].uri);
+        const photo = new FormData();
+        let file = {
+          uri: response.assets[0].uri,
+          type: response.assets[0].type,
+          name: response.assets[0].fileName,
+        };
+        photo.append('file', file);
+        setUploadImage(prevState => photo);
       }
     });
   };

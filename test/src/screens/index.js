@@ -13,6 +13,7 @@ import AddMemoColor from './MakeMemo/AddMemoColor';
 import AddInviteCode from './MakeMemo/AddInviteCode';
 import CompleteMemo from './MakeMemo/CompleteMemo';
 import CompleteInviteCode from './MakeMemo/CompleteInviteCode';
+import WriteDiary from './MakeMemo/WriteDiary';
 // History
 import History from './History/History';
 import SetMemoPeriod from './History/SetMemoPeriod';
@@ -40,6 +41,7 @@ export {
   CompleteInviteCode,
   SetMemoPeriod,
   History,
+  WriteDiary,
   EditDiaryColor,
   EditDiaryTitle,
 };

@@ -1,7 +1,7 @@
 import React, {useContext, useState, useEffect} from 'react';
 import {ThemeContext} from 'styled-components/native';
 import styled from 'styled-components/native';
-import {TouchableOpacity} from 'react-native';
+import {TouchableOpacity, Text} from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import moment from 'moment';
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -487,7 +487,7 @@ const MainPage = ({navigation}) => {
         <BtnContainer>
           <Button
             title="오늘 일기 쓰기"
-            onPress={() => {}}
+            onPress={() => navigation.navigate('WriteDiary')}
             containerStyle={{
               backgroundColor: theme.pointColor,
               alignItems: 'center',

@@ -147,10 +147,9 @@ const Agree = ({navigation}) => {
               title="다음 단계로"
               onPress={_handleNextButtonPress}
               containerStyle={{
-                backgroundColor: theme.pointColor,
+                backgroundColor: check1 && check2 ? theme.pointColor : theme.dark040,
                 alignItems: 'center',
                 justifyContent: 'center',
-                opacity: check1 && check2 ? 1 : 0.5,
               }}
               textStyle={{
                 color: theme.white,

@@ -100,6 +100,20 @@ const Joined = ({navigation}) => {
     }
   }, [addFcmTokenResult]);
 
+  useEffect(() => {
+    if (addFcmTokenResult.data?.addFcmToken) {
+      //최종 로그인
+      console.log('Login Success');
+      setUser({
+        accessToken: accessToken,
+        email: data.myProfile.email,
+        socialType: socialType,
+        nickname: data.myProfile.nickname,
+        profileImg: data.myProfile.profileimg,
+      });
+    }
+  }, [addFcmTokenResult]);
+
   return (
     <Container>
       <KeyboardAvoidingScrollView

@@ -29,7 +29,7 @@ const Home = ({navigation, route}) => {
     if (screenName == 'Home') {
       SetScreenName(`${user.nickname}님의 반쪽 일기장`);
     } else if (screenName == 'Setting') {
-      SetScreenName('환경 설정');
+      SetScreenName('더 보기');
     }
     console.log(curScreenName);
   });
@@ -44,15 +44,13 @@ const Home = ({navigation, route}) => {
         {showLabel: false})
       }
       screenOptions={{
-        headerTitleAlign: 'flex-start',
         tabBarStyle: {
           height: 60,
         },
         headerTitleStyle: {
           color: theme.dark010,
           fontSize: 16,
-          fontWeight: '700',
-          fontFamily: theme.fontRegular,
+          fontFamily: theme.fontBold,
         },
         headerStyle: {
           backgroundColor: theme.fullWhite,
@@ -61,11 +59,6 @@ const Home = ({navigation, route}) => {
           height: 60,
         },
         title: curScreenName,
-        headerRight: () => (
-          <TouchableOpacity onPress={() => navigation.navigate(Home)}>
-            <Icon name="notifications" size={26} style={{marginRight: 20}} />
-          </TouchableOpacity>
-        ),
       }}>
       <Tab.Screen
         headerTitle="Home"
@@ -77,6 +70,12 @@ const Home = ({navigation, route}) => {
               name: focused ? 'ios-home' : 'ios-home-outline',
               focused,
             }),
+          headerTitleAlign: 'flex-start',
+          headerRight: () => (
+            <TouchableOpacity onPress={() => navigation.navigate(Home)}>
+              <Icon name="notifications" size={26} style={{marginRight: 20}} />
+            </TouchableOpacity>
+          ),
         }}
       />
       <Tab.Screen
@@ -88,6 +87,17 @@ const Home = ({navigation, route}) => {
               name: focused ? 'ios-settings' : 'ios-settings-outline',
               focused,
             }),
+          headerTitleAlign: 'center',
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Icon
+                name={'arrow-back'}
+                size={24}
+                color={'black'}
+                style={{marginLeft: 14}}
+              />
+            </TouchableOpacity>
+          ),
         }}
       />
     </Tab.Navigator>

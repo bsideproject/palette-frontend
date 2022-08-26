@@ -31,6 +31,7 @@ const ButtonContainer = styled.View`
 `;
 
 const Nickname = ({navigation}) => {
+  const [pass, setPass] = useState(false);
   const [nickname, setNickname] = useState('');
   const theme = useContext(ThemeContext);
   const [errorMessage, setErrorMessage] = useState('');
@@ -69,6 +70,14 @@ const Nickname = ({navigation}) => {
   }, []);
 
   useEffect(() => {
+    if (nickname.length >= 1 && nickname.length <= 8) {
+      setPass(prevState => true);
+    } else {
+      setPass(prevState => false);
+    }
+  }, [nickname]);
+
+  useEffect(() => {
     if (!!updateResult.data) {
       console.log(
         'UPDATE_PROFILE GRAPHQL RESULT DATA 닉네임설정',
@@ -84,12 +93,12 @@ const Nickname = ({navigation}) => {
           backgroundColor: theme.fullWhite,
         }}
         stickyFooter={
-          <ButtonContainer>
+          <ButtonContainer pointerEvents={pass ? 'auto' : 'none'}>
             <Button
               title="다음 단계로"
               onPress={_handleNextButtonPress}
               containerStyle={{
-                backgroundColor: theme.pointColor,
+                backgroundColor: pass ? theme.pointColor : theme.dark040,
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
