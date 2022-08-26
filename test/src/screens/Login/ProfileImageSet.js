@@ -100,11 +100,11 @@ const ProfileImageSet = ({navigation}) => {
             'Content-Type': 'multipart/form-data',
           },
         })
-        .then(async response => {
-          console.log('result=======>', response.data);
+        .then(response => {
+          console.log('result=======>', response.data.urls[0]);
           //유저 프로필 이미지 업로드
-          await updateProfile({
-            variables: {profileImg: response.data.url},
+          updateProfile({
+            variables: {profileImg: response.data.urls[0]},
           });
 
           navigation.navigate('Joined');
