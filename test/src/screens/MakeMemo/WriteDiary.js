@@ -14,7 +14,6 @@ import Icon from 'react-native-vector-icons/Feather';
 // import Icon from 'react-native-vector-icons/AntDesign';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
-import {SliderBox} from 'react-native-image-slider-box';
 import Modal from 'react-native-modal';
 
 const Container = styled.View`
