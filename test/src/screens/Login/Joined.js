@@ -96,20 +96,7 @@ const Joined = ({navigation}) => {
         email: data.myProfile.email,
         socialType: socialType,
         nickname: data.myProfile.nickname,
-      });
-    }
-  }, [addFcmTokenResult]);
-
-  useEffect(() => {
-    if (addFcmTokenResult.data?.addFcmToken) {
-      //최종 로그인
-      console.log('Login Success');
-      setUser({
-        accessToken: accessToken,
-        email: data.myProfile.email,
-        socialType: socialType,
-        nickname: data.myProfile.nickname,
-        profileImg: data.myProfile.profileimg,
+        profileImg: data.myProfile.profileImg,
       });
     }
   }, [addFcmTokenResult]);

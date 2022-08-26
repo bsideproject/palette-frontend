@@ -235,10 +235,17 @@ const Signin = ({navigation}) => {
         socialType: socialType,
       })
       .then(response => {
-        console.log('login data', response.data.socialTypes);
+        console.log('login data22222', response.data.socialTypes[0]);
         if (!response.data.isRegistered) {
           //데이터베이스에 회원이 존재 하지 않는 경우
           setAutoLogin(prev => !prev);
+        }
+        if (
+          response.data.socialTypes.length === 1 &&
+          response.data.socialTypes[0].toLowerCase() !== socialType
+        ) {
+          alert('이미 계정이 있음 통합 페이지 이동!');
+          return;
         }
         AsyncStorage.setItem(
           'refresh_token',

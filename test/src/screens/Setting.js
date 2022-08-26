@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 import {ThemeContext} from 'styled-components/native';
 import styled from 'styled-components/native';
 import {Button, Input, ErrorMessage} from '@components';
@@ -6,7 +6,19 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
 import {UserContext} from '@contexts';
-import {View, TouchableOpacity} from 'react-native';
+import {View, TouchableOpacity, PermissionsAndroid} from 'react-native';
+import {
+  BallIndicator,
+  BarIndicator,
+  DotIndicator,
+  MaterialIndicator,
+  PacmanIndicator,
+  PulseIndicator,
+  SkypeIndicator,
+  UIActivityIndicator,
+  WaveIndicator,
+} from 'react-native-indicators';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 const Container = styled.View`
   flex: 1;
@@ -55,11 +67,42 @@ const BoundaryContainer = styled.View`
   margin: 20px 0;
 `;
 
+const TEST = require('/assets/icons/test.gif');
 const PROFILE_DEFAULT = require('/assets/icons/default_profile.png');
 
 const Setting = ({navigation}) => {
   const theme = useContext(ThemeContext);
   const {setUser, user} = useContext(UserContext);
+
+  useEffect(() => {
+    PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.CAMERA).then(
+      response => {
+        console.log(response);
+      },
+    );
+  }, []);
+
+  const requestPermission = async () => {
+    if (Platform.OS === 'android') {
+      await PermissionsAndroid.requestMultiple([
+        PermissionsAndroid.PERMISSIONS.CAMERA,
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+      ]).then(result => {
+        console.log(result);
+        if (
+          result['android.permission.CAMERA'] &&
+          result['android.permission.WRITE_EXTERNAL_STORAGE'] &&
+          result['android.permission.READ_EXTERNAL_STORAGE'] === 'granted'
+        ) {
+          console.log('모든 권한 획득');
+        } else {
+          console.log('권한거절');
+        }
+      });
+    } else {
+    }
+  };
 
   const _handleLogout = () => {
     //로그아웃 함수
@@ -98,7 +141,7 @@ const Setting = ({navigation}) => {
     <Container>
       <InnerContainer>
         <ProfileContainer>
-          {user.profileImg.length > 0 ? (
+          {user.profileImg !== null ? (
             <ProfileImage source={{uri: user.profileImg}} />
           ) : (
             <ProfileImage source={PROFILE_DEFAULT} />

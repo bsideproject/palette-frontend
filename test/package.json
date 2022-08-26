@@ -40,6 +40,7 @@
     "react-native-gesture-handler": "^2.5.0",
     "react-native-image-picker": "^4.8.5",
     "react-native-image-slider-box": "^2.0.5",
+    "react-native-indicators": "^0.17.0",
     "react-native-ionicons": "^4.6.5",
     "react-native-kakao-connect": "file:KakaoConnect",
     "react-native-keyboard-avoiding-scroll-view": "^1.0.1",

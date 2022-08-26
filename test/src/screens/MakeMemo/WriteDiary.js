@@ -300,8 +300,8 @@ const WriteDiary = ({navigation, route}) => {
   const openPicker = async () => {
     try {
       const response = await MultipleImagePicker.openPicker({
+        mediaType: 'image',
         usedCameraButton: true,
-        selectedAssets: 'images',
         maxSelectedAssets: 3,
         isExportThumbnail: true,
       });
