@@ -146,14 +146,16 @@ const Signin = ({navigation}) => {
         await refetch()
           .then(data => {
             console.log('refetch data', data);
-            setUser({
-              accessToken: accessToken,
-              email: data.data.myProfile.email,
-              socialType: socialType,
-              nickname: data.data.myProfile.nickname,
-              profileImg: data.data.myProfile.profileImg,
-              socialTypes: data.data.myProfile.socialTypes,
-            });
+            if (data.data.myProfile.nickname !== '') {
+              setUser({
+                accessToken: accessToken,
+                email: data.data.myProfile.email,
+                socialType: socialType,
+                nickname: data.data.myProfile.nickname,
+                profileImg: data.data.myProfile.profileImg,
+                socialTypes: data.data.myProfile.socialTypes,
+              });
+            }
           })
           .catch(error => {
             console.log('refetch error', error.networkError.statusCode);
@@ -167,25 +169,24 @@ const Signin = ({navigation}) => {
   }, [accessToken, autoLogin]);
 
   useEffect(() => {
-    if (!loading) {
-      // Get From DataBase
-      if (!!data && isRegistered) {
-        if (data.myProfile.nickname === '') {
-          //닉네임 설정을 안한 회원
-          navigation.navigate('Nickname');
-        } else {
-          AsyncStorage.getItem('fcmtoken', (err, result) => {
-            console.log('fcm token: ', result);
-            addFcmToken({
-              variables: {
-                token: result,
-              },
-            });
+    // Get From DataBase
+    console.log('회원인지 아닌지', isRegistered);
+    if (!!data && isRegistered) {
+      if (data.myProfile.nickname === '') {
+        //닉네임 설정을 안한 회원
+        navigation.navigate('Nickname');
+      } else {
+        AsyncStorage.getItem('fcmtoken', (err, result) => {
+          console.log('fcm token: ', result);
+          addFcmToken({
+            variables: {
+              token: result,
+            },
           });
-        }
+        });
       }
     }
-  }, [loading]);
+  }, [isRegistered]);
 
   useEffect(() => {
     if (addFcmTokenResult.data?.addFcmToken) {
@@ -237,6 +238,7 @@ const Signin = ({navigation}) => {
   };
 
   const _handleNaverSignin = props => {
+    setIsRegistered(false);
     return new Promise((resolve, reject) => {
       NaverLogin.login(props, async (err, token) => {
         console.log(`\n\n  Token is fetched  :: ${JSON.stringify(token)} \n\n`);
@@ -256,6 +258,7 @@ const Signin = ({navigation}) => {
 
   const _handleKakaoSignin = async () => {
     try {
+      setIsRegistered(false);
       const token = await login();
 
       console.log('카카오 로그인 결과 -> ', JSON.stringify(token));
@@ -282,6 +285,7 @@ const Signin = ({navigation}) => {
       .then(response => {
         console.log('login data => socialTypes...', response.data.socialTypes);
         if (!response.data.isRegistered) {
+          console.log('약관동의x');
           //데이터베이스에 회원이 존재 하지 않는 경우
           setAutoLogin(prev => !prev);
         }
@@ -296,6 +300,7 @@ const Signin = ({navigation}) => {
           });
           return;
         }
+
         AsyncStorage.setItem(
           'refresh_token',
           response.headers['set-cookie'][0].split(' ')[0],
@@ -315,6 +320,7 @@ const Signin = ({navigation}) => {
           console.log('AsyncStorage email Save!');
         });
         setIsRegistered(response.data.isRegistered);
+
         if (!response.data.isRegistered) {
           //데이터베이스에 회원이 존재 하지 않는 경우
           navigation.navigate('Agree');

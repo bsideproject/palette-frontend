@@ -8,6 +8,7 @@ const Container = styled.TouchableOpacity`
   flex: 1;
   justify-content: center;
   align-items: center;
+  backgroundColor: rgba(17, 17, 17, 0.34);
 `;
 
 const InnerContainer = styled.View`
@@ -18,8 +19,8 @@ const InnerContainer = styled.View`
 `;
 
 const TitleText = styled.Text`
-  font-size:16px;
-  margin-left:8px;
+  font-size: 16px;
+  margin-left: 8px;
 `;
 
 const ButtonContainer = styled.TouchableOpacity`
@@ -40,8 +41,7 @@ const UploadModal = ({
       transparent={true}
       animationType="none"
       onRequestClose={onClose}>
-      <Container
-        onPress={onClose}>
+      <Container onPress={onClose}>
         <InnerContainer>
           <ButtonContainer
             onPress={() => {

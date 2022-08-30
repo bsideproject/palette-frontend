@@ -7,6 +7,8 @@ import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
 import Modal from 'react-native-modal';
 import axios from 'axios';
 import {UserContext} from '@contexts';
+import {launchCamera} from 'react-native-image-picker';
+import {UploadModal} from '@components';
 
 const Container = styled.View`
   flex: 1;
@@ -174,36 +176,7 @@ const WriteDiary = ({navigation, route}) => {
   const [contentError, setContentError] = useState(false);
   const [titleText, setTitleText] = useState('');
   const [contentText, setContentText] = useState('');
-
-  // const usePrevState = state => {
-  //   const ref = useRef(state);
-  //   useEffect(() => {
-  //     ref.current = state;
-  //   }, [state]);
-  //   return ref.current;
-  // };
-  // const prev = usePrevState(imageArr);
-  // useEffect(() => {
-  //   console.log('1', imageArr.length);
-  //   console.log('2', prev.length);
-  //   if (imageArr.length < prev.length) {
-  //     const photo = new FormData();
-  //     imageArr.map((res, i) => {
-  //       let file = {
-  //         uri: res,
-  //         type: 'image/jpeg',
-  //         name: `remainImage${i}.jpg`,
-  //       };
-  //       photo.append('file', file);
-  //       if (i + 1 === imageArr.length) {
-  //         console.log('3', i);
-  //         console.log('4', imageArr.length);
-  //         setUploadImage(prev => photo);
-  //         return;
-  //       }
-  //     });
-  //   }
-  // }, [imageArr]);
+  const [selectModal, setSelectModal] = useState(false);
 
   useEffect(() => {
     navigation.setOptions({
@@ -276,6 +249,35 @@ const WriteDiary = ({navigation, route}) => {
     }
   };
 
+  const _handleLaunchCamera = () => {
+    // 카메라 기능
+    const camera_options = {
+      selectionLimit: 1,
+      mediaType: 'photo',
+      includeBase64: true,
+      cameraType: 'back',
+    };
+
+    launchCamera(camera_options, response => {
+      if (response.didCancel) {
+        console.log('취소');
+      } else if (response.error) {
+        alert('에러 발생');
+      } else {
+        console.log('카메라 결과물 ===> ', response);
+        setImageArr(prevState => [...prevState, response.assets[0].uri]);
+        const photo = new FormData();
+        let file = {
+          uri: response.assets[0].uri,
+          type: response.assets[0].type,
+          name: response.assets[0].fileName,
+        };
+        photo.append('file', file);
+        setUploadImage(photo);
+      }
+    });
+  };
+
   const _handleDeleteImage = url => {
     const photo = new FormData();
     imageArr.map((arrUrl, i) => {
@@ -290,7 +292,6 @@ const WriteDiary = ({navigation, route}) => {
     });
     setUploadImage(prev => photo);
     setImageArr(prevState => prevState.filter(state => state !== url));
-    //uploadimage formdata 삭제 기능 예정
   };
 
   const SelectedImage = () => {
@@ -374,13 +375,21 @@ const WriteDiary = ({navigation, route}) => {
           </SubUploadImageContainer>
         )}
         {imageArr.length === 0 && (
-          <UploadImageContainer onPress={openPicker}>
+          <UploadImageContainer onPress={() => setSelectModal(true)}>
             <UploadImageDefault source={IMG_DEFAULT} />
             <UploadImageText>사진 업로드</UploadImageText>
             <PlusIconContainer>
               <PlusIcon source={PLUS_ICON} />
             </PlusIconContainer>
           </UploadImageContainer>
+        )}
+        {selectModal && (
+          <UploadModal
+            onClose={() => setSelectModal(false)}
+            visible={selectModal}
+            onLaunchImageLibrary={openPicker}
+            onLaunchCamera={_handleLaunchCamera}
+          />
         )}
         <DiaryTitle
           maxLength={12}
