@@ -10,10 +10,12 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@apollo/client": "^3.6.9",
     "@apollo/react-hooks": "^4.0.0",
     "@baronha/react-native-multiple-image-picker": "^0.4.10",
     "@react-native-clipboard/clipboard": "^1.10.0",
     "@react-native-community/async-storage": "^1.12.1",
+    "@react-native-community/netinfo": "^9.3.0",
     "@react-native-firebase/app": "^15.3.0",
     "@react-native-firebase/messaging": "^15.3.0",
     "@react-native-seoul/kakao-login": "^4.2.3",
@@ -40,7 +42,6 @@
     "react-native-gesture-handler": "^2.5.0",
     "react-native-image-picker": "^4.8.5",
     "react-native-image-slider-box": "^2.0.5",
-    "react-native-indicators": "^0.17.0",
     "react-native-ionicons": "^4.6.5",
     "react-native-kakao-connect": "file:KakaoConnect",
     "react-native-keyboard-avoiding-scroll-view": "^1.0.1",

@@ -16,6 +16,8 @@ import {
   EditDiaryTitle,
   setModalDisplay,
   WriteDiary,
+  FirstExplain,
+  SecondExplain,
 } from '@screens';
 import Home from './Home';
 import {LogBox} from 'react-native';
@@ -125,6 +127,20 @@ const Main = () => {
         component={WriteDiary}
         options={{
           title: '오늘의 일기',
+        }}
+      />
+      <Stack.Screen
+        name="FirstExplain"
+        component={FirstExplain}
+        options={{
+          headerTitle: '이용약관',
+        }}
+      />
+      <Stack.Screen
+        name="SecondExplain"
+        component={SecondExplain}
+        options={{
+          headerTitle: '개인정보 취급방침',
         }}
       />
     </Stack.Navigator>

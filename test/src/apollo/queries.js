@@ -41,6 +41,7 @@ const GET_PROFILE = gql`
       email
       nickname
       profileImg
+      socialTypes
       diaries {
         title
         invitationCode
@@ -54,18 +55,21 @@ const UPDATE_PROFILE = gql`
     $nickname: String
     $agreeWithTerms: Boolean
     $profileImg: String
+    $socialTypes: [String!]
   ) {
     editMyProfile(
       editMyProfileInput: {
         nickname: $nickname
         agreeWithTerms: $agreeWithTerms
         profileImg: $profileImg
+        socialTypes: $socialTypes
       }
     ) {
       id
       email
       nickname
       profileImg
+      socialTypes
       agreeWithTerms
       createdAt
     }

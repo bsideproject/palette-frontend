@@ -7,6 +7,7 @@ import {
   FirstExplain,
   SecondExplain,
   Nickname,
+  AccountConnect,
   ProfileImageSet,
   Joined,
 } from '@screens';
@@ -40,6 +41,13 @@ const Auth = () => {
         name="Signin"
         component={Signin}
         options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="AccountConnect"
+        component={AccountConnect}
+        options={{
+          headerTitle: '',
+        }}
       />
       <Stack.Screen
         name="Agree"

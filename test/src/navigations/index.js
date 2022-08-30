@@ -4,9 +4,13 @@ import Auth from './Auth';
 import Main from './Main';
 import SplashScreen from 'react-native-splash-screen';
 import {UserContext} from '@contexts';
+import {useNetInfo} from '@react-native-community/netinfo';
+import {NetworkContainer} from '@screens';
 
 const Navigation = () => {
   const {user} = useContext(UserContext);
+  const [netConnected, setNetConnected] = useState(true);
+  const netinfo = useNetInfo();
 
   useEffect(() => {
     setTimeout(() => {
@@ -14,13 +18,25 @@ const Navigation = () => {
     }, 1000);
   }, []);
 
-  console.log('token', user.accessToken);
+  useEffect(() => {
+    if (netinfo.isConnected === false) {
+      setNetConnected(false);
+    }
+  }, [netinfo]);
 
-  return (
+  const _handleNetwork = () => {
+    if (netinfo.isConnected === true) {
+      setNetConnected(true);
+    }
+  };
+
+  return netConnected ? (
     <NavigationContainer>
       {user.accessToken ? <Main /> : <Auth />}
       {/* <Main /> */}
     </NavigationContainer>
+  ) : (
+    <NetworkContainer handleNetwork={_handleNetwork} />
   );
 };
 

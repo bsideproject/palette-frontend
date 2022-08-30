@@ -1,20 +1,12 @@
-import React, {useContext, useState, useEffect, useReducer} from 'react';
-import {UploadModal} from '@components';
+import React, {useContext, useState, useEffect, useRef} from 'react';
 import styled from 'styled-components/native';
-import {
-  View,
-  Platform,
-  ActionSheetIOS,
-  TouchableOpacity,
-  Text,
-  TextInput,
-} from 'react-native';
+import {View, TouchableOpacity, Text} from 'react-native';
 import {ThemeContext} from 'styled-components/native';
 import Icon from 'react-native-vector-icons/Feather';
-// import Icon from 'react-native-vector-icons/AntDesign';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
 import Modal from 'react-native-modal';
+import axios from 'axios';
+import {UserContext} from '@contexts';
 
 const Container = styled.View`
   flex: 1;
@@ -106,17 +98,6 @@ const PlusIconContainer = styled.View`
   margin-top: 30px;
 `;
 
-const ModalTxt = styled.View`
-  flex: 3;
-  margin-left: 5%;
-`;
-
-const ModalIcon = styled.View`
-  flex: 1;
-  align-items: flex-end;
-  margin-right: 5%;
-`;
-
 const ExitModalContainer = styled.View`
   flex-direction: column;
   background-color: ${({theme}) => theme.white};
@@ -178,10 +159,10 @@ const PLUS_ICON = require('/assets/icons/plus.png');
 const CLOSE_ICON = require('/assets/icons/close_circle.png');
 
 const WriteDiary = ({navigation, route}) => {
+  const {user} = useContext(UserContext);
   const theme = useContext(ThemeContext);
+  const [uploadImage, setUploadImage] = useState(null);
   const [imageArr, setImageArr] = useState([]);
-  const [uploadImage, setUploadImage] = useState('');
-  const [modalVisible, setModalVisible] = useState(false);
   const [exitModalVisible, setExitModalVisible] = useState(false);
   const [isExit, setIsExit] = useState(false);
   const [titlePlaceholder, setTitlePlaceholder] =
@@ -194,23 +175,55 @@ const WriteDiary = ({navigation, route}) => {
   const [titleText, setTitleText] = useState('');
   const [contentText, setContentText] = useState('');
 
-  navigation.setOptions({
-    headerLeft: () => (
-      <TouchableOpacity onPress={_handleBackPage}>
-        <Icon
-          name={'arrow-left'}
-          size={24}
-          color={'black'}
-          style={{marginLeft: 14}}
-        />
-      </TouchableOpacity>
-    ),
-    headerRight: () => (
-      <TouchableOpacity onPress={_handleSave}>
-        <Text style={{marginRight: 18, color: theme.success}}>저장</Text>
-      </TouchableOpacity>
-    ),
-  });
+  // const usePrevState = state => {
+  //   const ref = useRef(state);
+  //   useEffect(() => {
+  //     ref.current = state;
+  //   }, [state]);
+  //   return ref.current;
+  // };
+  // const prev = usePrevState(imageArr);
+  // useEffect(() => {
+  //   console.log('1', imageArr.length);
+  //   console.log('2', prev.length);
+  //   if (imageArr.length < prev.length) {
+  //     const photo = new FormData();
+  //     imageArr.map((res, i) => {
+  //       let file = {
+  //         uri: res,
+  //         type: 'image/jpeg',
+  //         name: `remainImage${i}.jpg`,
+  //       };
+  //       photo.append('file', file);
+  //       if (i + 1 === imageArr.length) {
+  //         console.log('3', i);
+  //         console.log('4', imageArr.length);
+  //         setUploadImage(prev => photo);
+  //         return;
+  //       }
+  //     });
+  //   }
+  // }, [imageArr]);
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerLeft: () => (
+        <TouchableOpacity onPress={_handleBackPage}>
+          <Icon
+            name={'arrow-left'}
+            size={24}
+            color={'black'}
+            style={{marginLeft: 14}}
+          />
+        </TouchableOpacity>
+      ),
+      headerRight: () => (
+        <TouchableOpacity onPress={_handleSave}>
+          <Text style={{marginRight: 18, color: theme.success}}>저장</Text>
+        </TouchableOpacity>
+      ),
+    });
+  }, [titleText, contentText, imageArr]);
 
   useEffect(() => {
     if (isExit) {
@@ -230,68 +243,6 @@ const WriteDiary = ({navigation, route}) => {
     }
   }, [contentError]);
 
-  const _handleLaunchImageLibrary = () => {
-    // 사진첩 사진 등록 기능
-    const library_options = {
-      selectionLimit: 1,
-      mediaType: 'photo',
-      includeBase64: false,
-    };
-
-    launchImageLibrary(library_options, response => {
-      if (response.didCancel) {
-        console.log('취소');
-      } else if (response.error) {
-        alert('에러 발생');
-      } else {
-        console.log('사진첩 결과물 ===> ', response);
-        setUploadImage(response.assets[0].uri);
-      }
-    });
-  };
-
-  const _handleLaunchCamera = () => {
-    // 카메라 기능
-    const camera_options = {
-      saveToPhotos: true,
-      mediaType: 'photo',
-      includeBase64: false,
-    };
-
-    launchCamera(camera_options, response => {
-      if (response.didCancel) {
-        console.log('취소');
-      } else if (response.error) {
-        alert('에러 발생');
-      } else {
-        console.log('카메라 결과물 ===> ', response);
-        setUploadImage(response.assets[0].uri);
-      }
-    });
-  };
-
-  const modalOpen = () => {
-    if (Platform.OS === 'android') {
-      //android
-      setModalVisible(true);
-    } else {
-      //ios
-      ActionSheetIOS.showActionSheetWithOptions(
-        {
-          options: ['카메라로 촬영하기', '사진 선택하기', '취소'],
-          cancelButtonIndex: 2,
-        },
-        buttonIndex => {
-          if (buttonIndex === 0) {
-            _handleLaunchCamera();
-          } else if (buttonIndex === 1) {
-            _handleLaunchImageLibrary();
-          }
-        },
-      );
-    }
-  };
-
   const _handlerExit = () => {
     setExitModalVisible(false);
     setIsExit(true);
@@ -300,15 +251,24 @@ const WriteDiary = ({navigation, route}) => {
   const openPicker = async () => {
     try {
       const response = await MultipleImagePicker.openPicker({
+        usedCameraButton: false,
         mediaType: 'image',
-        usedCameraButton: true,
         maxSelectedAssets: 3,
         isExportThumbnail: true,
       });
 
       console.log('response: ', response);
-      setUploadImage(response[0].path);
+      const photo = new FormData();
       response.map((res, i) => {
+        const file = {
+          uri: res.path,
+          type: 'image/jpeg',
+          name: res.fileName,
+        };
+        photo.append('file', file);
+        if (i + 1 === response.length) {
+          setUploadImage(photo);
+        }
         setImageArr(prevState => [...prevState, res.path]);
       });
     } catch (e) {
@@ -317,14 +277,27 @@ const WriteDiary = ({navigation, route}) => {
   };
 
   const _handleDeleteImage = url => {
+    const photo = new FormData();
+    imageArr.map((arrUrl, i) => {
+      if (arrUrl !== url) {
+        const file = {
+          uri: arrUrl,
+          type: 'image/jpeg',
+          name: `remain${i}.jpg`,
+        };
+        photo.append('file', file);
+      }
+    });
+    setUploadImage(prev => photo);
     setImageArr(prevState => prevState.filter(state => state !== url));
+    //uploadimage formdata 삭제 기능 예정
   };
 
   const SelectedImage = () => {
     return imageArr.map((image, i) => (
       <View style={{position: 'relative'}} key={i}>
         <SubUploadImage source={{uri: image}} />
-        <TouchableOpacity onPress={() => _handleDeleteImage(image)}>
+        <TouchableOpacity onPress={() => _handleDeleteImage(image, i)}>
           <CloseIcon source={CLOSE_ICON} />
         </TouchableOpacity>
       </View>
@@ -339,19 +312,39 @@ const WriteDiary = ({navigation, route}) => {
     }
   };
 
-  const _handleSave = () => {
+  const _handleSave = async () => {
     if (titleText.length === 0) {
-      alert('제목입력해주세요');
       setTitleError(true);
     } else if (contentText.length === 0) {
-      alert('내용 입력해주세요.');
       setContentError(true);
     } else {
-      alert('저장 완료');
+      //저장 기능 작성;
       if (imageArr.length > 0) {
+        console.log('이미지 업로드', JSON.stringify(uploadImage));
         //사진 업로드 한 경우
+        await axios
+          .post('http://61.97.190.252:8080/api/v1/upload', uploadImage, {
+            headers: {
+              authorization: `Bearer ${user.accessToken}`,
+              'Content-Type': 'multipart/form-data',
+            },
+          })
+          .then(response => {
+            //일기 이미지 저장 완료
+            console.log('result=======>', response.data.urls);
+
+            //일기 저장 api연동 예정
+          })
+          .catch(error => {
+            const errorData = JSON.parse(JSON.stringify(error));
+            console.log('diary image upload api error', errorData.status);
+          })
+          .then(() => {
+            console.log('dariay image upload api 실행 완료');
+          });
       } else {
         //사진 업로드 하지 않은 경우
+        //일기 저장 api연동 예정
       }
     }
   };
@@ -380,24 +373,15 @@ const WriteDiary = ({navigation, route}) => {
             <SelectedImage />
           </SubUploadImageContainer>
         )}
-        {
-          imageArr.length === 0 && (
-            <UploadImageContainer onPress={openPicker}>
-              <UploadImageDefault source={IMG_DEFAULT} />
-              <UploadImageText>사진 업로드</UploadImageText>
-              <PlusIconContainer>
-                <PlusIcon source={PLUS_ICON} />
-              </PlusIconContainer>
-            </UploadImageContainer>
-          )
-          //  <UploadImageContainer onPress={modalOpen}>
-        }
-        {/* <UploadModal
-          visible={modalVisible}
-          onClose={() => setModalVisible(false)}
-          onLaunchCamera={_handleLaunchCamera}
-          onLaunchImageLibrary={_handleLaunchImageLibrary}
-        /> */}
+        {imageArr.length === 0 && (
+          <UploadImageContainer onPress={openPicker}>
+            <UploadImageDefault source={IMG_DEFAULT} />
+            <UploadImageText>사진 업로드</UploadImageText>
+            <PlusIconContainer>
+              <PlusIcon source={PLUS_ICON} />
+            </PlusIconContainer>
+          </UploadImageContainer>
+        )}
         <DiaryTitle
           maxLength={12}
           placeholder={titlePlaceholder}

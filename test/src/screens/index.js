@@ -4,6 +4,7 @@ import Agree from './Login/Agree';
 import FirstExplain from './Login/FirstExplain';
 import SecondExplain from './Login/SecondExplain';
 import Nickname from './Login/Nickname';
+import AccountConnect from './Login/AccountConnect';
 import ProfileImageSet from './Login/ProfileImageSet';
 import Joined from './Login/Joined';
 // Make Memo
@@ -19,6 +20,10 @@ import History from './History/History';
 import SetMemoPeriod from './History/SetMemoPeriod';
 import EditDiaryColor from './History/EditDiaryColor';
 import EditDiaryTitle from './History/EditDiaryTitle';
+// Permission
+import Permission from './Permission/Permission';
+// Network
+import NetworkContainer from './Network/NetworkContainer';
 // Main Page
 import MainPage from './MainPage';
 import Setting from './Setting';
@@ -35,6 +40,7 @@ export {
   FirstExplain,
   SecondExplain,
   Nickname,
+  AccountConnect,
   ProfileImageSet,
   Joined,
   CompleteMemo,
@@ -44,4 +50,6 @@ export {
   WriteDiary,
   EditDiaryColor,
   EditDiaryTitle,
+  Permission,
+  NetworkContainer,
 };

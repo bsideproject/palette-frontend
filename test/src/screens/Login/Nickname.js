@@ -32,6 +32,7 @@ const ButtonContainer = styled.View`
 
 const Nickname = ({navigation}) => {
   const [pass, setPass] = useState(false);
+  const [socialType, setSocialType] = useState('');
   const [nickname, setNickname] = useState('');
   const theme = useContext(ThemeContext);
   const [errorMessage, setErrorMessage] = useState('');
@@ -57,7 +58,7 @@ const Nickname = ({navigation}) => {
     } else {
       setIsError(false);
       updateProfile({
-        variables: {nickname: nickname},
+        variables: {nickname: nickname, socialTypes: [socialType]},
       });
       navigation.navigate('ProfileImageSet');
     }
@@ -66,6 +67,10 @@ const Nickname = ({navigation}) => {
   useEffect(() => {
     AsyncStorage.getItem('access_token', (err, result) => {
       setAccessToken(result);
+    });
+    AsyncStorage.getItem('social_type', (err, result) => {
+      console.log(result);
+      setSocialType(result);
     });
   }, []);
 

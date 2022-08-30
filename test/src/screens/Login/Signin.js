@@ -2,7 +2,14 @@ import React, {useContext, useEffect, useState} from 'react';
 import styled from 'styled-components/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {Alert, Text, View, Image, TouchableOpacity} from 'react-native';
+import {
+  Alert,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+  PermissionsAndroid,
+} from 'react-native';
 import {UserContext} from '@contexts';
 import SocialBtn from '@components/SocialBtn';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -19,6 +26,7 @@ import {
   NaverLogin,
   getProfile as getNaverProfile,
 } from '@react-native-seoul/naver-login';
+import {Permission} from '@screens';
 import {responsePathAsArray} from 'graphql';
 import {requestUserPermission} from '../../push/PushNotification_helper';
 
@@ -80,6 +88,7 @@ const Signin = ({navigation}) => {
   const [socialType, setSocialType] = useState('');
   const [isRegistered, setIsRegistered] = useState(false);
   const [autoLogin, setAutoLogin] = useState(false);
+  const [permission, setPermission] = useState(false);
   const {loading, error, data, refetch} = USE_QUERY('GET_PROFILE', accessToken);
   const [addFcmToken, addFcmTokenResult] = USE_MUTATION(
     'ADD_FCM_TOKEN',
@@ -87,17 +96,48 @@ const Signin = ({navigation}) => {
   );
 
   useEffect(() => {
-    AsyncStorage.getItem('access_token', (err, result) => {
-      if (!!result) {
-        setAccessToken(result);
-      }
-    });
-    AsyncStorage.getItem('social_type', (err, result) => {
-      console.log('이전 로그인 했던 플랫폼 --> ', result);
-      setPrevSignType(result);
-    });
-    // FCM Token
-    requestUserPermission();
+    PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.CAMERA)
+      .then(response => {
+        console.log('camera permission', response);
+        if (!response) {
+          setPermission(true);
+        } else {
+          PermissionsAndroid.check(
+            PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+          )
+            .then(response => {
+              console.log('storage permission', response);
+              if (!response) {
+                setPermission(true);
+              } else {
+                //모든 권한 있음 할시
+                AsyncStorage.getItem('access_token', (err, result) => {
+                  if (!!result) {
+                    setAccessToken(result);
+                  }
+                });
+                AsyncStorage.getItem('social_type', (err, result) => {
+                  console.log('이전 로그인 했던 플랫폼 --> ', result);
+                  setPrevSignType(result);
+                });
+                // FCM Token
+                requestUserPermission();
+              }
+            })
+            .catch(error => {
+              console.log('storage permission error', error);
+            })
+            .then(() => {
+              console.log('storage permission check');
+            });
+        }
+      })
+      .catch(error => {
+        console.log('camera permission error', error);
+      })
+      .then(() => {
+        console.log('camera permission check');
+      });
   }, []);
 
   useEffect(() => {
@@ -112,6 +152,7 @@ const Signin = ({navigation}) => {
               socialType: socialType,
               nickname: data.data.myProfile.nickname,
               profileImg: data.data.myProfile.profileImg,
+              socialTypes: data.data.myProfile.socialTypes,
             });
           })
           .catch(error => {
@@ -156,6 +197,7 @@ const Signin = ({navigation}) => {
         socialType: socialType,
         nickname: data.myProfile.nickname,
         profileImg: data.myProfile.profileImg,
+        socialTypes: data.myProfile.socialTypes,
       });
     }
   }, [addFcmTokenResult]);
@@ -206,7 +248,7 @@ const Signin = ({navigation}) => {
         resolve(token);
         getAccessToken({
           email: naverEmail,
-          socialType: 'naver',
+          socialType: 'NAVER',
         });
       });
     });
@@ -224,7 +266,7 @@ const Signin = ({navigation}) => {
       console.log('getProfile birthday--> ', profile.birthday);
       console.log('getProfile birthyear--> ', profile.birthyear);
       console.log('getProfile gender--> ', profile.gender);
-      getAccessToken({email: profile.email, socialType: 'kakao'});
+      getAccessToken({email: profile.email, socialType: 'KAKAO'});
       // setResult(JSON.stringify(token));
     } catch (error) {
       console.log(error);
@@ -238,16 +280,20 @@ const Signin = ({navigation}) => {
         socialType: socialType,
       })
       .then(response => {
-        console.log('login data22222', response.data.socialTypes[0]);
+        console.log('login data => socialTypes...', response.data.socialTypes);
         if (!response.data.isRegistered) {
           //데이터베이스에 회원이 존재 하지 않는 경우
           setAutoLogin(prev => !prev);
         }
         if (
           response.data.socialTypes.length === 1 &&
-          response.data.socialTypes[0].toLowerCase() !== socialType
+          response.data.socialTypes[0] !== socialType
         ) {
-          alert('이미 계정이 있음 통합 페이지 이동!');
+          navigation.navigate('AccountConnect', {
+            accessToken: response.data.accessToken,
+            socialType: response.data.socialTypes[0],
+            email: email,
+          });
           return;
         }
         AsyncStorage.setItem(
@@ -257,7 +303,6 @@ const Signin = ({navigation}) => {
             console.log('AsyncStorage refresh_token Save!');
           },
         );
-
         AsyncStorage.setItem('access_token', response.data.accessToken, () => {
           console.log('AsyncStorage access_token Save!');
           setAccessToken(response.data.accessToken);
@@ -276,7 +321,7 @@ const Signin = ({navigation}) => {
         }
       })
       .catch(error => {
-        console.log('login api error', error);
+        console.log('login api error', JSON.stringify(error));
       })
       .then(() => {
         console.log('login api 실행 완료');
@@ -335,7 +380,7 @@ const Signin = ({navigation}) => {
         <LastLoginBox>
           <LastLoginText>
             마지막 로그인 수단 :{' '}
-            {prevSignType === 'kakao' ? '카카오' : '네이버'}
+            {prevSignType === 'KAKAO' ? '카카오' : '네이버'}
           </LastLoginText>
         </LastLoginBox>
       );
@@ -344,7 +389,9 @@ const Signin = ({navigation}) => {
     }
   };
 
-  return (
+  return permission ? (
+    <Permission onChange={() => setPermission(false)} />
+  ) : (
     <KeyboardAwareScrollView
       extraScrollHeight={20}
       contentContainerStyle={{flex: 1}}>

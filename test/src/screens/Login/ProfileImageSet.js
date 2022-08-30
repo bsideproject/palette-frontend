@@ -1,17 +1,8 @@
 import React, {useContext, useState, useEffect} from 'react';
 import {Button} from '@components';
 import styled from 'styled-components/native';
-import {
-  TouchableOpacity,
-  View,
-  Text,
-  Image,
-  Alert,
-  Platform,
-  ActionSheetIOS,
-} from 'react-native';
+import {Image} from 'react-native';
 import {ThemeContext} from 'styled-components/native';
-import Icon from 'react-native-vector-icons/AntDesign';
 import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {USE_MUTATION} from '@apolloClient/queries';
