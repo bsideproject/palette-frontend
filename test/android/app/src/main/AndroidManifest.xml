@@ -47,7 +47,10 @@
                   android:value="false"/>
       <!-- Change the resource name to your App's accent color - or any other color you want -->
       <meta-data  android:name="com.dieam.reactnativepushnotification.notification_color"
-                  android:resource="@color/white"/> <!-- or @android:color/{name} to use a standard color -->
+                  android:resource="@color/dodgerblue"/> <!-- or @android:color/{name} to use a standard color -->
+
+      <meta-data  android:name="com.google.firebase.messaging.default_notification_icon" 
+                  android:resource="@mipmap/ic_notification" />
 
       <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationActions" />
       <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationPublisher" />

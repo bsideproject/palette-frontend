@@ -105,9 +105,12 @@ const CompleteMemo = ({navigation, route}) => {
   const theme = useContext(ThemeContext);
   const [pushModalVisible, setPushModalVisible] = useState(false);
   const MAKE_IMG = require('/assets/icons/make.png');
+  const {user, setUser} = useContext(UserContext);
+  console.log('user:', user);
 
-  const {user} = useContext(UserContext);
-  console.log(user);
+  const _handleMoveMainPage = () => {
+    navigation.navigate('Home');
+  };
 
   const _handleRequestSetMemo = () => {
     // Get User_id
@@ -116,12 +119,14 @@ const CompleteMemo = ({navigation, route}) => {
     console.log(memoName, memoColorId);
 
     // [TODO] If Alarm On -> MoveMain Page / Off -> SetPushModal
-    // Set Push Modal
-    setPushModalVisible(true);
-  };
-
-  const _handleMoveMainPage = () => {
-    navigation.navigate('Home');
+    console.log('USER PushEnabled: ', user.pushEnabled);
+    if (user.pushEnabled == true) {
+      console.log('Move......', user);
+      _handleMoveMainPage();
+    } else {
+      // Set Push Modal
+      setPushModalVisible(true);
+    }
   };
 
   return (

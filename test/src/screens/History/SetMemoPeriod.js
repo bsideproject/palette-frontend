@@ -4,7 +4,6 @@ import styled from 'styled-components/native';
 import {Button} from '@components';
 import {UserContext} from '@contexts';
 import {USE_MUTATION} from '@apolloClient/queries';
-import Modal from 'react-native-modal';
 
 const SetMemoFlexTop = styled.View`
   justify-content: center;
@@ -63,13 +62,13 @@ const SetMemoPeriod = ({navigation, route}) => {
   );
 
   const _handleSetMemoPeriod = period => {
-    console.log(route.params);
+    console.log(route.params.id);
     console.log(period);
 
     // [TODO] Read Diary Id
     updateDiaryPeriod({
       variables: {
-        diaryId: 1,
+        diaryId: route.params.id,
         period: period,
       },
     });

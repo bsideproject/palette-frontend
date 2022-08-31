@@ -100,6 +100,7 @@ const Setting = ({navigation}) => {
               nickname: null,
               profileImg: null,
               socialTypes: null,
+              pushEnabled: null,
             });
           })
           .catch(error => {

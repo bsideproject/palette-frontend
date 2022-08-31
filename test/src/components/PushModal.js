@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 import {TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {ThemeContext} from 'styled-components/native';
+import {UserContext} from '@contexts';
+import {USE_MUTATION} from '@apolloClient/queries';
 
 const Conatiner = styled.View`
   flex: 1;
@@ -77,13 +79,30 @@ const BottomTxt = styled.Text`
 
 const PushModal = ({onPressExit, onPressEnd}) => {
   const theme = useContext(ThemeContext);
-
-  console.log('End', onPressEnd);
+  const {user, setUser} = useContext(UserContext);
+  const [updateProfile, updateResult] = USE_MUTATION(
+    'UPDATE_PROFILE',
+    user.accessToken,
+  );
 
   const _handleEnd = onOff => {
-    // [TODO] Set Alarm
-    console.log(onOff);
-
+    console.log('Set Push Notify:', onOff);
+    if (onOff == true) {
+      // Update Back-End
+      updateProfile({
+        variables: {pushEnabled: true},
+      });
+      // Update Local Context Api
+      setUser({
+        accessToken: user.accessToken,
+        email: user.email,
+        socialType: user.socialType,
+        nickname: user.nickname,
+        profileImg: user.profileImg,
+        socialTypes: user.socialType,
+        pushEnabled: true,
+      });
+    }
     onPressExit();
     onPressEnd();
   };

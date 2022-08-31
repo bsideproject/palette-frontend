@@ -14,23 +14,34 @@ import AutoHeightImage from 'react-native-auto-height-image';
 import Icon_Ionicons from 'react-native-vector-icons/Ionicons';
 import {Button} from '@components';
 import {utcToKst} from '~/src/utils';
+import AsyncStorage from '@react-native-community/async-storage';
+import {UserContext} from '@contexts';
+import {USE_QUERY} from '@apolloClient/queries';
 
 // Time & Date Function
 const checkDate = ts => {
   // [TODO] UTC Time Convert
-  const now = moment().startOf('day');
+  const now = moment().add(9, 'hour').startOf('day');
   const target = moment(ts).startOf('day');
 
   // Today Check
   if (now.diff(target, 'day') > 0) {
-    return moment(utcToKst(ts)).format('MM/DD');
+    return moment(ts).format('MM/DD');
   } else {
     return 'Today';
   }
 };
 
+const checkDateDiff = ts => {
+  // Convert Korea Time
+  const now = moment().add(9, 'hour').startOf('day');
+  const target = moment(ts).startOf('day');
+
+  return now.diff(target, 'day');
+};
+
 const checkTime = ts => {
-  return moment(utcToKst(ts)).format('hh:mm A');
+  return moment(ts).format('hh:mm A');
 };
 
 // Spinner
@@ -123,7 +134,18 @@ const MemoData_Text3 = styled.Text`
   font-family: ${({theme}) => theme.fontRegular};
 `;
 
+const MemoData_Text4 = styled.Text`
+  font-size: 16px;
+  font-weight: 400;
+  color: ${({theme}) => theme.white};
+  font-family: ${({theme}) => theme.fontRegular};
+`;
+
 // Memo Recently
+const MemoRecentContainer = styled.View`
+  flex: 1;
+`;
+
 const MemoRecentItemContainer = styled.View`
   border-radius: 10px;
   flex: 1;
@@ -202,84 +224,41 @@ const Text_underline = styled.Text`
 
 const MainPage = ({navigation}) => {
   const theme = useContext(ThemeContext);
-  const [memos, setMemos] = useState([{isAddContainer: true}]);
-  const [recentData, setRecentData] = useState([]);
+  const [memos, setMemos] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const {width, height} = Dimensions.get('screen');
-  const [slideIdx, setSlideIdx] = useState();
+  const [slideIdx, setSlideIdx] = useState(1);
+  const {user} = useContext(UserContext);
+  const {loading, error, data} = USE_QUERY(
+    'LOOK_UP_DIARY_PAGE',
+    user.accessToken,
+  );
   const PROFILE_IMG_DEFAULT = require('/assets/icons/profile_default_memo.png');
 
-  const testMemoData = [
-    {
-      startColorCode: '#FF0000',
-      endColorCode: '#222222',
-      adminUser: '김반쪽',
-      title: '제주도 한달살이 일기',
-      diaryStatus: 'WAIT',
-      invitationCode: 'ZVABWzCe',
-    },
-    {
-      startColorCode: '#00FF00',
-      endColorCode: '#222222',
-      adminUser: '김반쪽',
-      partnerUser: '홍길동',
-      title: '제주도 두달살이 일기',
-      diaryStatus: 'READY',
-    },
-    {
-      startColorCode: '#0000FF',
-      endColorCode: '#222222',
-      adminUser: '김반쪽',
-      partnerUser: '홍길동',
-      title: '제주도 세달살이 일기',
-      diaryStatus: 'START',
-      dday: 1,
-    },
-  ];
-
-  const testRecentlyData = [
-    {
-      user: {
-        profileImg: 'https://...',
-      },
-      title: '괌여행 첫날',
-      content: '드디어 출발이다..',
-      createdAt: '2022-08-09 22:41:56.045248',
-    },
-    {
-      user: {
-        profileImg: 'https://...',
-      },
-      dday: 3,
-      createdAt: '2022-08-07 12:41:56.045248',
-    },
-    {
-      user: {
-        profileImg: 'https://...',
-      },
-      title: '여행 계획을 세우자',
-      content: '오늘 김반쪽과 만나기로 했다..',
-      createdAt: '2022-08-03 07:11:36.045248',
-    },
-  ];
-
+  console.log('UserHome: ', user);
   const getData = () => {
-    // Get From DataBase, Start Spinner
-    // console.log('Get Data From QraphQL');
+    if (!loading) {
+      diaryData = [{isAddContainer: true}];
+      diaryData = diaryData.concat(data['diaries']);
 
-    // Diary, Page 분리
-    setMemos(memos.concat(testMemoData));
-    setRecentData(testRecentlyData);
-
-    setTimeout(() => {
+      setMemos(diaryData);
       setIsLoading(false);
-    }, 1000);
+    }
+  };
+
+  const _handlePushMessage = () => {
+    AsyncStorage.getItem('fcmData', (err, result) => {
+      console.log('Push Data: ', result);
+    });
   };
 
   // Get Query from QraphQL
   useEffect(() => {
+    // Push Data Check (TODO)!!!!
+    _handlePushMessage();
+
     getData();
-  }, []);
+  }, [loading, data]);
 
   const AddContainer = () => {
     return (
@@ -311,7 +290,7 @@ const MainPage = ({navigation}) => {
       case 'WAIT':
         return (
           <LinearGradient
-            colors={[item.startColorCode, item.endColorCode]}
+            colors={[item.color.startCode, item.color.endCode]}
             style={{
               width: '100%',
               height: '80%',
@@ -319,7 +298,9 @@ const MainPage = ({navigation}) => {
               borderRadius: 6,
             }}>
             <MemoDataItem>
-              <MemoData_Text1>{item.adminUser}님의</MemoData_Text1>
+              <MemoData_Text1>
+                {item.joinedUsers[0].nickname}님의
+              </MemoData_Text1>
               <MemoData_Text2>{item.title}</MemoData_Text2>
               <MemoBtnItem>
                 <TouchableOpacity
@@ -341,7 +322,7 @@ const MainPage = ({navigation}) => {
       case 'READY':
         return (
           <LinearGradient
-            colors={[item.startColorCode, item.endColorCode]}
+            colors={[item.color.startCode, item.color.endCode]}
             style={{
               width: '100%',
               height: '80%',
@@ -350,7 +331,8 @@ const MainPage = ({navigation}) => {
             }}>
             <MemoDataItem>
               <MemoData_Text1>
-                {item.adminUser}님과 {item.partnerUser}님의
+                {item.joinedUsers[0].nickname}님과
+                {item.joinedUsers[1].nickname}님의
               </MemoData_Text1>
               <MemoData_Text2>{item.title}</MemoData_Text2>
               <MemoBtnItem>
@@ -371,17 +353,47 @@ const MainPage = ({navigation}) => {
               marginTop: '8%',
             }}>
             <LinearGradient
-              colors={[item.startColorCode, item.endColorCode]}
+              colors={[item.color.startCode, item.color.endCode]}
               style={{width: '100%', height: '100%', borderRadius: 6}}>
               <MemoDataItem>
                 <MemoData_Text1>
-                  {item.adminUser}님과 {item.partnerUser}님의
+                  {item.joinedUsers[0].nickname}님과
+                  {item.joinedUsers[1].nickname}님의
                 </MemoData_Text1>
                 <MemoData_Text2>{item.title}</MemoData_Text2>
                 <MemoBtnItem>
                   <MemoData_Text3 style={{fontSize: 24}}>
-                    D-{item.dday}
+                    D-{item.currentHistory.remainingDays}
                   </MemoData_Text3>
+                </MemoBtnItem>
+              </MemoDataItem>
+            </LinearGradient>
+          </TouchableOpacity>
+        );
+      case 'DISCARD':
+        return (
+          <TouchableOpacity
+            onPress={() => navigation.navigate('History', item)}
+            style={{
+              width: '100%',
+              height: '80%',
+              marginTop: '8%',
+            }}>
+            <LinearGradient
+              colors={[theme.dark030, theme.dark030]}
+              style={{width: '100%', height: '100%', borderRadius: 6}}>
+              <MemoDataItem>
+                <MemoData_Text1>
+                  {item.joinedUsers[0].nickname}님과
+                  {item.joinedUsers[1].nickname}님의
+                </MemoData_Text1>
+                <MemoData_Text2>{item.title}</MemoData_Text2>
+                <MemoBtnItem>
+                  <MemoData_Text4>
+                    <Text_underline>
+                      {item.joinedUsers[1].nickname}님이 일기장을 나가셨습니다.
+                    </Text_underline>
+                  </MemoData_Text4>
                 </MemoBtnItem>
               </MemoDataItem>
             </LinearGradient>
@@ -395,7 +407,7 @@ const MainPage = ({navigation}) => {
     item.isAddContainer ? AddContainer() : MemoStatusContainer(item);
 
   const RecentContent = item => {
-    if (item.dday) {
+    if (!item.isSelf) {
       return (
         <MemoRecentItemLeft
           style={{
@@ -409,14 +421,14 @@ const MainPage = ({navigation}) => {
             color={theme.dark020}
             style={{marginRight: 3}}
           />
-          <MemoRecent_Text4>D-{item.dday}</MemoRecent_Text4>
+          <MemoRecent_Text4>D-{checkDateDiff(item.createdAt)}</MemoRecent_Text4>
         </MemoRecentItemLeft>
       );
     } else {
       return (
         <MemoRecentItemLeft>
           <MemoRecent_Text1>{item.title}</MemoRecent_Text1>
-          <MemoRecent_Text2>{item.content}</MemoRecent_Text2>
+          <MemoRecent_Text2>{item.body}</MemoRecent_Text2>
         </MemoRecentItemLeft>
       );
     }
@@ -424,12 +436,13 @@ const MainPage = ({navigation}) => {
 
   const Item2 = ({item}) => (
     //[TODO] Item.user.profileImg using
-    <MemoRecentItemContainer color={item.dday ? theme.homeColor : theme.white}>
+    <MemoRecentItemContainer
+      color={item.isSelf ? theme.white : theme.homeColor}>
       <MemoRecent_Icon>
         <AutoHeightImage
           width={40}
           maxHeight={60}
-          source={PROFILE_IMG_DEFAULT}
+          source={{uri: item.author.profileImg}}
           style={{
             borderRadius: 50,
           }}
@@ -449,6 +462,24 @@ const MainPage = ({navigation}) => {
 
   const renderItem2 = ({item}) => {
     return <Item2 item={item} />;
+  };
+
+  const renderRecentHistory = sliderIdx => {
+    if (sliderIdx > 0) {
+      if (memos[sliderIdx].currentHistory == null) {
+        return <MemoEmpty_Text1>교환 일기에 초대해주세요</MemoEmpty_Text1>;
+      } else if (memos[sliderIdx].currentHistory.pages.length == 0) {
+        return <MemoEmpty_Text1>최근 작성한 교환일기가 없어요</MemoEmpty_Text1>;
+      } else {
+        return (
+          <FlatList
+            data={memos[sliderIdx].currentHistory.pages}
+            renderItem={renderItem2}
+            numColumns={1}
+          />
+        );
+      }
+    }
   };
 
   const renderBtnFooter = sliderIdx => {
@@ -526,11 +557,9 @@ const MainPage = ({navigation}) => {
       </MemoFlexTop>
       <MemoFlexBottom>
         <MemoRecent_Title>최근 반쪽</MemoRecent_Title>
-        {recentData.length == 0 ? (
-          <MemoEmpty_Text1>최근 작성한 교환일기가 없어요</MemoEmpty_Text1>
-        ) : (
-          <FlatList data={recentData} renderItem={renderItem2} numColumns={1} />
-        )}
+        <MemoRecentContainer>
+          {renderRecentHistory(slideIdx)}
+        </MemoRecentContainer>
       </MemoFlexBottom>
       <MemoFlexFooter>{renderBtnFooter(slideIdx)}</MemoFlexFooter>
     </MemoDataContainer>
@@ -538,3 +567,85 @@ const MainPage = ({navigation}) => {
 };
 
 export default MainPage;
+
+/*
+const testMemoData = [
+  {
+    startColorCode: '#FF0000',
+    endColorCode: '#222222',
+    adminUser: '김반쪽',
+    title: '제주도 한달살이 일기',
+    diaryStatus: 'WAIT',
+    invitationCode: 'ZVABWzCe',
+  },
+  {
+    startColorCode: '#00FF00',
+    endColorCode: '#222222',
+    adminUser: '김반쪽',
+    partnerUser: '홍길동',
+    title: '제주도 두달살이 일기',
+    diaryStatus: 'READY',
+  },
+  {
+    startColorCode: '#0000FF',
+    endColorCode: '#222222',
+    adminUser: '김반쪽',
+    partnerUser: '홍길동',
+    title: '제주도 세달살이 일기',
+    diaryStatus: 'START',
+    dday: 1,
+  },
+];
+
+const testRecentlyData = [
+  {
+    user: {
+      profileImg: 'https://...',
+    },
+    title: '괌여행 첫날',
+    content: '드디어 출발이다..',
+    createdAt: '2022-08-09 22:41:56.045248',
+  },
+  {
+    user: {
+      profileImg: 'https://...',
+    },
+    dday: 3,
+    createdAt: '2022-08-07 12:41:56.045248',
+  },
+  {
+    user: {
+      profileImg: 'https://...',
+    },
+    title: '여행 계획을 세우자',
+    content: '오늘 김반쪽과 만나기로 했다..',
+    createdAt: '2022-08-03 07:11:36.045248',
+  },
+];
+
+const testRecentlyData = [
+  {
+    user: {
+      profileImg: 'https://...',
+    },
+    title: '괌여행 첫날',
+    content: '드디어 출발이다..',
+    createdAt: '2022-08-09 22:41:56.045248',
+  },
+  {
+    user: {
+      profileImg: 'https://...',
+    },
+    dday: 3,
+    createdAt: '2022-08-07 12:41:56.045248',
+  },
+  {
+    user: {
+      profileImg: 'https://...',
+    },
+    title: '여행 계획을 세우자',
+    content: '오늘 김반쪽과 만나기로 했다..',
+    createdAt: '2022-08-03 07:11:36.045248',
+  },
+];
+*/

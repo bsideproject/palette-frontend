@@ -77,8 +77,8 @@ const UPDATE_PROFILE = gql`
 `;
 
 const REGISTER_DIARY_PERIOD = gql`
-  mutation RegisterDiaryDate($diaryId: Long!, $period: Long!) {
-    updateDiaryDate(diaryDateInput: {diaryId: $diaryId, period: $period}) {
+  mutation createHistory($diaryId: Long!, $period: Int!) {
+    createHistory(createHistoryInput: {diaryId: $diaryId, period: $period}) {
       historyId
     }
   }
@@ -103,6 +103,37 @@ const DELETE_FCM_TOKEN = gql`
   }
 `;
 
+const LOOK_UP_DIARY_PAGE = gql`
+  query {
+    diaries {
+      id
+      title
+      color {
+        startCode
+        endCode
+      }
+      joinedUsers {
+        nickname
+      }
+      currentHistory {
+        remainingDays
+        pages {
+          id
+          title
+          body
+          isSelf
+          createdAt
+          author {
+            profileImg
+          }
+        }
+        id
+      }
+      diaryStatus
+    }
+  }
+`;
+
 // ---------------------------------------------------------
 const QUERY_ARRAY = {
   COLOR_CODE: COLOR_CODE,
@@ -113,6 +144,7 @@ const QUERY_ARRAY = {
   REGISTER_DIARY_PERIOD: REGISTER_DIARY_PERIOD,
   ADD_FCM_TOKEN: ADD_FCM_TOKEN,
   DELETE_FCM_TOKEN: DELETE_FCM_TOKEN,
+  LOOK_UP_DIARY_PAGE: LOOK_UP_DIARY_PAGE,
 };
 
 export const USE_QUERY = (Query, Token) => {

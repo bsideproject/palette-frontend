@@ -2,6 +2,16 @@ import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-community/async-storage';
 import PushNotification from 'react-native-push-notification';
 
+const setFcmDataInStorage = remoteMessage => {
+  if (Object.keys(remoteMessage).includes('data') && remoteMessage.data != '') {
+    AsyncStorage.setItem('fcmData', remoteMessage.data, () => {
+      console.log('FCM DATA:', remoteMessage.data);
+    });
+  } else {
+    AsyncStorage.removeItem('fcmData');
+  }
+};
+
 export async function requestUserPermission() {
   const authStatus = await messaging().requestPermission();
   const enabled =
@@ -38,6 +48,7 @@ export const NotificationListner = () => {
       'Notification caused app to open from background state:',
       remoteMessage.notification,
     );
+    setFcmDataInStorage(remoteMessage);
   });
 
   // Check whether an initial notification is available
@@ -49,15 +60,20 @@ export const NotificationListner = () => {
           'Notification caused app to open from quit state:',
           remoteMessage.notification,
         );
+        setFcmDataInStorage(remoteMessage);
       }
     });
 
   messaging().onMessage(async remoteMessage => {
     console.log('notification on foregruond state...', remoteMessage);
+    setFcmDataInStorage(remoteMessage);
     PushNotification.localNotification({
       channelId: 'half-diary',
       title: remoteMessage.notification.title,
       message: remoteMessage.notification.body,
+      data: remoteMessage.data,
+      largeIcon: 'ic_launcher_round',
+      smallIcon: 'ic_launcher_round',
     });
   });
 };

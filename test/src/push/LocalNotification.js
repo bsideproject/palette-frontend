@@ -1,5 +1,6 @@
 import {Platform} from 'react-native';
 import PushNotification from 'react-native-push-notification';
+import {Navigator} from 'react-native';
 
 export const configurePushNotify = () => {
   PushNotification.configure({
@@ -10,6 +11,7 @@ export const configurePushNotify = () => {
     // (required) Called when a remote is received or opened, or local notification is opened
     onNotification: function (notification) {
       console.log('NOTIFICATION:', notification);
+      Navigator.push('Home');
     },
     requestPermissions: Platform.OS === 'ios',
   });

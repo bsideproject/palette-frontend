@@ -154,6 +154,7 @@ const Signin = ({navigation}) => {
                 nickname: data.data.myProfile.nickname,
                 profileImg: data.data.myProfile.profileImg,
                 socialTypes: data.data.myProfile.socialTypes,
+                pushEnabled: data.data.myProfile.pushEnabled,
               });
             }
           })
@@ -199,6 +200,7 @@ const Signin = ({navigation}) => {
         nickname: data.myProfile.nickname,
         profileImg: data.myProfile.profileImg,
         socialTypes: data.myProfile.socialTypes,
+        pushEnabled: data.myProfile.pushEnabled,
       });
     }
   }, [addFcmTokenResult]);

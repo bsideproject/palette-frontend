@@ -98,6 +98,7 @@ const Joined = ({navigation}) => {
         nickname: data.myProfile.nickname,
         profileImg: data.myProfile.profileImg,
         socialTypes: data.myProfile.socialTypes,
+        pushEnabled: data.myProfile.pushEnabled,
       });
     }
   }, [addFcmTokenResult]);

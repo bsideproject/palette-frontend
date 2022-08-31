@@ -1,3 +1,4 @@
 <resources>
-    <color name="white">#FFF</color>
+    <color name="white">#FFFFFF</color>
+    <color name="custom">#0F4CFC</color>
 </resources>
