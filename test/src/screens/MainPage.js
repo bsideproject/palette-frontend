@@ -239,8 +239,19 @@ const MainPage = ({navigation}) => {
   const getData = () => {
     if (!loading) {
       diaryData = [{isAddContainer: true}];
-      diaryData = diaryData.concat(data['diaries']);
-
+      if (
+        data == undefined ||
+        data.length == 0 ||
+        data['diaries'] == undefined ||
+        data['diaries'].length == 0
+      ) {
+        console.log('Data is Empty');
+        setSlideIdx(0);
+      } else {
+        diaryData = diaryData.concat(data['diaries']);
+        //console.log('DATA!!!:', data['diaries']);
+        setSlideIdx(1);
+      }
       setMemos(diaryData);
       setIsLoading(false);
     }
@@ -466,6 +477,7 @@ const MainPage = ({navigation}) => {
 
   const renderRecentHistory = sliderIdx => {
     if (sliderIdx > 0) {
+      console.log('??', memos, slideIdx);
       if (memos[sliderIdx].currentHistory == null) {
         return <MemoEmpty_Text1>교환 일기에 초대해주세요</MemoEmpty_Text1>;
       } else if (memos[sliderIdx].currentHistory.pages.length == 0) {
