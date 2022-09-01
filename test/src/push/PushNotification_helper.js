@@ -2,7 +2,7 @@ import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-community/async-storage';
 import PushNotification from 'react-native-push-notification';
 
-const setFcmDataInStorage = remoteMessage => {
+export const setFcmDataInStorage = remoteMessage => {
   if (Object.keys(remoteMessage).includes('data') && remoteMessage.data != '') {
     AsyncStorage.setItem('fcmData', remoteMessage.data, () => {
       console.log('FCM DATA:', remoteMessage.data);

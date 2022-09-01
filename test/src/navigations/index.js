@@ -6,6 +6,7 @@ import SplashScreen from 'react-native-splash-screen';
 import {UserContext} from '@contexts';
 import {useNetInfo} from '@react-native-community/netinfo';
 import {NetworkContainer} from '@screens';
+import {navigationRef} from '../RootNavigation';
 
 const Navigation = () => {
   const {user} = useContext(UserContext);
@@ -31,7 +32,7 @@ const Navigation = () => {
   };
 
   return netConnected ? (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       {user.accessToken ? <Main /> : <Auth />}
       {/* <Main /> */}
     </NavigationContainer>

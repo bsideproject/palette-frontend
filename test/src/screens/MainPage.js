@@ -238,7 +238,7 @@ const MainPage = ({navigation}) => {
   console.log('UserHome: ', user);
   const getData = () => {
     if (!loading) {
-      diaryData = [{isAddContainer: true}];
+      let diaryData = [{isAddContainer: true}];
       if (
         data == undefined ||
         data.length == 0 ||
@@ -257,17 +257,8 @@ const MainPage = ({navigation}) => {
     }
   };
 
-  const _handlePushMessage = () => {
-    AsyncStorage.getItem('fcmData', (err, result) => {
-      console.log('Push Data: ', result);
-    });
-  };
-
   // Get Query from QraphQL
   useEffect(() => {
-    // Push Data Check (TODO)!!!!
-    _handlePushMessage();
-
     getData();
   }, [loading, data]);
 
