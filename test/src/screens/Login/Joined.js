@@ -6,8 +6,8 @@ import {Image} from 'react-native';
 import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
 import {UserContext} from '@contexts';
 import AsyncStorage from '@react-native-community/async-storage';
-import axios from 'axios';
 import {USE_QUERY, USE_MUTATION} from '@apolloClient/queries';
+import {loginApi} from '../../api/restfulAPI';
 
 const Container = styled.View`
   flex: 1;
@@ -45,21 +45,13 @@ const Joined = ({navigation}) => {
     accessToken,
   );
 
-  const _handleNextButtonPress = () => {
-    axios
-      .post('http://61.97.190.252:8080/api/v1/login', {
-        email: email,
-        socialType: socialType,
-      })
-      .then(response => {
-        AsyncStorage.setItem('access_token', response.data.accessToken, () => {
-          console.log('Joined AsyncStorage access_token Save!');
-          setAccessToken(prevState => response.data.accessToken);
-        });
-      })
-      .catch(error => {
-        console.log('login api error', error);
-      });
+  const _handleNextButtonPress = async () => {
+    const response = await loginApi(email, socialType);
+    const {data} = response;
+    AsyncStorage.setItem('access_token', data.accessToken, () => {
+      console.log('Joined AsyncStorage access_token Save!');
+      setAccessToken(data.accessToken);
+    });
   };
 
   useEffect(() => {

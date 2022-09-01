@@ -7,7 +7,7 @@ import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {USE_MUTATION} from '@apolloClient/queries';
 import AsyncStorage from '@react-native-community/async-storage';
-import axios from 'axios';
+import {imageUploadApi} from '../../api/restfulAPI';
 
 const Container = styled.View`
   flex: 1;
@@ -84,29 +84,14 @@ const ProfileImageSet = ({navigation}) => {
 
   const _handleNextButtonPress = async () => {
     if (!!uploadImage) {
-      await axios
-        .post('http://61.97.190.252:8080/api/v1/upload', uploadImage, {
-          headers: {
-            authorization: `Bearer ${accessToken}`,
-            'Content-Type': 'multipart/form-data',
-          },
-        })
-        .then(response => {
-          console.log('result=======>', response.data.urls[0]);
-          //유저 프로필 이미지 업로드
-          updateProfile({
-            variables: {profileImg: response.data.urls[0]},
-          });
+      const response = await imageUploadApi(uploadImage, accessToken);
+      const {data} = response;
+      //유저 프로필 이미지 업로드
+      updateProfile({
+        variables: {profileImg: data.urls[0]},
+      });
 
-          navigation.navigate('Joined');
-        })
-        .catch(error => {
-          const errorData = JSON.parse(JSON.stringify(error));
-          console.log('profile image upload api error', errorData.status);
-        })
-        .then(() => {
-          console.log('profile image upload api 실행 완료');
-        });
+      navigation.navigate('Joined');
     } else {
       //등록 프로필 이미지 없는 경우
       navigation.navigate('Joined');

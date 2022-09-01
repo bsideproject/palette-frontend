@@ -5,10 +5,10 @@ import {ThemeContext} from 'styled-components/native';
 import Icon from 'react-native-vector-icons/Feather';
 import MultipleImagePicker from '@baronha/react-native-multiple-image-picker';
 import Modal from 'react-native-modal';
-import axios from 'axios';
 import {UserContext} from '@contexts';
 import {launchCamera} from 'react-native-image-picker';
 import {UploadModal} from '@components';
+import {imageUploadApi} from '../../api/restfulAPI';
 
 const Container = styled.View`
   flex: 1;
@@ -321,28 +321,13 @@ const WriteDiary = ({navigation, route}) => {
     } else {
       //저장 기능 작성;
       if (imageArr.length > 0) {
-        console.log('이미지 업로드', JSON.stringify(uploadImage));
         //사진 업로드 한 경우
-        await axios
-          .post('http://61.97.190.252:8080/api/v1/upload', uploadImage, {
-            headers: {
-              authorization: `Bearer ${user.accessToken}`,
-              'Content-Type': 'multipart/form-data',
-            },
-          })
-          .then(response => {
-            //일기 이미지 저장 완료
-            console.log('result=======>', response.data.urls);
+        const response = await imageUploadApi(uploadImage, user.accessToken);
+        const {data} = response;
+        //일기 이미지 저장 완료
+        console.log('result=======>', response.data.urls);
 
-            //일기 저장 api연동 예정
-          })
-          .catch(error => {
-            const errorData = JSON.parse(JSON.stringify(error));
-            console.log('diary image upload api error', errorData.status);
-          })
-          .then(() => {
-            console.log('dariay image upload api 실행 완료');
-          });
+        //일기 저장 api연동 예정
       } else {
         //사진 업로드 하지 않은 경우
         //일기 저장 api연동 예정

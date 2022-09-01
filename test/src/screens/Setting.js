@@ -3,11 +3,11 @@ import {ThemeContext} from 'styled-components/native';
 import styled from 'styled-components/native';
 import {Button} from '@components';
 import Icon from 'react-native-vector-icons/AntDesign';
-import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
 import {UserContext} from '@contexts';
 import {USE_MUTATION} from '@apolloClient/queries';
 import {View} from 'react-native';
+import {logoutApi} from '../api/restfulAPI';
 
 const Container = styled.View`
   flex: 1;
@@ -56,6 +56,12 @@ const BoundaryContainer = styled.View`
   margin: 20px 0;
 `;
 
+const VersionText = styled.Text`
+  font-size:14px;
+  font-family: ${({theme}) => theme.fontRegular};
+  color:${({theme}) => theme.dark030}};
+`;
+
 const PROFILE_DEFAULT = require('/assets/icons/default_profile.png');
 
 const Setting = ({navigation}) => {
@@ -76,40 +82,22 @@ const Setting = ({navigation}) => {
     });
   };
 
-  const _handleLogout = () => {
-    //로그아웃 함수
-    AsyncStorage.getItem('refresh_token', async (err, result) => {
-      if (!!result) {
-        await axios
-          .get('http://61.97.190.252:8080/api/v1/logout', {
-            headers: {
-              Cookie: result,
-            },
-          })
-          .then(response => {
-            console.log('로그아웃', response);
-            _handleDeleteFcmToken();
-            AsyncStorage.removeItem('refresh_token');
-            AsyncStorage.removeItem('access_token');
-            AsyncStorage.removeItem('email');
-            AsyncStorage.removeItem('fcmtoken');
-            setUser({
-              accessToken: null,
-              email: null,
-              socialType: null,
-              nickname: null,
-              profileImg: null,
-              socialTypes: null,
-              pushEnabled: null,
-            });
-          })
-          .catch(error => {
-            console.log('logout api error', JSON.stringify(error));
-          })
-          .then(() => {
-            console.log('logout api 실행 완료');
-          });
-      }
+  const _handleLogout = async () => {
+    const response = await logoutApi();
+    console.log('로그아웃', response);
+    _handleDeleteFcmToken();
+    AsyncStorage.removeItem('refresh_token');
+    AsyncStorage.removeItem('access_token');
+    AsyncStorage.removeItem('email');
+    AsyncStorage.removeItem('fcmtoken');
+    setUser({
+      accessToken: null,
+      email: null,
+      socialType: null,
+      nickname: null,
+      profileImg: null,
+      socialTypes: null,
+      pushEnabled: null,
     });
   };
 
@@ -130,19 +118,19 @@ const Setting = ({navigation}) => {
           </View>
           <Icon name={'right'} size={15} color={theme.dark010} />
         </SettingContainer>
-        <BoundaryContainer />
+        {/* <BoundaryContainer />
         <SettingContainer>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <SettingText>공지사항</SettingText>
           </View>
           <Icon name={'right'} size={15} color={theme.dark010} />
-        </SettingContainer>
+        </SettingContainer> */}
         <BoundaryContainer />
         <SettingContainer>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <SettingText>버전</SettingText>
           </View>
-          <Icon name={'right'} size={15} color={theme.dark010} />
+          <VersionText>v.1.0.1</VersionText>
         </SettingContainer>
         <BoundaryContainer />
         <SettingContainer onPress={() => navigation.navigate('FirstExplain')}>

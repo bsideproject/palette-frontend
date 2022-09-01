@@ -14,13 +14,10 @@ import {UserContext} from '@contexts';
 import SocialBtn from '@components/SocialBtn';
 import AsyncStorage from '@react-native-community/async-storage';
 import {ThemeContext} from 'styled-components/native';
-import axios from 'axios';
 import {USE_QUERY, USE_MUTATION} from '@apolloClient/queries';
 import {
   login,
   getProfile as getKakaoProfile,
-  logout,
-  unlink,
 } from '@react-native-seoul/kakao-login';
 import {
   NaverLogin,
@@ -29,6 +26,7 @@ import {
 import {Permission} from '@screens';
 import {responsePathAsArray} from 'graphql';
 import {requestUserPermission} from '../../push/PushNotification_helper';
+import {refreshApi, loginApi} from '../../api/restfulAPI';
 
 const Container = styled.View`
   flex: 1;
@@ -98,7 +96,6 @@ const Signin = ({navigation}) => {
   useEffect(() => {
     PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.CAMERA)
       .then(response => {
-        console.log('camera permission', response);
         if (!response) {
           setPermission(true);
         } else {
@@ -106,7 +103,6 @@ const Signin = ({navigation}) => {
             PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
           )
             .then(response => {
-              console.log('storage permission', response);
               if (!response) {
                 setPermission(true);
               } else {
@@ -117,7 +113,6 @@ const Signin = ({navigation}) => {
                   }
                 });
                 AsyncStorage.getItem('social_type', (err, result) => {
-                  console.log('이전 로그인 했던 플랫폼 --> ', result);
                   setPrevSignType(result);
                 });
                 // FCM Token
@@ -145,7 +140,6 @@ const Signin = ({navigation}) => {
       setTimeout(async () => {
         await refetch()
           .then(data => {
-            console.log('refetch data', data);
             if (data.data.myProfile.nickname !== '') {
               setUser({
                 accessToken: accessToken,
@@ -159,9 +153,8 @@ const Signin = ({navigation}) => {
             }
           })
           .catch(error => {
-            console.log('refetch error', error.networkError.statusCode);
             if (error.networkError.statusCode === 401) {
-              refreshFunc();
+              _handleRefreshApi();
             }
           })
           .then(() => console.log('refetch success'));
@@ -205,31 +198,20 @@ const Signin = ({navigation}) => {
     }
   }, [addFcmTokenResult]);
 
-  //naver-login-ios settings
-  // const iosKeys = {
-  //   kConsumerKey: "w4cSPEHXMDrXw_OcULnX",
-  //   kConsumerSecret: "7dATQfr1oi",
-  //   kServiceAppName: "테스트앱(iOS)",
-  //   kServiceAppUrlScheme: "testapp" // only for iOS
-  // };
-
-  //naver-login-android settings
   const androidKeys = {
     kConsumerKey: 'w4cSPEHXMDrXw_OcULnX',
     kConsumerSecret: '7dATQfr1oi',
     kServiceAppName: 'com.diary',
   };
 
-  const initials = Platform.OS === 'ios' ? iosKeys : androidKeys;
+  const initials = androidKeys;
 
   const getUserProfile = async props => {
-    // const profileResult = await getProfile(naverToken.accessToken);
     const profileResult = await getNaverProfile(props.accessToken);
     if (profileResult.resultcode === '024') {
       Alert.alert('로그인 실패', profileResult.message);
       return;
     }
-    console.log('profileResult email--> ', profileResult.response.email);
     console.log('profileResult birthday--> ', profileResult.response.birthday);
     console.log(
       'profileResult birthyear--> ',
@@ -243,7 +225,6 @@ const Signin = ({navigation}) => {
     setIsRegistered(false);
     return new Promise((resolve, reject) => {
       NaverLogin.login(props, async (err, token) => {
-        console.log(`\n\n  Token is fetched  :: ${JSON.stringify(token)} \n\n`);
         if (err) {
           reject(err);
           return;
@@ -261,79 +242,56 @@ const Signin = ({navigation}) => {
   const _handleKakaoSignin = async () => {
     try {
       setIsRegistered(false);
-      const token = await login();
-
-      console.log('카카오 로그인 결과 -> ', JSON.stringify(token));
-
+      await login();
       const profile = await getKakaoProfile();
-
-      console.log('getProfile email--> ', profile.email);
       console.log('getProfile birthday--> ', profile.birthday);
       console.log('getProfile birthyear--> ', profile.birthyear);
       console.log('getProfile gender--> ', profile.gender);
       getAccessToken({email: profile.email, socialType: 'KAKAO'});
-      // setResult(JSON.stringify(token));
     } catch (error) {
       console.log(error);
     }
   };
 
   const getAccessToken = async ({email, socialType}) => {
-    await axios
-      .post('http://61.97.190.252:8080/api/v1/login', {
+    const response = await loginApi(email, socialType);
+    const {data} = response;
+    if (!data.isRegistered) {
+      //데이터베이스에 회원이 존재 하지 않는 경우
+      setAutoLogin(prev => !prev);
+    }
+    if (data.socialTypes.length === 1 && data.socialTypes[0] !== socialType) {
+      navigation.navigate('AccountConnect', {
+        accessToken: data.accessToken,
+        socialType: data.socialTypes[0],
         email: email,
-        socialType: socialType,
-      })
-      .then(response => {
-        console.log('login data => socialTypes...', response.data.socialTypes);
-        if (!response.data.isRegistered) {
-          console.log('약관동의x');
-          //데이터베이스에 회원이 존재 하지 않는 경우
-          setAutoLogin(prev => !prev);
-        }
-        if (
-          response.data.socialTypes.length === 1 &&
-          response.data.socialTypes[0] !== socialType
-        ) {
-          navigation.navigate('AccountConnect', {
-            accessToken: response.data.accessToken,
-            socialType: response.data.socialTypes[0],
-            email: email,
-          });
-          return;
-        }
-
-        AsyncStorage.setItem(
-          'refresh_token',
-          response.headers['set-cookie'][0].split(' ')[0],
-          () => {
-            console.log('AsyncStorage refresh_token Save!');
-          },
-        );
-        AsyncStorage.setItem('access_token', response.data.accessToken, () => {
-          console.log('AsyncStorage access_token Save!');
-          setAccessToken(response.data.accessToken);
-        });
-        AsyncStorage.setItem('social_type', socialType, () => {
-          console.log('AsyncStorage social_type Save!');
-          setSocialType(socialType);
-        });
-        AsyncStorage.setItem('email', email, () => {
-          console.log('AsyncStorage email Save!');
-        });
-        setIsRegistered(response.data.isRegistered);
-
-        if (!response.data.isRegistered) {
-          //데이터베이스에 회원이 존재 하지 않는 경우
-          navigation.navigate('Agree');
-        }
-      })
-      .catch(error => {
-        console.log('login api error', JSON.stringify(error));
-      })
-      .then(() => {
-        console.log('login api 실행 완료');
       });
+      return;
+    }
+
+    AsyncStorage.setItem(
+      'refresh_token',
+      response.headers['set-cookie'][0].split(' ')[0],
+      () => {
+        console.log('AsyncStorage refresh_token Save!');
+      },
+    );
+    AsyncStorage.setItem('access_token', data.accessToken, () => {
+      console.log('AsyncStorage access_token Save!');
+      setAccessToken(data.accessToken);
+    });
+    AsyncStorage.setItem('social_type', socialType, () => {
+      console.log('AsyncStorage social_type Save!');
+      setSocialType(socialType);
+    });
+    AsyncStorage.setItem('email', email, () => {
+      console.log('AsyncStorage email Save!');
+    });
+    setIsRegistered(data.isRegistered);
+
+    if (!data.isRegistered) {
+      navigation.navigate('Agree');
+    }
   };
 
   const _handleNavFirstExplain = () => {
@@ -344,42 +302,23 @@ const Signin = ({navigation}) => {
     navigation.navigate('SecondExplain');
   };
 
-  const refreshFunc = () => {
-    //토큰 갱신 함수
-    AsyncStorage.getItem('refresh_token', async (err, result) => {
-      if (!!result) {
-        await axios
-          .post('http://61.97.190.252:8080/api/v1/token', {
-            headers: {
-              Cookie: result,
-            },
-          })
-          .then(response => {
-            console.log('토큰 갱신', response.data);
-            setAccessToken(response.data.accessToken);
-            AsyncStorage.setItem(
-              'access_token',
-              response.data.accessToken,
-              () => {
-                console.log('refresh and save access_token');
-              },
-            );
-            AsyncStorage.setItem(
-              'refresh_token',
-              response.headers['set-cookie'][0].split(' ')[0],
-              () => {
-                console.log('refresh and refresh_token save');
-              },
-            );
-          })
-          .catch(error => {
-            console.log('refresh token api error', error);
-          })
-          .then(() => {
-            console.log('refresh token api 실행 완료');
-          });
-      }
+  const _handleRefreshApi = async () => {
+    const response = await refreshApi();
+    if (response === 'A001') {
+      return;
+    }
+    const {data} = response;
+    setAccessToken(data.accessToken);
+    AsyncStorage.setItem('access_token', data.accessToken, () => {
+      console.log('refresh and save access_token');
     });
+    AsyncStorage.setItem(
+      'refresh_token',
+      response.headers['set-cookie'][0].split(' ')[0],
+      () => {
+        console.log('refresh and refresh_token save');
+      },
+    );
   };
 
   const LastLogin = () => {
