@@ -234,10 +234,17 @@ const MainPage = ({navigation}) => {
     user.accessToken,
   );
   const PROFILE_IMG_DEFAULT = require('/assets/icons/profile_default_memo.png');
+  //console.log('UserHome: ', user);
 
-  console.log('UserHome: ', user);
   const getData = () => {
-    if (!loading) {
+    if (error != undefined) {
+      console.log('ERROR: ', JSON.stringify(error));
+      // [TODO] Go to Error Page
+    } else {
+      if (loading || data == undefined) {
+        console.log('Data Fecting & Data Empty');
+        return;
+      }
       let diaryData = [{isAddContainer: true}];
       if (
         data == undefined ||
@@ -260,7 +267,7 @@ const MainPage = ({navigation}) => {
   // Get Query from QraphQL
   useEffect(() => {
     getData();
-  }, [loading, data]);
+  }, [loading]);
 
   const AddContainer = () => {
     return (
@@ -443,7 +450,8 @@ const MainPage = ({navigation}) => {
       <MemoRecent_Icon>
         <AutoHeightImage
           width={40}
-          maxHeight={60}
+          height={40}
+          maxHeight={40}
           source={{uri: item.author.profileImg}}
           style={{
             borderRadius: 50,
@@ -468,7 +476,6 @@ const MainPage = ({navigation}) => {
 
   const renderRecentHistory = sliderIdx => {
     if (sliderIdx > 0) {
-      console.log('??', memos, slideIdx);
       if (memos[sliderIdx].currentHistory == null) {
         return <MemoEmpty_Text1>교환 일기에 초대해주세요</MemoEmpty_Text1>;
       } else if (memos[sliderIdx].currentHistory.pages.length == 0) {

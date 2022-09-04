@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {ThemeContext} from 'styled-components/native';
 import styled from 'styled-components/native';
 import {Button} from '@components';
@@ -8,6 +8,8 @@ import {UserContext} from '@contexts';
 import {USE_MUTATION} from '@apolloClient/queries';
 import {View} from 'react-native';
 import {logoutApi} from '../api/restfulAPI';
+import SwitchToggle from 'react-native-switch-toggle';
+import {useIsFocused} from '@react-navigation/native';
 
 const Container = styled.View`
   flex: 1;
@@ -67,8 +69,17 @@ const PROFILE_DEFAULT = require('/assets/icons/default_profile.png');
 const Setting = ({navigation}) => {
   const theme = useContext(ThemeContext);
   const {setUser, user} = useContext(UserContext);
+  const [pushToggle, setPushToggle] = useState(user.pushEnabled);
+  const focus = useIsFocused();
+
+  console.log('ss', user, pushToggle);
+
   const [deleteFcmToken, deleteFcmTokenResult] = USE_MUTATION(
     'DELETE_FCM_TOKEN',
+    user.accessToken,
+  );
+  const [updateProfile, updateResult] = USE_MUTATION(
+    'UPDATE_PROFILE',
     user.accessToken,
   );
 
@@ -101,6 +112,28 @@ const Setting = ({navigation}) => {
     });
   };
 
+  const _handlePushEnabled = () => {
+    let toggle = !pushToggle;
+    console.log('Toggle : ', toggle);
+    setPushToggle(toggle);
+    updateProfile({
+      variables: {pushEnabled: toggle},
+    });
+    setUser({
+      accessToken: user.accessToken,
+      email: user.email,
+      socialType: user.socialType,
+      nickname: user.nickname,
+      profileImg: user.profileImg,
+      socialTypes: user.socialType,
+      pushEnabled: toggle,
+    });
+  };
+
+  useEffect(() => {
+    setPushToggle(user.pushEnabled);
+  }, [focus]);
+
   return (
     <Container>
       <InnerContainer>
@@ -118,13 +151,31 @@ const Setting = ({navigation}) => {
           </View>
           <Icon name={'right'} size={15} color={theme.dark010} />
         </SettingContainer>
-        {/* <BoundaryContainer />
+        <BoundaryContainer />
         <SettingContainer>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <SettingText>공지사항</SettingText>
+            <SettingText>푸시 알림</SettingText>
           </View>
-          <Icon name={'right'} size={15} color={theme.dark010} />
-        </SettingContainer> */}
+          <SwitchToggle
+            switchOn={pushToggle}
+            circleColorOn={theme.pointColor}
+            backgroundColorOn={theme.homeColor}
+            circleColorOff={theme.dark030}
+            onPress={_handlePushEnabled}
+            containerStyle={{
+              width: 40,
+              height: 15,
+              borderRadius: 25,
+              alignItems: 'center',
+              marginTop: 5,
+            }}
+            circleStyle={{
+              width: 20,
+              height: 20,
+              borderRadius: 25,
+            }}
+          />
+        </SettingContainer>
         <BoundaryContainer />
         <SettingContainer>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>

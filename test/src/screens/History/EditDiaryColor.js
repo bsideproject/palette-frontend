@@ -72,10 +72,14 @@ const EditDiaryColor = ({navigation, route}) => {
   const {loading, error, data} = USE_QUERY('COLOR_CODE', user.accessToken);
 
   const getData = () => {
-    // Get From DataBase, Start Spinner
-    console.log('Get Data From QraphQL');
-
-    if (!loading) {
+    if (error != undefined) {
+      console.log('ERROR: ', JSON.stringify(error));
+      // [TODO] Go to Error Page
+    } else {
+      if (loading || data == undefined) {
+        console.log('Data Fecting & Data Empty');
+        return;
+      }
       let readData = [];
       data['colors'].map(item => {
         readData.push({
@@ -85,9 +89,8 @@ const EditDiaryColor = ({navigation, route}) => {
           endCode: item.endCode,
         });
       });
-      setIsLoading(false);
       setColors(readData);
-      console.log(readData);
+      setIsLoading(false);
     }
   };
 

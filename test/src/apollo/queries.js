@@ -42,6 +42,7 @@ const GET_PROFILE = gql`
       nickname
       profileImg
       socialTypes
+      pushEnabled
       diaries {
         title
         invitationCode
@@ -56,6 +57,7 @@ const UPDATE_PROFILE = gql`
     $agreeWithTerms: Boolean
     $profileImg: String
     $socialTypes: [String!]
+    $pushEnabled: Boolean
   ) {
     editMyProfile(
       editMyProfileInput: {
@@ -63,6 +65,7 @@ const UPDATE_PROFILE = gql`
         agreeWithTerms: $agreeWithTerms
         profileImg: $profileImg
         socialTypes: $socialTypes
+        pushEnabled: $pushEnabled
       }
     ) {
       id

@@ -36,7 +36,7 @@ const AddInviteCode = ({navigation}) => {
   const [errorMessage, setErrorMessage] = useState('유효하지 않은 코드입니다.');
   const [isError, setIsError] = useState(false);
   const {user} = useContext(UserContext);
-  const [setInviteCode, inviteCodeResult] = USE_MUTATION(
+  const [setInviteCode, {inviteCodeResult, loading, error}] = USE_MUTATION(
     'SET_INVITE_CODE',
     user.accessToken,
   );
@@ -51,27 +51,27 @@ const AddInviteCode = ({navigation}) => {
   };
 
   useEffect(() => {
-    //console.log('DATA', inviteCodeResult.data);
-    if (inviteCodeResult.data?.inviteDiary.adminUser) {
-      // [TODO] Invite Code Status
-      console.log(inviteCodeResult.data);
-      let isError = false;
-
-      // Error Status
-      if (isError) {
-        setIsError(true);
+    if (error != undefined) {
+      setIsError(true);
+      let jsonData = JSON.parse(JSON.stringify(error));
+      setErrorMessage(jsonData.message);
+    } else {
+      if (loading || inviteCodeResult == undefined) {
+        console.log('Data Fecting & Data Empty');
         return;
-      } else {
+      }
+      // If Success
+      if (inviteCodeResult.data?.inviteDiary.adminUser) {
+        // [TODO] Invite Code Status
+        console.log(inviteCodeResult.data);
         // If Success
         navigation.navigate('CompleteInviteCode', {
           userName: inviteCodeResult.data.inviteDiary.adminUser.nickname,
           memoName: inviteCodeResult.data.inviteDiary.diary.title,
         });
       }
-    } else {
-      console.log('Loading or Error', inviteCodeResult.data);
     }
-  }, [inviteCodeResult]);
+  }, [loading]);
 
   return (
     <KeyboardAvoidingScrollView

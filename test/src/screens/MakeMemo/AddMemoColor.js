@@ -77,11 +77,14 @@ const AddMemoColor = ({navigation, route}) => {
   );
 
   const getData = () => {
-    // Get From DataBase, Start Spinner
-    console.log('Get Data From QraphQL');
-    // console.log(loading, error, data);
-
-    if (!loading) {
+    if (error != undefined) {
+      console.log('ERROR: ', JSON.stringify(error));
+      // [TODO] Go to Error Page
+    } else {
+      if (loading || data == undefined) {
+        console.log('Data Fecting & Data Empty');
+        return;
+      }
       let readData = [];
       data['colors'].map(item => {
         readData.push({
@@ -91,9 +94,9 @@ const AddMemoColor = ({navigation, route}) => {
           endCode: item.endCode,
         });
       });
-      setIsLoading(false);
       setColors(readData);
-      console.log(readData);
+      // console.log(readData);
+      setIsLoading(false);
     }
   };
 

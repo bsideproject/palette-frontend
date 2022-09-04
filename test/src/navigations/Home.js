@@ -6,6 +6,8 @@ import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {TouchableOpacity} from 'react-native';
 import {UserContext} from '../contexts';
+import styled from 'styled-components/native';
+import AutoHeightImage from 'react-native-auto-height-image';
 
 const TabIcon = ({name, focused}) => {
   const theme = useContext(ThemeContext);
@@ -17,6 +19,35 @@ const TabIcon = ({name, focused}) => {
     />
   );
 };
+
+const ProfileContainer = styled.View`
+  flex: 1;
+`;
+
+const ProfileRow = styled.View`
+  flex: 1;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+`;
+
+const ProfileImage = styled.Image`
+  flex: 2;
+  width: 37px;
+  height: 37px;
+  border-radius: 50px;
+`;
+
+const ProfileNickname = styled.Text`
+  flex: 1;
+  font-family: ${({theme}) => theme.fontBold};
+  font-size: 16px;
+  border-radius: 50px;
+  margin-left: 10px;
+`;
+
+const PROFILE_DEFAULT = require('/assets/icons/default_profile.png');
+
 const Tab = createBottomTabNavigator();
 
 const Home = ({navigation, route}) => {
@@ -49,7 +80,7 @@ const Home = ({navigation, route}) => {
         },
         headerTitleStyle: {
           color: theme.dark010,
-          fontSize: 16,
+          fontSize: 20,
           fontFamily: theme.fontBold,
         },
         headerStyle: {
@@ -58,7 +89,30 @@ const Home = ({navigation, route}) => {
           borderBottomColor: theme.light020,
           height: 60,
         },
-        title: curScreenName,
+        title:
+          curScreenName != '더 보기' ? (
+            <ProfileContainer>
+              {user.profileImg !== null ? (
+                <ProfileRow>
+                  <ProfileImage source={{uri: user.profileImg}} />
+                  <ProfileNickname>{curScreenName}</ProfileNickname>
+                </ProfileRow>
+              ) : (
+                <AutoHeightImage
+                  width={40}
+                  maxHeight={60}
+                  source={{uri: PROFILE_DEFAULT}}
+                  style={{
+                    borderRadius: 50,
+                  }}
+                />
+              )}
+            </ProfileContainer>
+          ) : (
+            <ProfileContainer>
+              <ProfileNickname>{curScreenName}</ProfileNickname>
+            </ProfileContainer>
+          ),
       }}>
       <Tab.Screen
         headerTitle="Home"

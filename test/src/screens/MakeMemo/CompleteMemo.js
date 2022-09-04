@@ -105,7 +105,7 @@ const CompleteMemo = ({navigation, route}) => {
   const theme = useContext(ThemeContext);
   const [pushModalVisible, setPushModalVisible] = useState(false);
   const MAKE_IMG = require('/assets/icons/make.png');
-  const {user, setUser} = useContext(UserContext);
+  const {user} = useContext(UserContext);
   console.log('user:', user);
 
   const _handleMoveMainPage = () => {
