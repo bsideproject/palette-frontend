@@ -13,10 +13,9 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import AutoHeightImage from 'react-native-auto-height-image';
 import Icon_Ionicons from 'react-native-vector-icons/Ionicons';
 import {Button} from '@components';
-import {utcToKst} from '~/src/utils';
-import AsyncStorage from '@react-native-community/async-storage';
 import {UserContext} from '@contexts';
 import {USE_QUERY} from '@apolloClient/queries';
+import {useIsFocused} from '@react-navigation/native';
 
 // Time & Date Function
 const checkDate = ts => {
@@ -108,7 +107,7 @@ const MemoBtnItem = styled.View`
   justify-content: center;
   margin-bottom: 5%;
   margin-top: 5%;
-  width: 70%;
+  width: 100%;
 `;
 
 const MemoData_Text1 = styled.Text`
@@ -229,11 +228,11 @@ const MainPage = ({navigation}) => {
   const {width, height} = Dimensions.get('screen');
   const [slideIdx, setSlideIdx] = useState(1);
   const {user} = useContext(UserContext);
-  const {loading, error, data} = USE_QUERY(
+  const {loading, error, data, refetch} = USE_QUERY(
     'LOOK_UP_DIARY_PAGE',
     user.accessToken,
   );
-  const PROFILE_IMG_DEFAULT = require('/assets/icons/profile_default_memo.png');
+  const focus = useIsFocused();
   //console.log('UserHome: ', user);
 
   const getData = () => {
@@ -256,18 +255,24 @@ const MainPage = ({navigation}) => {
         setSlideIdx(0);
       } else {
         diaryData = diaryData.concat(data['diaries']);
-        //console.log('DATA!!!:', data['diaries']);
+        // console.log('DATA!!!:', data['diaries']);
         setSlideIdx(1);
       }
       setMemos(diaryData);
-      setIsLoading(false);
     }
   };
 
   // Get Query from QraphQL
   useEffect(() => {
-    getData();
-  }, [loading]);
+    if (focus) {
+      setIsLoading(true);
+      refetch();
+      getData();
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 500);
+    }
+  }, [focus, loading, data]);
 
   const AddContainer = () => {
     return (
@@ -561,7 +566,7 @@ const MainPage = ({navigation}) => {
           renderItem={renderItem1}
           sliderWidth={width * 0.9}
           itemWidth={width * 0.9}
-          firstItem={1}
+          firstItem={slideIdx}
           onBeforeSnapToItem={slideIndex => setSlideIdx(slideIndex)}
         />
       </MemoFlexTop>

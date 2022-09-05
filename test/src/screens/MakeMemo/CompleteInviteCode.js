@@ -98,7 +98,6 @@ const CompleteInviteCode = ({navigation, route}) => {
           />
         </ImgContainer>
         <TxtContainer>
-          <TxtStyle>{userName}님이</TxtStyle>
           <InviteTxtStyle>
             {route.params.userName}의 {route.params.memoName}
           </InviteTxtStyle>

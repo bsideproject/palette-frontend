@@ -72,8 +72,6 @@ const Setting = ({navigation}) => {
   const [pushToggle, setPushToggle] = useState(user.pushEnabled);
   const focus = useIsFocused();
 
-  console.log('ss', user, pushToggle);
-
   const [deleteFcmToken, deleteFcmTokenResult] = USE_MUTATION(
     'DELETE_FCM_TOKEN',
     user.accessToken,

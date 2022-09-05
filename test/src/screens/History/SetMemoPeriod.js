@@ -56,8 +56,10 @@ const Container = styled.View`
 const SetMemoPeriod = ({navigation, route}) => {
   const theme = useContext(ThemeContext);
   const {user} = useContext(UserContext);
-  const [updateDiaryPeriod, {updateDiaryPeriodResult, loading, error}] =
-    USE_MUTATION('REGISTER_DIARY_PERIOD', user.accessToken);
+  const [updateDiaryPeriod, {data, loading, error}] = USE_MUTATION(
+    'REGISTER_DIARY_PERIOD',
+    user.accessToken,
+  );
 
   const _handleSetMemoPeriod = period => {
     console.log(route.params.id);
@@ -77,15 +79,15 @@ const SetMemoPeriod = ({navigation, route}) => {
       console.log('ERROR: ', JSON.stringify(error));
       // [TODO] Go to Error Page
     } else {
-      if (loading || updateDiaryPeriodResult == undefined) {
+      if (loading || data == undefined) {
         console.log('Data Fecting & Data Empty');
         return;
       }
-      console.log('DATA', updateDiaryPeriodResult.data);
-      if (updateDiaryPeriodResult.data?.updateDiaryDate.historyId) {
+      console.log('DATA', data);
+      if (data?.createHistory.historyId) {
         navigation.navigate('Home');
       } else {
-        console.log('Loading or Error', updateDiaryPeriodResult.data);
+        console.log('Loading or Error', data);
       }
     }
   }, [loading]);

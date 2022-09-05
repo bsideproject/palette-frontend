@@ -4,6 +4,8 @@ import styled from 'styled-components/native';
 import {Text} from 'react-native';
 import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
 import {Button, Input, ErrorMessage} from '@components';
+import {USE_QUERY, USE_MUTATION} from '@apolloClient/queries';
+import {UserContext} from '@contexts';
 
 const Container = styled.View`
   flex: 1;
@@ -34,6 +36,11 @@ const EditDiaryTitle = ({navigation, route}) => {
   const [errorMessage, setErrorMessage] = useState('');
   const [isError, setIsError] = useState(false);
   const pattern_spc = /[~!@#$%^&*()_+|<>?:{}]/; // 특수문자
+  const {user} = useContext(UserContext);
+  const [updateDiaryTitle, {data, loading, error}] = USE_MUTATION(
+    'UPDATE_DIARY',
+    user.accessToken,
+  );
 
   const _handleSetMemoColorPress = () => {
     // Check Valid Type
@@ -48,9 +55,13 @@ const EditDiaryTitle = ({navigation, route}) => {
       setErrorMessage('특수문자를 제외한 제목을 입력해주세요.');
     } else {
       setIsError(false);
-
       console.log('Receive Data: ', route.params, name);
-      // [TODO] : Edit Diary Title Using GraphQL
+      updateDiaryTitle({
+        variables: {
+          diaryId: route.params,
+          title: name,
+        },
+      });
       navigation.goBack();
     }
   };

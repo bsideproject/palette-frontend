@@ -137,6 +137,20 @@ const LOOK_UP_DIARY_PAGE = gql`
   }
 `;
 
+const UPDATE_DIARY = gql`
+  mutation updateDiary($diaryId: Long!, $title: String!, $colorId: String!) {
+    updateDiary(
+      updateDiaryInput: {diaryId: $diaryId, title: $title, colorId: 3}
+    )
+  }
+`;
+
+const EXIT_DIARY = gql`
+  mutation outDiary($diaryId: Long!) {
+    outDiary(outDiaryInput: {diaryId: $diaryId})
+  }
+`;
+
 // ---------------------------------------------------------
 const QUERY_ARRAY = {
   COLOR_CODE: COLOR_CODE,
@@ -148,6 +162,8 @@ const QUERY_ARRAY = {
   ADD_FCM_TOKEN: ADD_FCM_TOKEN,
   DELETE_FCM_TOKEN: DELETE_FCM_TOKEN,
   LOOK_UP_DIARY_PAGE: LOOK_UP_DIARY_PAGE,
+  UPDATE_DIARY: UPDATE_DIARY,
+  EXIT_DIARY: EXIT_DIARY,
 };
 
 export const USE_QUERY = (Query, Token) => {

@@ -10,6 +10,8 @@ import moment from 'moment';
 import {FlatList} from 'react-native-gesture-handler';
 import {Dimensions} from 'react-native';
 import {utcToKst} from '~/src/utils';
+import {USE_QUERY, USE_MUTATION} from '@apolloClient/queries';
+import {UserContext} from '@contexts';
 
 const DateTime = ts => {
   return moment(utcToKst(ts)).format('YYYY년 MM월 DD일');
@@ -351,6 +353,11 @@ const History = ({navigation, route}) => {
   const {width, height} = Dimensions.get('screen');
   // History
   const [selDiary, setSelDiary] = useState(null);
+  const {user} = useContext(UserContext);
+  const [exitDiary, exitDiaryResult] = USE_MUTATION(
+    'EXIT_DIARY',
+    user.accessToken,
+  );
   // console.log(RemainDate('2022-08-22 07:11:36.045248'));
   // console.log(DateConvertDD('2022-08-16 22:41:56.045248'));
 
@@ -486,7 +493,7 @@ const History = ({navigation, route}) => {
 
     setTimeout(() => {
       setIsLoading(false);
-    }, 1000);
+    }, 500);
   };
 
   // Get Query from QraphQL
@@ -502,10 +509,10 @@ const History = ({navigation, route}) => {
         setExitModalVisible(true);
         break;
       case 'MODIFY':
-        navigation.navigate('EditDiaryTitle', selDiary);
+        navigation.navigate('EditDiaryTitle', route.params.id);
         break;
       case 'COLOR':
-        navigation.navigate('EditDiaryColor', selDiary);
+        navigation.navigate('EditDiaryColor', route.params.id);
         break;
     }
     setHistoryModalVisible(false);
@@ -513,6 +520,11 @@ const History = ({navigation, route}) => {
 
   const _handleExitMemo = () => {
     console.log('Exit Memo');
+    exitDiary({
+      variables: {
+        diaryId: route.params.id,
+      },
+    });
     setExitModalVisible(false);
   };
 
@@ -607,7 +619,10 @@ const History = ({navigation, route}) => {
           </HistoryDateTxt>
         </HistoryDateBox>
 
-        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+        <ScrollView
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+          keyExtractor={(item, index) => index.toString()}>
           {History.content.map(item => {
             return historyDateSwipeBox(item);
           })}

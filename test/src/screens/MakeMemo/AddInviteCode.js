@@ -36,7 +36,7 @@ const AddInviteCode = ({navigation}) => {
   const [errorMessage, setErrorMessage] = useState('유효하지 않은 코드입니다.');
   const [isError, setIsError] = useState(false);
   const {user} = useContext(UserContext);
-  const [setInviteCode, {inviteCodeResult, loading, error}] = USE_MUTATION(
+  const [setInviteCode, {data, loading, error}] = USE_MUTATION(
     'SET_INVITE_CODE',
     user.accessToken,
   );
@@ -56,18 +56,18 @@ const AddInviteCode = ({navigation}) => {
       let jsonData = JSON.parse(JSON.stringify(error));
       setErrorMessage(jsonData.message);
     } else {
-      if (loading || inviteCodeResult == undefined) {
+      if (loading || data == undefined) {
         console.log('Data Fecting & Data Empty');
         return;
       }
       // If Success
-      if (inviteCodeResult.data?.inviteDiary.adminUser) {
+      if (data?.inviteDiary.adminUser) {
         // [TODO] Invite Code Status
-        console.log(inviteCodeResult.data);
+        console.log('DATA', data.inviteDiary);
         // If Success
         navigation.navigate('CompleteInviteCode', {
-          userName: inviteCodeResult.data.inviteDiary.adminUser.nickname,
-          memoName: inviteCodeResult.data.inviteDiary.diary.title,
+          userName: data.inviteDiary.adminUser.nickname,
+          memoName: data.inviteDiary.diary.title,
         });
       }
     }
