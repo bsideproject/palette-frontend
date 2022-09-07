@@ -133,6 +133,16 @@ const Setting = ({navigation}) => {
     });
   };
 
+  const _handleFirst = () => {
+    return (
+      <WebView
+        source={{
+          uri: 'https://www.notion.so/bside/1-f638d9b4058a4f8aba4fc7d5505e2d97',
+        }}
+      />
+    );
+  };
+
   useEffect(() => {
     setPushToggle(user.pushEnabled);
   }, [focus]);
@@ -155,7 +165,7 @@ const Setting = ({navigation}) => {
           <Icon name={'right'} size={15} color={theme.dark010} />
         </ClickContainer>
         <BoundaryContainer />
-        <SettingContainer>
+        <NoneClickContainer>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <SettingText>푸시 알림</SettingText>
           </View>
@@ -178,7 +188,7 @@ const Setting = ({navigation}) => {
               borderRadius: 25,
             }}
           />
-        </SettingContainer>
+        </NoneClickContainer>
         <BoundaryContainer />
         <NoneClickContainer>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
