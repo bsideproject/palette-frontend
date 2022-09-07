@@ -108,9 +108,10 @@ const DELETE_FCM_TOKEN = gql`
 
 const LOOK_UP_DIARY_PAGE = gql`
   query {
-    diaries {
+    diaries(pageInput: {page: 0, size: 1000}) {
       id
       title
+      invitationCode
       color {
         startCode
         endCode

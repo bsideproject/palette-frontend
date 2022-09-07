@@ -255,7 +255,7 @@ const MainPage = ({navigation}) => {
         setSlideIdx(0);
       } else {
         diaryData = diaryData.concat(data['diaries']);
-        // console.log('DATA!!!:', data['diaries']);
+        //console.log('DATA!!!:', data['diaries']);
         setSlideIdx(1);
       }
       setMemos(diaryData);
@@ -268,9 +268,13 @@ const MainPage = ({navigation}) => {
       setIsLoading(true);
       refetch();
       getData();
-      setTimeout(() => {
+      if (data['diaries'].length + 1 != memos.length) {
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 1000);
+      } else {
         setIsLoading(false);
-      }, 500);
+      }
     }
   }, [focus, loading, data]);
 
