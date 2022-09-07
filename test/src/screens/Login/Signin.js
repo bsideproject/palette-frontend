@@ -144,7 +144,6 @@ const Signin = ({navigation}) => {
               setUser({
                 accessToken: accessToken,
                 email: data.data.myProfile.email,
-                socialType: socialType,
                 nickname: data.data.myProfile.nickname,
                 profileImg: data.data.myProfile.profileImg,
                 socialTypes: data.data.myProfile.socialTypes,
@@ -189,7 +188,6 @@ const Signin = ({navigation}) => {
       setUser({
         accessToken: accessToken,
         email: data.myProfile.email,
-        socialType: socialType,
         nickname: data.myProfile.nickname,
         profileImg: data.myProfile.profileImg,
         socialTypes: data.myProfile.socialTypes,
@@ -254,6 +252,7 @@ const Signin = ({navigation}) => {
   };
 
   const getAccessToken = async ({email, socialType}) => {
+    // const response = await loginApi('rmsdyd200@naver.com', 'KAKAO');
     const response = await loginApi(email, socialType);
     const {data} = response;
     if (!data.isRegistered) {

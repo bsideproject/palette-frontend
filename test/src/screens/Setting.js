@@ -41,7 +41,13 @@ const ProfileNickname = styled.Text`
   font-size: 16px;
 `;
 
-const SettingContainer = styled.TouchableOpacity`
+const ClickContainer = styled.TouchableOpacity`
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 0 22.5px 0 16px;
+`;
+
+const NoneClickContainer = styled.View`
   flex-direction: row;
   justify-content: space-between;
   padding: 0 22.5px 0 16px;
@@ -102,7 +108,6 @@ const Setting = ({navigation}) => {
     setUser({
       accessToken: null,
       email: null,
-      socialType: null,
       nickname: null,
       profileImg: null,
       socialTypes: null,
@@ -143,12 +148,12 @@ const Setting = ({navigation}) => {
           )}
           <ProfileNickname>{user.nickname}</ProfileNickname>
         </ProfileContainer>
-        <SettingContainer>
+        <ClickContainer>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <SettingText>계정</SettingText>
           </View>
           <Icon name={'right'} size={15} color={theme.dark010} />
-        </SettingContainer>
+        </ClickContainer>
         <BoundaryContainer />
         <SettingContainer>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -175,27 +180,28 @@ const Setting = ({navigation}) => {
           />
         </SettingContainer>
         <BoundaryContainer />
-        <SettingContainer>
+        <NoneClickContainer>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <SettingText>버전</SettingText>
           </View>
           <VersionText>v.1.0.1</VersionText>
-        </SettingContainer>
+        </NoneClickContainer>
         <BoundaryContainer />
-        <SettingContainer onPress={() => navigation.navigate('FirstExplain')}>
+        <ClickContainer onPress={() => navigation.navigate('FirstExplain')}>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <SettingText>서비스 이용약관</SettingText>
           </View>
           <Icon name={'right'} size={15} color={theme.dark010} />
-        </SettingContainer>
+        </ClickContainer>
         <BoundaryContainer />
-        <SettingContainer onPress={() => navigation.navigate('SecondExplain')}>
+        <ClickContainer onPress={() => navigation.navigate('SecondExplain')}>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <SettingText>개인정보처리방침</SettingText>
           </View>
           <Icon name={'right'} size={15} color={theme.dark010} />
-        </SettingContainer>
+        </ClickContainer>
         <BoundaryContainer />
+
         <Button
           title="로그아웃"
           onPress={_handleLogout}

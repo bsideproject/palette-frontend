@@ -160,6 +160,7 @@ const IMG_DEFAULT = require('/assets/icons/set_diaryImg.png');
 const PLUS_ICON = require('/assets/icons/plus.png');
 const CLOSE_ICON = require('/assets/icons/close_circle.png');
 
+let params;
 const WriteDiary = ({navigation, route}) => {
   const {user} = useContext(UserContext);
   const theme = useContext(ThemeContext);
@@ -177,6 +178,17 @@ const WriteDiary = ({navigation, route}) => {
   const [titleText, setTitleText] = useState('');
   const [contentText, setContentText] = useState('');
   const [selectModal, setSelectModal] = useState(false);
+
+  useEffect(() => {
+    if (route.params) {
+      params = route.params;
+      setTitleText(params.title);
+      setContentText(params.contents);
+      setImageArr(params.imgUrl);
+    } else {
+      params = null;
+    }
+  }, []);
 
   useEffect(() => {
     navigation.setOptions({
@@ -264,21 +276,21 @@ const WriteDiary = ({navigation, route}) => {
       } else if (response.error) {
         alert('에러 발생');
       } else {
-        console.log('카메라 결과물 ===> ', response);
-        setImageArr(prevState => [...prevState, response.assets[0].uri]);
         const photo = new FormData();
         let file = {
           uri: response.assets[0].uri,
-          type: response.assets[0].type,
-          name: response.assets[0].fileName,
+          type: 'image/jpeg',
+          name: 'camera.jpg',
         };
         photo.append('file', file);
         setUploadImage(photo);
+        setImageArr(prevState => [...prevState, response.assets[0].uri]);
       }
     });
   };
 
   const _handleDeleteImage = url => {
+    console.log('delete', imageArr);
     const photo = new FormData();
     imageArr.map((arrUrl, i) => {
       if (arrUrl !== url) {
@@ -290,7 +302,13 @@ const WriteDiary = ({navigation, route}) => {
         photo.append('file', file);
       }
     });
-    setUploadImage(prev => photo);
+    if (imageArr.length === 1) {
+      console.log('uploadImage null');
+      setUploadImage(null);
+    } else {
+      console.log('uploadImage not null');
+      setUploadImage(prev => photo);
+    }
     setImageArr(prevState => prevState.filter(state => state !== url));
   };
 
@@ -320,17 +338,14 @@ const WriteDiary = ({navigation, route}) => {
       setContentError(true);
     } else {
       //저장 기능 작성;
-      if (imageArr.length > 0) {
-        //사진 업로드 한 경우
+      if (uploadImage !== null) {
         const response = await imageUploadApi(uploadImage, user.accessToken);
-        const {data} = response;
-        //일기 이미지 저장 완료
-        console.log('result=======>', response.data.urls);
-
+        navigation.goBack();
         //일기 저장 api연동 예정
       } else {
-        //사진 업로드 하지 않은 경우
         //일기 저장 api연동 예정
+        console.log('nono');
+        navigation.goBack();
       }
     }
   };
@@ -421,14 +436,14 @@ const WriteDiary = ({navigation, route}) => {
             </TouchableOpacity>
           </ExitModalTop>
           <ExitModalMid>
-            <ExitModalTxt1>정말로 나가시겠습니까?</ExitModalTxt1>
+            <ExitModalTxt1>이 페이지에서 나가시겠습니까?</ExitModalTxt1>
             <ExitModalMargin />
             <ExitModalTxt2>
-              나간 일기장은 다시 들어올 수 없습니다!
+              이 페이지를 벗어나면 작성된 내용은{'\n'}저장되지 않습니다.
             </ExitModalTxt2>
           </ExitModalMid>
           <ExitModalBottom onPress={_handlerExit}>
-            <ExitModalTxt3>네, 일기장을 나갑니다.</ExitModalTxt3>
+            <ExitModalTxt3>페이지 나가기</ExitModalTxt3>
           </ExitModalBottom>
         </ExitModalContainer>
       </Modal>

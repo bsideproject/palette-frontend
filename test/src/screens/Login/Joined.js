@@ -86,7 +86,6 @@ const Joined = ({navigation}) => {
       setUser({
         accessToken: accessToken,
         email: data.myProfile.email,
-        socialType: socialType,
         nickname: data.myProfile.nickname,
         profileImg: data.myProfile.profileImg,
         socialTypes: data.myProfile.socialTypes,

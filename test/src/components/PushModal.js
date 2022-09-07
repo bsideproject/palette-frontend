@@ -96,10 +96,9 @@ const PushModal = ({onPressExit, onPressEnd}) => {
       setUser({
         accessToken: user.accessToken,
         email: user.email,
-        socialType: user.socialType,
         nickname: user.nickname,
         profileImg: user.profileImg,
-        socialTypes: user.socialType,
+        socialTypes: user.socialTypes,
         pushEnabled: true,
       });
     }

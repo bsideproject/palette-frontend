@@ -74,6 +74,7 @@ const UPDATE_PROFILE = gql`
       profileImg
       socialTypes
       agreeWithTerms
+      pushEnabled
       createdAt
     }
   }
