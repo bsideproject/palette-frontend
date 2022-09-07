@@ -239,6 +239,9 @@ const MainPage = ({navigation}) => {
     if (error != undefined) {
       console.log('ERROR: ', JSON.stringify(error));
       // [TODO] Go to Error Page
+      console.log('Data is Error');
+      setSlideIdx(0);
+      setMemos([{isAddContainer: true}]);
     } else {
       if (loading || data == undefined) {
         console.log('Data Fecting & Data Empty');
@@ -268,7 +271,8 @@ const MainPage = ({navigation}) => {
       setIsLoading(true);
       refetch();
       getData();
-      if (data['diaries'].length + 1 != memos.length) {
+      if (memos.length == 0 || data['diaries'].length + 1 != memos.length) {
+        console.log(data);
         setTimeout(() => {
           setIsLoading(false);
         }, 1000);
@@ -484,6 +488,9 @@ const MainPage = ({navigation}) => {
   };
 
   const renderRecentHistory = sliderIdx => {
+    if (error != undefined) {
+      return <MemoEmpty_Text1>데이터 불러오기 실패</MemoEmpty_Text1>;
+    }
     if (sliderIdx > 0) {
       if (memos[sliderIdx].currentHistory == null) {
         return <MemoEmpty_Text1>교환 일기에 초대해주세요</MemoEmpty_Text1>;
