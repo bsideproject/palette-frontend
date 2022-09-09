@@ -141,11 +141,15 @@ const LOOK_UP_DIARY_PAGE = gql`
   }
 `;
 
-const UPDATE_DIARY = gql`
-  mutation updateDiary($diaryId: Long!, $title: String!, $colorId: String!) {
-    updateDiary(
-      updateDiaryInput: {diaryId: $diaryId, title: $title, colorId: 3}
-    )
+const UPDATE_DIARY_TITLE = gql`
+  mutation updateDiary($diaryId: Long!, $title: String) {
+    updateDiary(updateDiaryInput: {diaryId: $diaryId, title: $title})
+  }
+`;
+
+const UPDATE_DIARY_COLOR = gql`
+  mutation updateDiary($diaryId: Long!, $colorId: Long!) {
+    updateDiary(updateDiaryInput: {diaryId: $diaryId, colorId: $colorId})
   }
 `;
 
@@ -166,7 +170,8 @@ const QUERY_ARRAY = {
   ADD_FCM_TOKEN: ADD_FCM_TOKEN,
   DELETE_FCM_TOKEN: DELETE_FCM_TOKEN,
   LOOK_UP_DIARY_PAGE: LOOK_UP_DIARY_PAGE,
-  UPDATE_DIARY: UPDATE_DIARY,
+  UPDATE_DIARY_TITLE: UPDATE_DIARY_TITLE,
+  UPDATE_DIARY_COLOR: UPDATE_DIARY_COLOR,
   EXIT_DIARY: EXIT_DIARY,
 };
 

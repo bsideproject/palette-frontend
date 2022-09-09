@@ -354,10 +354,10 @@ const History = ({navigation, route}) => {
   // History
   const [selDiary, setSelDiary] = useState(null);
   const {user} = useContext(UserContext);
-  const [exitDiary, exitDiaryResult] = USE_MUTATION(
-    'EXIT_DIARY',
-    user.accessToken,
-  );
+  const [
+    exitDiary,
+    {data: exitDiaryData, loading: exitDiaryLoading, error: exitDiaryError},
+  ] = USE_MUTATION('EXIT_DIARY', user.accessToken);
   // console.log(RemainDate('2022-08-22 07:11:36.045248'));
   // console.log(DateConvertDD('2022-08-16 22:41:56.045248'));
 
@@ -500,6 +500,23 @@ const History = ({navigation, route}) => {
   useEffect(() => {
     getData();
   }, []);
+
+  useEffect(() => {
+    if (exitDiaryError != undefined) {
+      let jsonData = JSON.parse(JSON.stringify(exitDiaryError));
+      console.log(jsonData);
+      // [TODO] Go to Error Page
+    } else {
+      if (exitDiaryLoading || exitDiaryData == undefined) {
+        console.log('Data Fecting & Data Empty');
+        return;
+      }
+      // Not Check Data Is True..
+      console.log('Success Data', exitDiaryData);
+      // If Success
+      navigation.navigate('Home');
+    }
+  }, [exitDiaryLoading]);
 
   const _handleMemoData = status => {
     console.log(status);

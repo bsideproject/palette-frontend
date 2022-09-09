@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 import {ThemeContext} from 'styled-components/native';
 import styled from 'styled-components/native';
 import {Text} from 'react-native';
@@ -38,15 +38,13 @@ const EditDiaryTitle = ({navigation, route}) => {
   const pattern_spc = /[~!@#$%^&*()_+|<>?:{}]/; // 특수문자
   const {user} = useContext(UserContext);
   const [updateDiaryTitle, {data, loading, error}] = USE_MUTATION(
-    'UPDATE_DIARY',
+    'UPDATE_DIARY_TITLE',
     user.accessToken,
   );
 
   const _handleSetMemoColorPress = () => {
-    // Check Valid Type
     console.log('Set Memo Color Press');
     setIsError(true);
-
     if (name.length == 0) {
       setErrorMessage('일기장 제목을 입력해주세요.');
     } else if (name.length < 1 || name.length > 12) {
@@ -62,9 +60,26 @@ const EditDiaryTitle = ({navigation, route}) => {
           title: name,
         },
       });
-      navigation.goBack();
     }
   };
+
+  // [USE EFFECT] -----------------------------------------------
+  useEffect(() => {
+    if (error != undefined) {
+      let jsonData = JSON.parse(JSON.stringify(error));
+      console.log(jsonData);
+      // [TODO] Go to Error Page
+    } else {
+      if (loading || data == undefined) {
+        console.log('Data Fecting & Data Empty');
+        return;
+      }
+      // Not Check Data Is True..
+      console.log('Success Data', data);
+      // If Success
+      navigation.goBack();
+    }
+  }, [loading]);
 
   return (
     <KeyboardAvoidingScrollView

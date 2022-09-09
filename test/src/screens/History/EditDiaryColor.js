@@ -70,6 +70,10 @@ const EditDiaryColor = ({navigation, route}) => {
   const [isError, setIsError] = useState(false);
   const {user} = useContext(UserContext);
   const {loading, error, data} = USE_QUERY('COLOR_CODE', user.accessToken);
+  const [
+    updateDiaryColor,
+    {loading: loadingDiaryColor, error: errorDiaryColor, data: dataDiaryColor},
+  ] = USE_MUTATION('UPDATE_DIARY_COLOR', user.accessToken);
 
   const getData = () => {
     if (error != undefined) {
@@ -101,9 +105,12 @@ const EditDiaryColor = ({navigation, route}) => {
     } else {
       setIsError(false);
       console.log('Set Memo: ', route.params, selectedColor.id);
-      console.log('token: ', user.accessToken);
-      // [TODO] Edit Color Code
-      navigation.goBack();
+      updateDiaryColor({
+        variables: {
+          diaryId: route.params,
+          colorId: selectedColor.id,
+        },
+      });
     }
   };
 
@@ -171,6 +178,23 @@ const EditDiaryColor = ({navigation, route}) => {
   useEffect(() => {
     getData();
   }, [loading]);
+
+  useEffect(() => {
+    if (errorDiaryColor != undefined) {
+      let jsonData = JSON.parse(JSON.stringify(errorDiaryColor));
+      console.log(jsonData);
+      // [TODO] Go to Error Page
+    } else {
+      if (loadingDiaryColor || dataDiaryColor == undefined) {
+        console.log('Data Fecting & Data Empty');
+        return;
+      }
+      // Not Check Data Is True..
+      console.log('Success Data', dataDiaryColor);
+      // If Success
+      navigation.goBack();
+    }
+  }, [loadingDiaryColor]);
 
   return isLoading ? (
     <SpinnerContainer>

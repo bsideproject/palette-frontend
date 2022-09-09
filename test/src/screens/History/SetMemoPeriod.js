@@ -61,6 +61,7 @@ const SetMemoPeriod = ({navigation, route}) => {
     user.accessToken,
   );
 
+  // [QUERY EVENT FUNCTION] --------------------------------------
   const _handleSetMemoPeriod = period => {
     console.log(route.params.id);
     console.log(period);
@@ -74,6 +75,7 @@ const SetMemoPeriod = ({navigation, route}) => {
     });
   };
 
+  // [USE EFFECT] -----------------------------------------------
   useEffect(() => {
     if (error != undefined) {
       console.log('ERROR: ', JSON.stringify(error));

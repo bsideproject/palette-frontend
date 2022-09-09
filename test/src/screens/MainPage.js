@@ -227,7 +227,6 @@ const MainPage = ({navigation, route}) => {
   const [isLoading, setIsLoading] = useState(true);
   const {width, height} = Dimensions.get('screen');
   const [loadError, setLoadError] = useState(false);
-  const [pushHandled, setPushHandled] = useState(false);
   const [slideIdx, setSlideIdx] = useState(1);
   const {user} = useContext(UserContext);
   const {loading, error, data, refetch} = USE_QUERY(
@@ -238,11 +237,10 @@ const MainPage = ({navigation, route}) => {
   //console.log('UserHome: ', user);
   //console.log('Route: ', route.params);
 
+  // [EVENT FUNCTION] ------------------------------------------
   const findIdxfromDiaryId = (diaryId, data) => {
     let findIdx = -1;
-    console.log('Memo len', data);
     for (let i = 0; i < data.length; ++i) {
-      console.log('Iddd', data[i].id);
       if (data[i].id == diaryId) {
         findIdx = i;
         break;
@@ -251,6 +249,17 @@ const MainPage = ({navigation, route}) => {
     return findIdx + 1;
   };
 
+  const _pushDataHandle = data => {
+    if (route.params != undefined && route.params.diaryId) {
+      let sidx = findIdxfromDiaryId(route.params.diaryId, data);
+      console.log('Diary Id: ', route.params.diaryId, sidx, data);
+      if (sidx != -1) {
+        setSlideIdx(sidx);
+      }
+    }
+  };
+
+  // [QUERY EVENT FUNCTION] --------------------------------------
   const getData = () => {
     if (error != undefined) {
       console.log('ERROR: ', JSON.stringify(error));
@@ -275,26 +284,15 @@ const MainPage = ({navigation, route}) => {
         console.log('Data is Empty');
         setSlideIdx(0);
       } else {
+        //console.log('DATA!!!:', data['diaries'], slideIdx);
         diaryData = diaryData.concat(data['diaries']);
-        //console.log('DATA!!!:', data['diaries']);
-        //setSlideIdx(1);
       }
       setMemos(diaryData);
     }
   };
 
-  const _pushDataHandle = data => {
-    if (route.params != undefined && route.params.diaryId) {
-      let sidx = findIdxfromDiaryId(route.params.diaryId, data);
-      console.log('Diary Id: ', route.params.diaryId, sidx, data);
-      if (sidx != -1) {
-        setSlideIdx(sidx);
-      }
-    }
-  };
-
+  // [USE EFFECT] -----------------------------------------------
   useEffect(() => {
-    console.log('1');
     if (data != undefined) {
       setIsLoading(true);
       _pushDataHandle(data['diaries']);
@@ -304,7 +302,6 @@ const MainPage = ({navigation, route}) => {
     }
   }, [route.params]);
 
-  // Get Query from QraphQL
   useEffect(() => {
     if (focus) {
       setIsLoading(true);
@@ -322,19 +319,24 @@ const MainPage = ({navigation, route}) => {
         setIsLoading(false);
         return;
       }
-      // 1. Add & Invite Diary. Change Diary Num
-      if (memos.length == 0 || data['diaries'].length + 1 != memos.length) {
+
+      let origData = memos.slice(1);
+      if (data['diaries'].every(item => origData.includes(item))) {
+        setIsLoading(false);
+      } else if (data['diaries'].length + 1 != memos.length) {
         setSlideIdx(1);
         setTimeout(() => {
           setIsLoading(false);
         }, 1000);
       } else {
-        // 2. Not Change Diary Num
-        setIsLoading(false);
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 1000);
       }
     }
   }, [focus, loading, data]);
 
+  // [RENDER FUNCTION] ------------------------------------------
   const AddContainer = () => {
     return (
       <TouchableOpacity
@@ -406,7 +408,7 @@ const MainPage = ({navigation, route}) => {
             }}>
             <MemoDataItem>
               <MemoData_Text1>
-                {item.joinedUsers[0].nickname}님과
+                {item.joinedUsers[0].nickname}님과&nbsp;
                 {item.joinedUsers[1].nickname}님의
               </MemoData_Text1>
               <MemoData_Text2>{item.title}</MemoData_Text2>
@@ -477,7 +479,6 @@ const MainPage = ({navigation, route}) => {
     }
   };
 
-  // [TODO] Go To History Page, Gradient Color Code
   const Item1 = ({item}) =>
     item.isAddContainer ? AddContainer() : MemoStatusContainer(item);
 
@@ -541,7 +542,11 @@ const MainPage = ({navigation, route}) => {
   };
 
   const renderRecentHistory = sliderIdx => {
-    if (loadError || memos == undefined) {
+    if (
+      loadError ||
+      memos == undefined ||
+      (slideIdx != 0 && memos[sliderIdx] == undefined)
+    ) {
       return <MemoEmpty_Text1>데이터 불러오기 실패</MemoEmpty_Text1>;
     }
     if (slideIdx == 0 && memos.length == 1) {
@@ -565,8 +570,12 @@ const MainPage = ({navigation, route}) => {
   };
 
   const renderBtnFooter = sliderIdx => {
-    if (loadError || memos == undefined) {
-      return;
+    if (
+      loadError ||
+      memos == undefined ||
+      (slideIdx != 0 && memos[sliderIdx] == undefined)
+    ) {
+      return <MemoEmpty_Text1>데이터 불러오기 실패</MemoEmpty_Text1>;
     }
     if (slideIdx > 0) {
       if (memos[sliderIdx].diaryStatus == 'READY') {
@@ -640,6 +649,7 @@ const MainPage = ({navigation, route}) => {
           itemWidth={width * 0.9}
           firstItem={slideIdx}
           onBeforeSnapToItem={slideIndex => setSlideIdx(slideIndex)}
+          initialNumToRender={memos.length}
         />
       </MemoFlexTop>
       <MemoFlexBottom>

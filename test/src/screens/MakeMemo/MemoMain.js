@@ -26,6 +26,7 @@ const BtnMargin_2 = styled.View`
 const MemoMain = ({navigation}) => {
   const theme = useContext(ThemeContext);
 
+  // [EVENT FUNCTION] ------------------------------------------
   const _handleMoveAddPage = () => {
     navigation.navigate('AddMemo');
   };

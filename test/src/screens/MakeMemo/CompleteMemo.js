@@ -106,8 +106,9 @@ const CompleteMemo = ({navigation, route}) => {
   const [pushModalVisible, setPushModalVisible] = useState(false);
   const MAKE_IMG = require('/assets/icons/make.png');
   const {user} = useContext(UserContext);
-  console.log('user:', user);
+  // console.log('user:', user);
 
+  // [EVENT FUNCTION] ------------------------------------------
   const _handleMoveMainPage = () => {
     navigation.navigate('Home');
   };
@@ -121,7 +122,7 @@ const CompleteMemo = ({navigation, route}) => {
     // [TODO] If Alarm On -> MoveMain Page / Off -> SetPushModal
     console.log('USER PushEnabled: ', user.pushEnabled);
     if (user.pushEnabled == true) {
-      console.log('Move......', user);
+      //console.log('Move......', user);
       _handleMoveMainPage();
     } else {
       // Set Push Modal

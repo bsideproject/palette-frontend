@@ -33,7 +33,7 @@ export const onPushDataToNavigate = (notify, idx) => {
         } else {
           navigate('History', notify.data);
         }
-      }, 2000);
+      }, 1000);
     } else {
       if (notify.data.diaryId && notify.data.historyId) {
         navigate('History', notify.data, {

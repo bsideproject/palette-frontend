@@ -71,11 +71,12 @@ const AddMemoColor = ({navigation, route}) => {
   const [isError, setIsError] = useState(false);
   const {user} = useContext(UserContext);
   const {loading, error, data} = USE_QUERY('COLOR_CODE', user.accessToken);
-  const [registerMemo, registerResult] = USE_MUTATION(
-    'REGISTER_MEMO',
-    user.accessToken,
-  );
+  const [
+    registerMemo,
+    {loading: loadingRegister, error: errorRegister, data: dataRegister},
+  ] = USE_MUTATION('REGISTER_MEMO', user.accessToken);
 
+  // [QUERY EVENT FUNCTION] --------------------------------------
   const getData = () => {
     if (error != undefined) {
       console.log('ERROR: ', JSON.stringify(error));
@@ -121,6 +122,34 @@ const AddMemoColor = ({navigation, route}) => {
     }
   };
 
+  // [USE EFFECT] -----------------------------------------------
+  useEffect(() => {
+    getData();
+  }, [loading]);
+
+  useEffect(() => {
+    if (errorRegister != undefined) {
+      let jsonData = JSON.parse(JSON.stringify(errorRegister));
+      console.log(jsonData);
+      // [TODO] Go to Error Page
+    } else {
+      if (loadingRegister || dataRegister == undefined) {
+        console.log('Data Fecting & Data Empty');
+        return;
+      }
+      // If Success
+      console.log('DATA', dataRegister);
+      if (dataRegister?.createDiary.invitationCode) {
+        navigation.navigate('CompleteMemo', {
+          invitationCode: dataRegister.createDiary.invitationCode,
+        });
+      } else {
+        console.log('Loading or Error', dataRegister);
+      }
+    }
+  }, [loadingRegister]);
+
+  // [RENDER FUNCTION] -----------------------------------------------
   const formedData = (data, numColumns) => {
     const numberOfFullRows = Math.floor(data.length / numColumns);
     let numberOfElementsLastRow = data.length - numberOfFullRows * numColumns;
@@ -181,21 +210,6 @@ const AddMemoColor = ({navigation, route}) => {
       />
     );
   };
-
-  useEffect(() => {
-    getData();
-  }, [loading]);
-
-  useEffect(() => {
-    console.log('DATA', registerResult.data);
-    if (registerResult.data?.createDiary.invitationCode) {
-      navigation.navigate('CompleteMemo', {
-        invitationCode: registerResult.data.createDiary.invitationCode,
-      });
-    } else {
-      console.log('Loading or Error', registerResult.data);
-    }
-  }, [registerResult]);
 
   return isLoading ? (
     <SpinnerContainer>

@@ -56,8 +56,7 @@ const CompleteInviteCode = ({navigation, route}) => {
   const userName = '김반쪽';
   const INVITE_IMG = require('/assets/icons/invite.png');
 
-  console.log(route.params);
-
+  // [EVENT FUNCTION] ------------------------------------------
   const _handleRequestSetMemo = () => {
     // Go to Main Page
     navigation.navigate('Home');

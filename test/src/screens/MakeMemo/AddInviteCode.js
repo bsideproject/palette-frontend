@@ -41,6 +41,7 @@ const AddInviteCode = ({navigation}) => {
     user.accessToken,
   );
 
+  // [QUERY EVENT FUNCTION] --------------------------------------
   const _handleSetInviteComplete = () => {
     // Set Invite Code
     setInviteCode({
@@ -50,6 +51,7 @@ const AddInviteCode = ({navigation}) => {
     });
   };
 
+  // [USE EFFECT] -----------------------------------------------
   useEffect(() => {
     if (error != undefined) {
       setIsError(true);

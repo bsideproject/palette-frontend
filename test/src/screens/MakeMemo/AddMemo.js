@@ -35,6 +35,7 @@ const AddMemo = ({navigation}) => {
   const [isError, setIsError] = useState(false);
   const pattern_spc = /[~!@#$%^&*()_+|<>?:{}]/; // 특수문자
 
+  // [RENDER FUNCTION] ------------------------------------------
   const _handleSetMemoColorPress = () => {
     // Check Valid Type
     console.log('Set Memo Color Press');
