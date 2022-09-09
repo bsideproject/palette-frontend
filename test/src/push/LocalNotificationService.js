@@ -1,12 +1,49 @@
 import PushNotification from 'react-native-push-notification';
 import {navigate} from '../RootNavigation';
 
-export const onPushDataToNavigate = notify => {
-  console.log('notify data', notify.data);
+export const onPushDataToNavigate = (notify, idx) => {
+  console.log('notify data', notify.data, idx);
+
+  // * Make Diary => Page Main
+  // * Make History, Make Page, Complete History => Page History
   if (notify && notify.data && notify.data.page == 'home') {
-    navigate('Home', notify.data);
+    if (idx == 1) {
+      setTimeout(() => {
+        if (notify.data.diaryId) {
+          navigate('Home', notify.data, {diaryId: notify.data.diaryId});
+        } else {
+          navigate('Home', notify.data);
+        }
+      }, 2000);
+    } else {
+      if (notify.data.diaryId) {
+        navigate('Home', notify.data, {diaryId: notify.data.diaryId});
+      } else {
+        navigate('Home', notify.data);
+      }
+    }
   } else if (notify && notify.data && notify.data.page == 'history') {
-    navigate('History', notify.data);
+    if (idx == 1) {
+      setTimeout(() => {
+        if (notify.data.diaryId && notify.data.historyId) {
+          navigate('History', notify.data, {
+            diaryId: notify.data.diaryId,
+            historyId: notify.data.historyId,
+          });
+        } else {
+          navigate('History', notify.data);
+        }
+      }, 2000);
+    } else {
+      if (notify.data.diaryId && notify.data.historyId) {
+        navigate('History', notify.data, {
+          diaryId: notify.data.diaryId,
+          historyId: notify.data.historyId,
+        });
+      } else {
+        navigate('History', notify.data);
+      }
+    }
   }
 };
 
@@ -16,14 +53,14 @@ class LocalNotificationService {
       onRegister: function (token) {
         console.log('[LocalNotificationService] onRegister:', token);
       },
-      onNotification: function (notification) {
+      onNotification: function (notification, idx) {
         console.log('[LocalNotificationService] onNotification:', notification);
         if (!notification?.data) {
           return;
         }
         notification.userInteraction = true;
         if (notification?.channelId == 'half-diary') {
-          onPushDataToNavigate(notification.data);
+          onPushDataToNavigate(notification.data, idx);
         }
       },
       // IOS ONLY (optional): default: all - Permissions to register.

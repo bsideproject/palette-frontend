@@ -221,11 +221,13 @@ const Text_underline = styled.Text`
   text-decoration-line: underline;
 `;
 
-const MainPage = ({navigation}) => {
+const MainPage = ({navigation, route}) => {
   const theme = useContext(ThemeContext);
   const [memos, setMemos] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const {width, height} = Dimensions.get('screen');
+  const [loadError, setLoadError] = useState(false);
+  const [pushHandled, setPushHandled] = useState(false);
   const [slideIdx, setSlideIdx] = useState(1);
   const {user} = useContext(UserContext);
   const {loading, error, data, refetch} = USE_QUERY(
@@ -234,15 +236,31 @@ const MainPage = ({navigation}) => {
   );
   const focus = useIsFocused();
   //console.log('UserHome: ', user);
+  //console.log('Route: ', route.params);
+
+  const findIdxfromDiaryId = (diaryId, data) => {
+    let findIdx = -1;
+    console.log('Memo len', data);
+    for (let i = 0; i < data.length; ++i) {
+      console.log('Iddd', data[i].id);
+      if (data[i].id == diaryId) {
+        findIdx = i;
+        break;
+      }
+    }
+    return findIdx + 1;
+  };
 
   const getData = () => {
     if (error != undefined) {
       console.log('ERROR: ', JSON.stringify(error));
       // [TODO] Go to Error Page
       console.log('Data is Error');
+      setLoadError(true);
       setSlideIdx(0);
       setMemos([{isAddContainer: true}]);
     } else {
+      setLoadError(false);
       if (loading || data == undefined) {
         console.log('Data Fecting & Data Empty');
         return;
@@ -259,11 +277,32 @@ const MainPage = ({navigation}) => {
       } else {
         diaryData = diaryData.concat(data['diaries']);
         //console.log('DATA!!!:', data['diaries']);
-        setSlideIdx(1);
+        //setSlideIdx(1);
       }
       setMemos(diaryData);
     }
   };
+
+  const _pushDataHandle = data => {
+    if (route.params != undefined && route.params.diaryId) {
+      let sidx = findIdxfromDiaryId(route.params.diaryId, data);
+      console.log('Diary Id: ', route.params.diaryId, sidx, data);
+      if (sidx != -1) {
+        setSlideIdx(sidx);
+      }
+    }
+  };
+
+  useEffect(() => {
+    console.log('1');
+    if (data != undefined) {
+      setIsLoading(true);
+      _pushDataHandle(data['diaries']);
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 100);
+    }
+  }, [route.params]);
 
   // Get Query from QraphQL
   useEffect(() => {
@@ -271,12 +310,26 @@ const MainPage = ({navigation}) => {
       setIsLoading(true);
       refetch();
       getData();
+
+      if (
+        data == undefined ||
+        data.length == 0 ||
+        data['diaries'] == undefined ||
+        data['diaries'].length == 0
+      ) {
+        console.log('Data is Empty');
+        setSlideIdx(0);
+        setIsLoading(false);
+        return;
+      }
+      // 1. Add & Invite Diary. Change Diary Num
       if (memos.length == 0 || data['diaries'].length + 1 != memos.length) {
-        console.log(data);
+        setSlideIdx(1);
         setTimeout(() => {
           setIsLoading(false);
         }, 1000);
       } else {
+        // 2. Not Change Diary Num
         setIsLoading(false);
       }
     }
@@ -488,8 +541,11 @@ const MainPage = ({navigation}) => {
   };
 
   const renderRecentHistory = sliderIdx => {
-    if (error != undefined) {
+    if (loadError || memos == undefined) {
       return <MemoEmpty_Text1>데이터 불러오기 실패</MemoEmpty_Text1>;
+    }
+    if (slideIdx == 0 && memos.length == 1) {
+      return <MemoEmpty_Text1>새로운 일기를 만들어보세요</MemoEmpty_Text1>;
     }
     if (sliderIdx > 0) {
       if (memos[sliderIdx].currentHistory == null) {
@@ -509,59 +565,64 @@ const MainPage = ({navigation}) => {
   };
 
   const renderBtnFooter = sliderIdx => {
-    if (sliderIdx > 0 && memos[sliderIdx].diaryStatus == 'READY') {
-      return (
-        <BtnContainer>
-          <Button
-            title="새 교환 일기 시작"
-            IconType="plus"
-            IconColor={theme.pointColor}
-            onPress={() =>
-              navigation.navigate('SetMemoPeriod', memos[sliderIdx])
-            }
-            containerStyle={{
-              backgroundColor: theme.white,
-              borderWidth: 1,
-              borderColor: theme.pointColor,
-              borderStyle: 'dashed',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-            textStyle={{
-              color: theme.pointColor,
-              fontSize: 18,
-              fontWeight: '700',
-              fontFamily: theme.fontRegular,
-              textAlign: 'center',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          />
-        </BtnContainer>
-      );
-    } else if (sliderIdx > 0 && memos[sliderIdx].diaryStatus == 'START') {
-      return (
-        <BtnContainer>
-          <Button
-            title="오늘 일기 쓰기"
-            onPress={() => navigation.navigate('WriteDiary')}
-            containerStyle={{
-              backgroundColor: theme.pointColor,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-            textStyle={{
-              color: theme.white,
-              fontSize: 18,
-              fontWeight: '700',
-              fontFamily: theme.fontRegular,
-              textAlign: 'center',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          />
-        </BtnContainer>
-      );
+    if (loadError || memos == undefined) {
+      return;
+    }
+    if (slideIdx > 0) {
+      if (memos[sliderIdx].diaryStatus == 'READY') {
+        return (
+          <BtnContainer>
+            <Button
+              title="새 교환 일기 시작"
+              IconType="plus"
+              IconColor={theme.pointColor}
+              onPress={() =>
+                navigation.navigate('SetMemoPeriod', memos[sliderIdx])
+              }
+              containerStyle={{
+                backgroundColor: theme.white,
+                borderWidth: 1,
+                borderColor: theme.pointColor,
+                borderStyle: 'dashed',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+              textStyle={{
+                color: theme.pointColor,
+                fontSize: 18,
+                fontWeight: '700',
+                fontFamily: theme.fontRegular,
+                textAlign: 'center',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            />
+          </BtnContainer>
+        );
+      } else if (memos[sliderIdx].diaryStatus == 'START') {
+        return (
+          <BtnContainer>
+            <Button
+              title="오늘 일기 쓰기"
+              onPress={() => navigation.navigate('WriteDiary')}
+              containerStyle={{
+                backgroundColor: theme.pointColor,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+              textStyle={{
+                color: theme.white,
+                fontSize: 18,
+                fontWeight: '700',
+                fontFamily: theme.fontRegular,
+                textAlign: 'center',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            />
+          </BtnContainer>
+        );
+      }
     }
   };
 
