@@ -174,8 +174,9 @@ const ExitModalMargin = styled.View`
 `;
 
 const HistoryTitleContainer = styled.View`
-  margin-top: 5%;
   flex: 1;
+  justify-content: center;
+  align-items: center;
 `;
 
 const HistoryTitleTxt = styled.Text`
@@ -390,7 +391,7 @@ const History = ({navigation, route}) => {
   ] = USE_MUTATION('EXIT_DIARY', user.accessToken);
   const focus = useIsFocused();
   // [TODO] 일기장 Id를 통해서 graphql-> 컨텐트 읽어오기
-  // console.log('ssss', route.params);
+  //console.log('ssss', route.params);
 
   // [QUERY EVENT FUNCTION] --------------------------------------
   const getData = () => {
@@ -490,6 +491,12 @@ const History = ({navigation, route}) => {
             marginRight: 12,
             marginBottom: 10,
             justifyContent: 'center',
+            borderColor:
+              item == selDiary && RemainDate(selDiary.endDate) != false
+                ? '#F3B948'
+                : '#FFFFFF',
+            borderWidth:
+              item == selDiary && RemainDate(selDiary.endDate) != false ? 3 : 0,
           }}>
           <HistoryDateItemTxt selected={item == selDiary ? true : false}>
             {PeriodDiff(item.startDate, item.endDate)}&nbsp;Days
