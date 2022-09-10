@@ -72,7 +72,8 @@ const ProfileImage = styled.Image`
 const PROFILEIMG_DEFAULT = require('/assets/icons/set_profileImg.png');
 const UPLOAD = require('/assets/icons/upload.png');
 
-const ProfileImageSet = ({navigation}) => {
+const ProfileImageSet = ({navigation, route}) => {
+  const {params} = route;
   const theme = useContext(ThemeContext);
   const [profileImage, setProfileImage] = useState('');
   const [accessToken, setAccessToken] = useState(null);
@@ -91,10 +92,12 @@ const ProfileImageSet = ({navigation}) => {
         variables: {profileImg: data.urls[0]},
       });
 
-      navigation.navigate('Joined');
+      if (params) navigation.goBack();
+      else navigation.navigate('Joined');
     } else {
       //등록 프로필 이미지 없는 경우
-      navigation.navigate('Joined');
+      if (params) navigation.goBack();
+      else navigation.navigate('Joined');
     }
   };
 
@@ -158,7 +161,7 @@ const ProfileImageSet = ({navigation}) => {
         stickyFooter={
           <ButtonContainer>
             <Button
-              title="다음 단계로"
+              title={params ? '확인' : '다음 단계로'}
               onPress={_handleNextButtonPress}
               containerStyle={{
                 backgroundColor: theme.pointColor,

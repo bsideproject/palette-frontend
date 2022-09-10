@@ -15,6 +15,7 @@ import AddInviteCode from './MakeMemo/AddInviteCode';
 import CompleteMemo from './MakeMemo/CompleteMemo';
 import CompleteInviteCode from './MakeMemo/CompleteInviteCode';
 import WriteDiary from './MakeMemo/WriteDiary';
+import ShowDiary from './MakeMemo/ShowDiary';
 // History
 import History from './History/History';
 import SetMemoPeriod from './History/SetMemoPeriod';
@@ -24,6 +25,8 @@ import EditDiaryTitle from './History/EditDiaryTitle';
 import Permission from './Permission/Permission';
 // Network
 import NetworkContainer from './Network/NetworkContainer';
+// User Info Page
+import UserInfo from './UserInfo';
 // Main Page
 import MainPage from './MainPage';
 import Setting from './Setting';
@@ -48,8 +51,10 @@ export {
   SetMemoPeriod,
   History,
   WriteDiary,
+  ShowDiary,
   EditDiaryColor,
   EditDiaryTitle,
   Permission,
   NetworkContainer,
+  UserInfo,
 };

@@ -16,8 +16,12 @@ import {
   EditDiaryTitle,
   setModalDisplay,
   WriteDiary,
+  ShowDiary,
   FirstExplain,
   SecondExplain,
+  Nickname,
+  ProfileImageSet,
+  UserInfo
 } from '@screens';
 import Home from './Home';
 import {LogBox} from 'react-native';
@@ -130,17 +134,45 @@ const Main = () => {
         }}
       />
       <Stack.Screen
+        name="ShowDiary"
+        component={ShowDiary}
+        options={{
+          title: '오늘의 일기',
+        }}
+      />
+      <Stack.Screen
         name="FirstExplain"
         component={FirstExplain}
         options={{
-          headerTitle: '이용약관',
+          headerShown: false,
         }}
       />
       <Stack.Screen
         name="SecondExplain"
         component={SecondExplain}
         options={{
-          headerTitle: '개인정보 취급방침',
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="Nickname"
+        component={Nickname}
+        options={{
+          title: '닉네임 설정',
+        }}
+      />
+      <Stack.Screen
+        name="ProfileImageSet"
+        component={ProfileImageSet}
+        options={{
+          title: '프로필 사진 설정',
+        }}
+      />
+      <Stack.Screen
+        name="UserInfo"
+        component={UserInfo}
+        options={{
+          title: '계정',
         }}
       />
     </Stack.Navigator>

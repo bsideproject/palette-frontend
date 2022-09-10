@@ -30,7 +30,8 @@ const ButtonContainer = styled.View`
   margin-bottom: 106px;
 `;
 
-const Nickname = ({navigation}) => {
+const Nickname = ({navigation, route}) => {
+  const {params} = route;
   const [pass, setPass] = useState(false);
   const [socialType, setSocialType] = useState('');
   const [nickname, setNickname] = useState('');
@@ -45,8 +46,6 @@ const Nickname = ({navigation}) => {
   );
 
   const _handleNextButtonPress = () => {
-    // Check Valid Type
-    console.log('Set Memo Color Press');
     setIsError(true);
 
     if (nickname.length === 0) {
@@ -60,7 +59,8 @@ const Nickname = ({navigation}) => {
       updateProfile({
         variables: {nickname: nickname, socialTypes: [socialType]},
       });
-      navigation.navigate('ProfileImageSet');
+      if(params) navigation.goBack();
+      else navigation.navigate('ProfileImageSet');
     }
   };
 
@@ -100,7 +100,7 @@ const Nickname = ({navigation}) => {
         stickyFooter={
           <ButtonContainer pointerEvents={pass ? 'auto' : 'none'}>
             <Button
-              title="다음 단계로"
+              title={params ? '확인' : '다음 단계로'}
               onPress={_handleNextButtonPress}
               containerStyle={{
                 backgroundColor: pass ? theme.pointColor : theme.dark040,

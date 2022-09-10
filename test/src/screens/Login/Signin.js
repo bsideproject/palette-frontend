@@ -252,8 +252,8 @@ const Signin = ({navigation}) => {
   };
 
   const getAccessToken = async ({email, socialType}) => {
-    // const response = await loginApi('rmsdyd200@naver.com', 'KAKAO');
-    const response = await loginApi(email, socialType);
+    const response = await loginApi('rmsdyd200@naver.com', 'KAKAO');
+    // const response = await loginApi(email, socialType);
     const {data} = response;
     if (!data.isRegistered) {
       //데이터베이스에 회원이 존재 하지 않는 경우

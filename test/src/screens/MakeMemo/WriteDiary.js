@@ -1,4 +1,4 @@
-import React, {useContext, useState, useEffect, useRef} from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 import styled from 'styled-components/native';
 import {View, TouchableOpacity, Text} from 'react-native';
 import {ThemeContext} from 'styled-components/native';
@@ -8,7 +8,8 @@ import Modal from 'react-native-modal';
 import {UserContext} from '@contexts';
 import {launchCamera} from 'react-native-image-picker';
 import {UploadModal} from '@components';
-import {imageUploadApi} from '../../api/restfulAPI';
+import {imageUploadApi, imageDeleteApi} from '../../api/restfulAPI';
+import {USE_MUTATION} from '@apolloClient/queries';
 
 const Container = styled.View`
   flex: 1;
@@ -37,7 +38,7 @@ const DiaryTitle = styled.TextInput.attrs(({theme, isError}) => ({
 const DiaryContent = styled.TextInput.attrs(({theme, isError}) => ({
   placeholderTextColor: isError ? theme.dark030 : theme.error,
 }))`
-  height: ${props => (props.isImage > 0 ? '400px' : '170px')};
+  height: ${props => (props.isImage === 0 ? '170px' : '400px')};
   border: 1px solid
     ${props =>
       props.isError ? ({theme}) => theme.light020 : ({theme}) => theme.error};
@@ -178,13 +179,19 @@ const WriteDiary = ({navigation, route}) => {
   const [titleText, setTitleText] = useState('');
   const [contentText, setContentText] = useState('');
   const [selectModal, setSelectModal] = useState(false);
+  const [createPage, createResult] = USE_MUTATION(
+    'CREATE_PAGE',
+    user.accessToken,
+  );
 
   useEffect(() => {
     if (route.params) {
       params = route.params;
-      setTitleText(params.title);
-      setContentText(params.contents);
-      setImageArr(params.imgUrl);
+      if (params.mode === 'edit') {
+        setTitleText(params.title);
+        setContentText(params.contents);
+        setImageArr(params.imgUrl);
+      }
     } else {
       params = null;
     }
@@ -289,7 +296,7 @@ const WriteDiary = ({navigation, route}) => {
     });
   };
 
-  const _handleDeleteImage = url => {
+  const _handleDeleteImage = async url => {
     console.log('delete', imageArr);
     const photo = new FormData();
     imageArr.map((arrUrl, i) => {
@@ -302,6 +309,10 @@ const WriteDiary = ({navigation, route}) => {
         photo.append('file', file);
       }
     });
+
+    if (url.includes('palette') === true) {
+      await imageDeleteApi(url);
+    }
     if (imageArr.length === 1) {
       console.log('uploadImage null');
       setUploadImage(null);
@@ -337,14 +348,26 @@ const WriteDiary = ({navigation, route}) => {
     } else if (contentText.length === 0) {
       setContentError(true);
     } else {
-      //저장 기능 작성;
       if (uploadImage !== null) {
         const response = await imageUploadApi(uploadImage, user.accessToken);
+        await createPage({
+          variables: {
+            title: titleText,
+            body: contentText,
+            historyId: params.historyId,
+            imageUrls: response.data.urls,
+          },
+        });
         navigation.goBack();
-        //일기 저장 api연동 예정
       } else {
-        //일기 저장 api연동 예정
-        console.log('nono');
+        await createPage({
+          variables: {
+            title: titleText,
+            body: contentText,
+            historyId: params.historyId,
+            imageUrls: [],
+          },
+        });
         navigation.goBack();
       }
     }

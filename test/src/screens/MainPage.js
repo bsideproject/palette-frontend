@@ -225,7 +225,7 @@ const MainPage = ({navigation, route}) => {
   const theme = useContext(ThemeContext);
   const [memos, setMemos] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const {width, height} = Dimensions.get('screen');
+  const {width} = Dimensions.get('screen');
   const [loadError, setLoadError] = useState(false);
   const [slideIdx, setSlideIdx] = useState(1);
   const {user} = useContext(UserContext);
@@ -617,7 +617,11 @@ const MainPage = ({navigation, route}) => {
           <BtnContainer>
             <Button
               title="오늘 일기 쓰기"
-              onPress={() => navigation.navigate('WriteDiary')}
+              onPress={() =>
+                navigation.navigate('WriteDiary', {
+                  historyId: memos[sliderIdx].currentHistory.id,
+                })
+              }
               containerStyle={{
                 backgroundColor: theme.pointColor,
                 alignItems: 'center',

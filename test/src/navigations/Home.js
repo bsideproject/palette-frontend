@@ -92,26 +92,20 @@ const Home = ({navigation, route}) => {
         title:
           curScreenName != '더 보기' ? (
             <ProfileContainer>
-              {user.profileImg !== null ? (
+              {user.profileImg ? (
                 <ProfileRow>
                   <ProfileImage source={{uri: user.profileImg}} />
                   <ProfileNickname>{curScreenName}</ProfileNickname>
                 </ProfileRow>
               ) : (
-                <AutoHeightImage
-                  width={40}
-                  maxHeight={60}
-                  source={{uri: PROFILE_DEFAULT}}
-                  style={{
-                    borderRadius: 50,
-                  }}
-                />
+                <ProfileRow>
+                  <ProfileImage source={PROFILE_DEFAULT} />
+                  <ProfileNickname>{curScreenName}</ProfileNickname>
+                </ProfileRow>
               )}
             </ProfileContainer>
           ) : (
-            <ProfileContainer>
-              <ProfileNickname>{curScreenName}</ProfileNickname>
-            </ProfileContainer>
+            '더 보기'
           ),
       }}>
       <Tab.Screen

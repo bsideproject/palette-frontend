@@ -250,7 +250,7 @@ const HistoryContentItemContainer = styled.View`
   margin-top: 2%;
 `;
 
-const HistoryRow = styled.View`
+const HistoryRow = styled.TouchableOpacity`
   margin-bottom: 3%;
   flex-direction: row;
   flex: 1;
@@ -559,7 +559,8 @@ const History = ({navigation, route}) => {
 
   const historyContentItemBox = ({item}) => {
     return (
-      <HistoryRow>
+      <HistoryRow
+        onPress={() => navigation.navigate('ShowDiary', {diary: item})}>
         <HistoryPeriodBar>
           <HistoryPeriodBarCircle isAdmin={item.isSelf} />
           <HistoryPeriodBarLine isAdmin={item.isSelf} />
