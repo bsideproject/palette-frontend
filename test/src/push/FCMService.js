@@ -113,7 +113,7 @@ class FCMService {
         } else {
           notification = remoteMessage;
         }
-        onNotification(notification);
+        onNotification(notification, 0);
       }
     });
 

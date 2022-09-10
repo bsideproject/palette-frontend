@@ -14,7 +14,7 @@ import AutoHeightImage from 'react-native-auto-height-image';
 import Icon_Ionicons from 'react-native-vector-icons/Ionicons';
 import {Button} from '@components';
 import {UserContext} from '@contexts';
-import {USE_QUERY} from '@apolloClient/queries';
+import {USE_QUERY, USE_MUTATION} from '@apolloClient/queries';
 import {useIsFocused} from '@react-navigation/native';
 
 // Time & Date Function
@@ -229,13 +229,17 @@ const MainPage = ({navigation, route}) => {
   const [loadError, setLoadError] = useState(false);
   const [slideIdx, setSlideIdx] = useState(1);
   const {user} = useContext(UserContext);
+  const focus = useIsFocused();
   const {loading, error, data, refetch} = USE_QUERY(
     'LOOK_UP_DIARY_PAGE',
     user.accessToken,
   );
-  const focus = useIsFocused();
-  // console.log('UserHome: ', user);
-  //console.log('Route: ', route.params);
+  const [
+    readAlarmHistory,
+    {loading: loadingRAH, error: errorRAH, data: dataRAH},
+  ] = USE_MUTATION('READ_PUSH_HISTORY', user.accessToken);
+
+  // console.log('USER', user);
 
   // [EVENT FUNCTION] ------------------------------------------
   const findIdxfromDiaryId = (diaryId, data) => {
@@ -255,6 +259,16 @@ const MainPage = ({navigation, route}) => {
       console.log('Diary Id: ', route.params.diaryId, sidx, data);
       if (sidx != -1) {
         setSlideIdx(sidx);
+      }
+      // Process Alarm Read Flag
+      if (route.params.hasOwnProperty('alarmHistoryId')) {
+        let alarmHistoryArray = [route.params.alarmHistoryId];
+        console.log('Send Alarm History Id:!!!!!', alarmHistoryArray);
+        readAlarmHistory({
+          variables: {
+            alarmHistoryIds: alarmHistoryArray,
+          },
+        });
       }
     }
   };
@@ -293,21 +307,10 @@ const MainPage = ({navigation, route}) => {
 
   // [USE EFFECT] -----------------------------------------------
   useEffect(() => {
-    if (data != undefined) {
-      setIsLoading(true);
-      _pushDataHandle(data['diaries']);
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 100);
-    }
-  }, [route.params]);
-
-  useEffect(() => {
     if (focus) {
       setIsLoading(true);
       refetch();
       getData();
-
       if (
         data == undefined ||
         data.length == 0 ||
@@ -317,6 +320,14 @@ const MainPage = ({navigation, route}) => {
         console.log('Data is Empty');
         setSlideIdx(0);
         setIsLoading(false);
+        return;
+      }
+
+      // Push Data Handled
+      if (route.params && route.params.hasOwnProperty('diaryId')) {
+        setIsLoading(true);
+        _pushDataHandle(data['diaries']);
+        route.params = null;
         return;
       }
 
@@ -334,7 +345,23 @@ const MainPage = ({navigation, route}) => {
         }, 1000);
       }
     }
-  }, [focus, loading, data]);
+  }, [focus, loading, data, route.params]);
+
+  useEffect(() => {
+    if (errorRAH != undefined) {
+      let jsonData = JSON.parse(JSON.stringify(errorRAH));
+      console.log(jsonData);
+      // [TODO] Go to Error Page
+    } else {
+      if (loadingRAH || dataRAH == undefined) {
+        console.log('Data Fecting & Data Empty');
+        return;
+      }
+      // If Success
+      console.log('PUSH READ SUCCESS: ', dataRAH);
+      setIsLoading(false);
+    }
+  }, [loadingRAH]);
 
   // [RENDER FUNCTION] ------------------------------------------
   const AddContainer = () => {

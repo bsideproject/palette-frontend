@@ -217,17 +217,6 @@ const CREATE_PAGE = gql`
   }
 `;
 
-const LOOK_UP_PUSH_HISTORY = gql`
-  query {
-    alarmHistories {
-      id
-      body
-      isRead
-      createdAt
-    }
-  }
-`;
-
 const GET_PAGE = gql`
   query GetPage($id: Long!) {
     page(pageQueryInput: {id: $id}) {
@@ -240,14 +229,6 @@ const GET_PAGE = gql`
         domain
       }
     }
-  }
-`;
-
-const READ_PUSH_HISTORY = gql`
-  mutation readAlarmHistories($alarmHistoryIds: [Long]!) {
-    readAlarmHistories(
-      readAlarmHistoriesInput: {alarmHistoryIds: $alarmHistoryIds}
-    )
   }
 `;
 
@@ -268,8 +249,6 @@ const QUERY_ARRAY = {
   LOOK_UP_HISTORY_PAGE: LOOK_UP_HISTORY_PAGE,
   CREATE_PAGE: CREATE_PAGE,
   GET_PAGE: GET_PAGE,
-  LOOK_UP_PUSH_HISTORY: LOOK_UP_PUSH_HISTORY,
-  READ_PUSH_HISTORY: READ_PUSH_HISTORY,
 };
 
 export const USE_QUERY = (Query, Token, variable) => {

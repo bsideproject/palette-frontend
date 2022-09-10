@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import styled from 'styled-components/native';
 import PropTypes from 'prop-types';
 import {TouchableOpacity} from 'react-native';
@@ -6,6 +6,7 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import {ThemeContext} from 'styled-components/native';
 import {UserContext} from '@contexts';
 import {USE_MUTATION} from '@apolloClient/queries';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 const Conatiner = styled.View`
   flex: 1;
@@ -77,10 +78,18 @@ const BottomTxt = styled.Text`
   text-decoration-line: underline;
 `;
 
+const SpinnerContainer = styled.Text`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  font-family: ${({theme}) => theme.fontRegular};
+`;
+
 const PushModal = ({onPressExit, onPressEnd}) => {
-  const theme = useContext(ThemeContext);
   const {user, setUser} = useContext(UserContext);
-  const [updateProfile, updateResult] = USE_MUTATION(
+  const [isLoading, setIsLoading] = useState(false);
+  const [updateProfile, {loading, error, data}] = USE_MUTATION(
     'UPDATE_PROFILE',
     user.accessToken,
   );
@@ -89,9 +98,25 @@ const PushModal = ({onPressExit, onPressEnd}) => {
     console.log('Set Push Notify:', onOff);
     if (onOff == true) {
       // Update Back-End
+      setIsLoading(true);
       updateProfile({
         variables: {pushEnabled: true},
       });
+    }
+  };
+
+  useEffect(() => {
+    if (error != undefined) {
+      let jsonData = JSON.parse(JSON.stringify(error));
+      console.log(jsonData);
+      // [TODO] Go to Error Page
+    } else {
+      if (loading || data == undefined) {
+        console.log('Data Fecting & Data Empty');
+        return;
+      }
+      // Not Check Data Is True..
+      console.log('Success Data', data);
       // Update Local Context Api
       setUser({
         accessToken: user.accessToken,
@@ -101,12 +126,18 @@ const PushModal = ({onPressExit, onPressEnd}) => {
         socialTypes: user.socialTypes,
         pushEnabled: true,
       });
+      // If Success
+      onPressExit();
+      onPressEnd();
+      setIsLoading(false);
     }
-    onPressExit();
-    onPressEnd();
-  };
+  }, [loading]);
 
-  return (
+  return isLoading ? (
+    <SpinnerContainer>
+      <Spinner visible={isLoading} textContent={'설정 적용 중...'} />
+    </SpinnerContainer>
+  ) : (
     <Conatiner>
       <PushModalContainer>
         <PushModalMid>

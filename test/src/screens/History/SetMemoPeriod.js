@@ -1,9 +1,10 @@
-import React, {useContext, useEffect} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {ThemeContext} from 'styled-components/native';
 import styled from 'styled-components/native';
 import {Button} from '@components';
 import {UserContext} from '@contexts';
 import {USE_MUTATION} from '@apolloClient/queries';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 const SetMemoFlexTop = styled.View`
   justify-content: center;
@@ -53,9 +54,18 @@ const Container = styled.View`
   align-items: center;
 `;
 
+const SpinnerContainer = styled.Text`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  font-family: ${({theme}) => theme.fontRegular};
+`;
+
 const SetMemoPeriod = ({navigation, route}) => {
   const theme = useContext(ThemeContext);
   const {user} = useContext(UserContext);
+  const [isLoading, setIsLoading] = useState(false);
   const [updateDiaryPeriod, {data, loading, error}] = USE_MUTATION(
     'REGISTER_DIARY_PERIOD',
     user.accessToken,
@@ -63,9 +73,9 @@ const SetMemoPeriod = ({navigation, route}) => {
 
   // [QUERY EVENT FUNCTION] --------------------------------------
   const _handleSetMemoPeriod = period => {
+    setIsLoading(true);
     console.log(route.params.id);
     console.log(period);
-
     // [TODO] Read Diary Id
     updateDiaryPeriod({
       variables: {
@@ -87,6 +97,7 @@ const SetMemoPeriod = ({navigation, route}) => {
       }
       console.log('DATA', data);
       if (data?.createHistory.historyId) {
+        setIsLoading(false);
         navigation.navigate('Home');
       } else {
         console.log('Loading or Error', data);
@@ -118,7 +129,11 @@ const SetMemoPeriod = ({navigation, route}) => {
     );
   };
 
-  return (
+  return isLoading ? (
+    <SpinnerContainer>
+      <Spinner visible={isLoading} textContent={'설정 적용 중...'} />
+    </SpinnerContainer>
+  ) : (
     <Container>
       <SetMemoFlexTop>
         <SetMemoTxt_1>일기장을 교환하기까지</SetMemoTxt_1>

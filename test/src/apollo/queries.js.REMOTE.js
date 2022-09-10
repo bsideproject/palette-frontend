@@ -195,28 +195,6 @@ const LOOK_UP_HISTORY_PAGE = gql`
   }
 `;
 
-const CREATE_PAGE = gql`
-  mutation createPage(
-    $title: String!
-    $body: String!
-    $historyId: Long!
-    $imageUrls: [String]!
-  ) {
-    createPage(
-      createPageInput: {
-        title: $title
-        body: $body
-        historyId: $historyId
-        imageUrls: $imageUrls
-      }
-    ) {
-      id
-      title
-      body
-    }
-  }
-`;
-
 const LOOK_UP_PUSH_HISTORY = gql`
   query {
     alarmHistories {
@@ -224,21 +202,6 @@ const LOOK_UP_PUSH_HISTORY = gql`
       body
       isRead
       createdAt
-    }
-  }
-`;
-
-const GET_PAGE = gql`
-  query GetPage($id: Long!) {
-    page(pageQueryInput: {id: $id}) {
-      id
-      title
-      body
-      images {
-        id
-        path
-        domain
-      }
     }
   }
 `;
@@ -266,8 +229,6 @@ const QUERY_ARRAY = {
   UPDATE_DIARY_COLOR: UPDATE_DIARY_COLOR,
   EXIT_DIARY: EXIT_DIARY,
   LOOK_UP_HISTORY_PAGE: LOOK_UP_HISTORY_PAGE,
-  CREATE_PAGE: CREATE_PAGE,
-  GET_PAGE: GET_PAGE,
   LOOK_UP_PUSH_HISTORY: LOOK_UP_PUSH_HISTORY,
   READ_PUSH_HISTORY: READ_PUSH_HISTORY,
 };

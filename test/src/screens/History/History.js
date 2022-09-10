@@ -390,8 +390,12 @@ const History = ({navigation, route}) => {
     exitDiary,
     {data: exitDiaryData, loading: exitDiaryLoading, error: exitDiaryError},
   ] = USE_MUTATION('EXIT_DIARY', user.accessToken);
+  const [
+    readAlarmHistory,
+    {loading: loadingRAH, error: errorRAH, data: dataRAH},
+  ] = USE_MUTATION('READ_PUSH_HISTORY', user.accessToken);
   const focus = useIsFocused();
-  //console.log('ssss', route.params);
+  // console.log('ssss', route.params);
 
   const findIdxfromHistoryId = (HistoryId, data) => {
     let findIdx = -1;
@@ -463,6 +467,16 @@ const History = ({navigation, route}) => {
         if (route.params.hasOwnProperty('historyId')) {
           isPushEvent = true;
         }
+        // Process Alarm Read Flag
+        if (route.params.hasOwnProperty('alarmHistoryId')) {
+          let alarmHistoryArray = [route.params.alarmHistoryId];
+          console.log('Send Alarm History Id:!!!!!', alarmHistoryArray);
+          readAlarmHistory({
+            variables: {
+              alarmHistoryIds: alarmHistoryArray,
+            },
+          });
+        }
       }
       refetch();
       getData(isPushEvent);
@@ -485,6 +499,21 @@ const History = ({navigation, route}) => {
       navigation.navigate('Home');
     }
   }, [exitDiaryLoading]);
+
+  useEffect(() => {
+    if (errorRAH != undefined) {
+      let jsonData = JSON.parse(JSON.stringify(errorRAH));
+      console.log(jsonData);
+      // [TODO] Go to Error Page
+    } else {
+      if (loadingRAH || dataRAH == undefined) {
+        console.log('Data Fecting & Data Empty');
+        return;
+      }
+      // If Success
+      console.log('PUSH READ SUCCESS: ', dataRAH);
+    }
+  }, [loadingRAH]);
 
   useEffect(() => {
     // console.log(modalVisible);

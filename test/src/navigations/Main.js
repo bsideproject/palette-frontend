@@ -14,14 +14,14 @@ import {
   History,
   EditDiaryColor,
   EditDiaryTitle,
-  setModalDisplay,
   WriteDiary,
   ShowDiary,
   FirstExplain,
   SecondExplain,
   Nickname,
   ProfileImageSet,
-  UserInfo
+  UserInfo,
+  PushHistory,
 } from '@screens';
 import Home from './Home';
 import {LogBox} from 'react-native';
@@ -95,6 +95,13 @@ const Main = () => {
         component={CompleteMemo}
         options={{
           headerLeft: false,
+        }}
+      />
+      <Stack.Screen
+        name="PushHistory"
+        component={PushHistory}
+        options={{
+          title: '알림',
         }}
       />
       <Stack.Screen

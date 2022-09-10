@@ -120,7 +120,8 @@ const Home = ({navigation, route}) => {
             }),
           headerTitleAlign: 'flex-start',
           headerRight: () => (
-            <TouchableOpacity onPress={() => navigation.navigate(Home)}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('PushHistory')}>
               <Icon name="notifications" size={26} style={{marginRight: 20}} />
             </TouchableOpacity>
           ),

@@ -2,8 +2,10 @@ import React, {useContext, useState} from 'react';
 import {ThemeContext} from 'styled-components/native';
 import styled from 'styled-components/native';
 import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
-import {Button} from '@components';
+import {Button, PushModal} from '@components';
 import {Image} from 'react-native';
+import {UserContext} from '@contexts';
+import Modal from 'react-native-modal';
 
 const Container = styled.View`
   flex: 1;
@@ -53,13 +55,23 @@ const InviteTxtStyle = styled.Text`
 
 const CompleteInviteCode = ({navigation, route}) => {
   const theme = useContext(ThemeContext);
-  const userName = '김반쪽';
   const INVITE_IMG = require('/assets/icons/invite.png');
+  const [pushModalVisible, setPushModalVisible] = useState(false);
+  const {user} = useContext(UserContext);
 
   // [EVENT FUNCTION] ------------------------------------------
-  const _handleRequestSetMemo = () => {
-    // Go to Main Page
+  const _handleMoveMainPage = () => {
     navigation.navigate('Home');
+  };
+
+  const _handleRequestSetMemo = () => {
+    console.log('USER PushEnabled: ', user.pushEnabled);
+    if (user.pushEnabled == true) {
+      _handleMoveMainPage();
+    } else {
+      // Set Push Modal
+      setPushModalVisible(true);
+    }
   };
 
   return (
@@ -103,6 +115,23 @@ const CompleteInviteCode = ({navigation, route}) => {
           <TxtStyle>일기장에 초대하셨습니다.</TxtStyle>
         </TxtContainer>
       </Container>
+
+      <Modal
+        isVisible={pushModalVisible}
+        useNativeDriver={true}
+        onRequestClose={() => setPushModalVisible(false)}
+        hideModalContentWhileAnimating={true}
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          flexDirection: 'row',
+        }}>
+        <PushModal
+          onPressExit={setPushModalVisible}
+          onPressEnd={_handleMoveMainPage}
+        />
+      </Modal>
     </KeyboardAvoidingScrollView>
   );
 };

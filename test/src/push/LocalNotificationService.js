@@ -10,14 +10,20 @@ export const onPushDataToNavigate = (notify, idx) => {
     if (idx == 1) {
       setTimeout(() => {
         if (notify.data.diaryId) {
-          navigate('Home', notify.data, {diaryId: notify.data.diaryId});
+          navigate('Home', notify.data, {
+            diaryId: notify.data.diaryId,
+            alarmHistoryId: notify.data.alarmHistoryId,
+          });
         } else {
           navigate('Home', notify.data);
         }
       }, 2000);
     } else {
       if (notify.data.diaryId) {
-        navigate('Home', notify.data, {diaryId: notify.data.diaryId});
+        navigate('Home', notify.data, {
+          diaryId: notify.data.diaryId,
+          alarmHistoryId: notify.data.alarmHistoryId,
+        });
       } else {
         navigate('Home', notify.data);
       }
@@ -29,6 +35,7 @@ export const onPushDataToNavigate = (notify, idx) => {
           navigate('History', notify.data, {
             diaryId: notify.data.diaryId,
             historyId: notify.data.historyId,
+            alarmHistoryId: notify.data.alarmHistoryId,
           });
         } else {
           navigate('History', notify.data);
@@ -39,6 +46,7 @@ export const onPushDataToNavigate = (notify, idx) => {
         navigate('History', notify.data, {
           diaryId: notify.data.diaryId,
           historyId: notify.data.historyId,
+          alarmHistoryId: notify.data.alarmHistoryId,
         });
       } else {
         navigate('History', notify.data);
@@ -54,7 +62,11 @@ class LocalNotificationService {
         console.log('[LocalNotificationService] onRegister:', token);
       },
       onNotification: function (notification, idx) {
-        console.log('[LocalNotificationService] onNotification:', notification);
+        console.log(
+          '[LocalNotificationService] onNotification:',
+          notification,
+          idx,
+        );
         if (!notification?.data) {
           return;
         }

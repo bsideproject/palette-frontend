@@ -30,6 +30,7 @@ import UserInfo from './UserInfo';
 // Main Page
 import MainPage from './MainPage';
 import Setting from './Setting';
+import PushHistory from './PushHistory';
 
 export {
   Signin,
@@ -39,6 +40,7 @@ export {
   AddInviteCode,
   MainPage,
   Setting,
+  PushHistory,
   Agree,
   FirstExplain,
   SecondExplain,
