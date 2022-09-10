@@ -376,25 +376,36 @@ const History = ({navigation, route}) => {
   const [History, setHistory] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [exitModalVisible, setExitModalVisible] = useState(false);
-  const {width, height} = Dimensions.get('screen');
   // History
   const [selDiary, setSelDiary] = useState(null);
   const {user} = useContext(UserContext);
+  const [diaryId, setDiaryId] = useState(route.params.id);
+
   const {loading, error, data, refetch} = USE_QUERY(
     'LOOK_UP_HISTORY_PAGE',
     user.accessToken,
-    {diaryId: route.params.id},
+    {diaryId: diaryId},
   );
   const [
     exitDiary,
     {data: exitDiaryData, loading: exitDiaryLoading, error: exitDiaryError},
   ] = USE_MUTATION('EXIT_DIARY', user.accessToken);
   const focus = useIsFocused();
-  // [TODO] 일기장 Id를 통해서 graphql-> 컨텐트 읽어오기
   //console.log('ssss', route.params);
 
+  const findIdxfromHistoryId = (HistoryId, data) => {
+    let findIdx = -1;
+    for (let i = 0; i < data.length; ++i) {
+      if (data[i].id == HistoryId) {
+        findIdx = i;
+        break;
+      }
+    }
+    return findIdx;
+  };
+
   // [QUERY EVENT FUNCTION] --------------------------------------
-  const getData = () => {
+  const getData = isPushEvent => {
     console.log(error, loading, data);
     if (error != undefined) {
       console.log('ERROR: ', JSON.stringify(error));
@@ -404,11 +415,25 @@ const History = ({navigation, route}) => {
         console.log('Data Fecting & Data Empty');
         return;
       }
-      console.log('Read Data', data['histories'].length);
-      console.log('Read Pages', data['histories'][0]);
+      // console.log('Read Data', data['histories']);
+      // console.log('Read Pages', data['histories'][0]);
+
       // Cur Select Diary
       setHistory(data['histories']);
-      setSelDiary(data['histories'][0]);
+
+      if (isPushEvent) {
+        let historyIdx = findIdxfromHistoryId(
+          route.params.historyId,
+          data['histories'],
+        );
+        if (historyIdx == -1) {
+          setSelDiary(data['histories'][0]);
+        } else {
+          setSelDiary(data['histories'][historyIdx]);
+        }
+      } else {
+        setSelDiary(data['histories'][0]);
+      }
 
       setTimeout(() => {
         setIsLoading(false);
@@ -429,11 +454,20 @@ const History = ({navigation, route}) => {
   // [USE EFFECT] -----------------------------------------------
   useEffect(() => {
     if (focus) {
+      let isPushEvent = false;
       setIsLoading(true);
+      if (route.params.hasOwnProperty('id')) {
+        setDiaryId(route.params.id);
+      } else if (route.params.hasOwnProperty('diaryId')) {
+        setDiaryId(route.params.diaryId);
+        if (route.params.hasOwnProperty('historyId')) {
+          isPushEvent = true;
+        }
+      }
       refetch();
-      getData();
+      getData(isPushEvent);
     }
-  }, [focus, loading, data]);
+  }, [focus, loading, data, route.params]);
 
   useEffect(() => {
     if (exitDiaryError != undefined) {
