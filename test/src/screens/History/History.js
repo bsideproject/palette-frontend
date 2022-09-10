@@ -12,6 +12,9 @@ import {Dimensions} from 'react-native';
 import {utcToKst} from '~/src/utils';
 import {USE_QUERY, USE_MUTATION} from '@apolloClient/queries';
 import {UserContext} from '@contexts';
+import {useIsFocused} from '@react-navigation/native';
+import AutoHeightImage from 'react-native-auto-height-image';
+import Icon_Ant from 'react-native-vector-icons/AntDesign';
 
 const DateTime = ts => {
   return moment(utcToKst(ts)).format('YYYY년 MM월 DD일');
@@ -24,11 +27,21 @@ const RemainDate = ts => {
   const target = moment(ts, 'YYYY-MM-DD HH:mm').utc();
   const diff = moment.duration(now.diff(target));
 
+  if (diff > 0) {
+    return false;
+  }
   const day_diff = Math.floor(diff.asDays());
   const hour_diff = Math.floor(diff.asHours()) % 24;
   const min_diff = Math.floor(diff.asMinutes()) % 60;
+  return -day_diff + '일 ' + -hour_diff + '시간 ' + -min_diff + '분 ';
+};
 
-  return day_diff + '일 ' + hour_diff + '시간 ' + min_diff + '분 ';
+const PeriodDiff = (startDate, endDate) => {
+  const s_date = moment(startDate, 'YYYY-MM-DD HH:mm').utc();
+  const e_date = moment(endDate, 'YYYY-MM-DD HH:mm').utc();
+  const diff = moment.duration(e_date.diff(s_date));
+  const day_diff = Math.floor(diff.asDays());
+  return day_diff;
 };
 
 const DateConvertMMM = ts => {
@@ -222,19 +235,22 @@ const HistoryContentContainer = styled.View`
 `;
 
 const HistoryContentRemainTimeTxt = styled.Text`
-  margin-top: 5%;
+  margin-top: 4%;
+  height: 5%;
   font-size: 14px;
   font-weight: 600;
   color: ${({theme}) => theme.dark010};
   text-align: center;
+  justify-content: center;
 `;
 
 const HistoryContentItemContainer = styled.View`
   flex: 1;
+  margin-top: 2%;
 `;
 
 const HistoryRow = styled.View`
-  margin-top: 5%;
+  margin-bottom: 3%;
   flex-direction: row;
   flex: 1;
   padding-right: 5%;
@@ -276,6 +292,8 @@ const HistoryItemBox = styled.View`
 
 const HistoryItemBoxDate = styled.View`
   flex: 1;
+  justify-content: center;
+  align-items: center;
 `;
 
 const HistoryItemBoxDateInMMM = styled.View`
@@ -311,6 +329,7 @@ const HistoryItemBoxContent = styled.View`
 
 const HistoryItemBoxInTitle = styled.View`
   flex: 1;
+  justify-content: center;
 `;
 
 const HistoryItemBoxInTitleTxt = styled.Text`
@@ -322,6 +341,7 @@ const HistoryItemBoxInTitleTxt = styled.Text`
 
 const HistoryItemBoxInContent = styled.View`
   flex: 1;
+  margin-top: 2%;
 `;
 
 const HistoryItemBoxInContentTxt = styled.Text`
@@ -333,6 +353,11 @@ const HistoryItemBoxInContentTxt = styled.Text`
 
 const HistoryItemBoxInImg = styled.View`
   flex: 1;
+  flex-direction: row;
+  shadow-offset: 0px 2px;
+  shadow-radius: 2px;
+  shadow-color: rgba(0, 0, 0, 0.15);
+  margin-top: 2%;
 `;
 
 const VerticalLine = styled.View`
@@ -354,152 +379,60 @@ const History = ({navigation, route}) => {
   // History
   const [selDiary, setSelDiary] = useState(null);
   const {user} = useContext(UserContext);
+  const {loading, error, data, refetch} = USE_QUERY(
+    'LOOK_UP_HISTORY_PAGE',
+    user.accessToken,
+    {diaryId: route.params.id},
+  );
   const [
     exitDiary,
     {data: exitDiaryData, loading: exitDiaryLoading, error: exitDiaryError},
   ] = USE_MUTATION('EXIT_DIARY', user.accessToken);
-  // console.log(RemainDate('2022-08-22 07:11:36.045248'));
-  // console.log(DateConvertDD('2022-08-16 22:41:56.045248'));
-
+  const focus = useIsFocused();
   // [TODO] 일기장 Id를 통해서 graphql-> 컨텐트 읽어오기
-  console.log(route.params);
+  // console.log('ssss', route.params);
 
-  const testHistoryData = {
-    title: route.params.title,
-    content: [
-      {
-        startDate: '2022-07-01 07:11:36.045248',
-        endDate: '2022-07-08 07:11:36.045248',
-        period: 7,
-        content: [
-          {
-            title: '김지은님의 일기',
-            content: '일기 test',
-            createdAt: '2022-08-16 22:41:56.045248',
-            contentImg: ['https://...', 'https://...'],
-            isAdmin: true,
-          },
-          {
-            title: '김반쪽의 일기',
-            content: '일기 test다..',
-            createdAt: '2022-08-18 22:41:56.045248',
-            contentImg: ['https://...', 'https://...'],
-            isAdmin: false,
-          },
-          {
-            title: '여행 계획을 세우자',
-            content: '오늘 김반쪽과 만나기로 했다..',
-            createdAt: '2022-08-03 07:11:36.045248',
-            contentImg: ['https://...', 'https://...'],
-            isAdmin: true,
-          },
-        ],
-      },
-      {
-        startDate: '2022-06-01 07:11:36.045248',
-        endDate: '2022-06-30 07:11:36.045248',
-        period: 30,
-        content: [
-          {
-            title: '김지은님의 일기',
-            content: '일기 test',
-            createdAt: '2022-08-16 22:41:56.045248',
-            contentImg: ['https://...', 'https://...'],
-            isAdmin: true,
-          },
-          {
-            title: '김반쪽의 일기',
-            content: '일기 test다..',
-            createdAt: '2022-08-18 22:41:56.045248',
-            contentImg: ['https://...', 'https://...'],
-            isAdmin: false,
-          },
-          {
-            title: '여행 계획을 세우자',
-            content: '오늘 김반쪽과 만나기로 했다..',
-            createdAt: '2022-08-03 07:11:36.045248',
-            contentImg: ['https://...', 'https://...'],
-            isAdmin: true,
-          },
-        ],
-      },
-      {
-        startDate: '2022-05-15 07:11:36.045248',
-        endDate: '2022-05-30 07:11:36.045248',
-        period: 15,
-        content: [
-          {
-            title: '김지은님의 일기',
-            content: '일기 test',
-            createdAt: '2022-08-16 22:41:56.045248',
-            contentImg: ['https://...', 'https://...'],
-            isAdmin: true,
-          },
-          {
-            title: '김반쪽의 일기',
-            content: '일기 test다..',
-            createdAt: '2022-08-18 22:41:56.045248',
-            contentImg: ['https://...', 'https://...'],
-            isAdmin: false,
-          },
-          {
-            title: '여행 계획을 세우자',
-            content: '오늘 김반쪽과 만나기로 했다..',
-            createdAt: '2022-08-03 07:11:36.045248',
-            contentImg: ['https://...', 'https://...'],
-            isAdmin: true,
-          },
-        ],
-      },
-      {
-        startDate: '2022-05-15 07:11:36.045248',
-        endDate: '2022-05-30 07:11:36.045248',
-        period: 15,
-        content: [
-          {
-            title: '김지은님의 일기',
-            content: '일기 test',
-            createdAt: '2022-08-16 22:41:56.045248',
-            contentImg: ['https://...', 'https://...'],
-            isAdmin: true,
-          },
-          {
-            title: '김반쪽의 일기',
-            content: '일기 test다..',
-            createdAt: '2022-08-18 22:41:56.045248',
-            contentImg: ['https://...', 'https://...'],
-            isAdmin: false,
-          },
-          {
-            title: '여행 계획을 세우자',
-            content: '오늘 김반쪽과 만나기로 했다..',
-            createdAt: '2022-08-03 07:11:36.045248',
-            contentImg: ['https://...', 'https://...'],
-            isAdmin: true,
-          },
-        ],
-      },
-    ],
-  };
-
+  // [QUERY EVENT FUNCTION] --------------------------------------
   const getData = () => {
-    // Get From DataBase, Start Spinner
-    // console.log('Get Data From QraphQL');
+    console.log(error, loading, data);
+    if (error != undefined) {
+      console.log('ERROR: ', JSON.stringify(error));
+      // [TODO] Go to Error Page
+    } else {
+      if (loading || data == undefined) {
+        console.log('Data Fecting & Data Empty');
+        return;
+      }
+      console.log('Read Data', data['histories'].length);
+      console.log('Read Pages', data['histories'][0]);
+      // Cur Select Diary
+      setHistory(data['histories']);
+      setSelDiary(data['histories'][0]);
 
-    // History Page Load
-    setHistory(testHistoryData);
-    // Cur Select Diary
-    setSelDiary(testHistoryData.content[0]);
-
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 500);
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 100);
+    }
   };
 
-  // Get Query from QraphQL
+  const _handleExitMemo = () => {
+    console.log('Exit Memo');
+    exitDiary({
+      variables: {
+        diaryId: route.params.id,
+      },
+    });
+    setExitModalVisible(false);
+  };
+
+  // [USE EFFECT] -----------------------------------------------
   useEffect(() => {
-    getData();
-  }, []);
+    if (focus) {
+      setIsLoading(true);
+      refetch();
+      getData();
+    }
+  }, [focus, loading, data]);
 
   useEffect(() => {
     if (exitDiaryError != undefined) {
@@ -518,6 +451,14 @@ const History = ({navigation, route}) => {
     }
   }, [exitDiaryLoading]);
 
+  useEffect(() => {
+    // console.log(modalVisible);
+    if (!(modalVisible == true || modalVisible == false)) {
+      setHistoryModalVisible(false);
+    }
+  }, []);
+
+  // [RENDER FUNCTION] ------------------------------------------
   const _handleMemoData = status => {
     console.log(status);
     // [TODO]
@@ -533,16 +474,6 @@ const History = ({navigation, route}) => {
         break;
     }
     setHistoryModalVisible(false);
-  };
-
-  const _handleExitMemo = () => {
-    console.log('Exit Memo');
-    exitDiary({
-      variables: {
-        diaryId: route.params.id,
-      },
-    });
-    setExitModalVisible(false);
   };
 
   const historyDateSwipeBox = item => {
@@ -561,7 +492,7 @@ const History = ({navigation, route}) => {
             justifyContent: 'center',
           }}>
           <HistoryDateItemTxt selected={item == selDiary ? true : false}>
-            {item.period}&nbsp;Days
+            {PeriodDiff(item.startDate, item.endDate)}&nbsp;Days
           </HistoryDateItemTxt>
         </TouchableOpacity>
 
@@ -570,54 +501,91 @@ const History = ({navigation, route}) => {
     );
   };
 
+  const histotyImageRender = item => {
+    return (
+      <AutoHeightImage
+        width={39}
+        height={39}
+        maxHeight={39}
+        source={{uri: item.domain + item.path}}
+        style={{
+          borderRadius: 5,
+          marginRight: '3%',
+        }}
+      />
+    );
+  };
+
   const historyContentItemBox = ({item}) => {
     return (
       <HistoryRow>
         <HistoryPeriodBar>
-          <HistoryPeriodBarCircle isAdmin={item.isAdmin} />
-          <HistoryPeriodBarLine isAdmin={item.isAdmin} />
+          <HistoryPeriodBarCircle isAdmin={item.isSelf} />
+          <HistoryPeriodBarLine isAdmin={item.isSelf} />
         </HistoryPeriodBar>
 
         <HistoryItemBox>
-          <HistoryItemBoxDate>
-            <HistoryItemBoxDateInMMM>
-              <HistoryItemBoxDateInMMMTxt>
-                {DateConvertMMM(item.createdAt)}
-              </HistoryItemBoxDateInMMMTxt>
-            </HistoryItemBoxDateInMMM>
-            <HistoryItemBoxDateInDD>
-              <HistoryItemBoxDateInDDTxt>
-                {DateConvertDD(item.createdAt)}
-              </HistoryItemBoxDateInDDTxt>
-            </HistoryItemBoxDateInDD>
-          </HistoryItemBoxDate>
+          {RemainDate(selDiary.endDate) == false ||
+          (RemainDate(selDiary.endDate) != false && item.isSelf == true) ? (
+            <HistoryItemBoxDate>
+              <HistoryItemBoxDateInMMM>
+                <HistoryItemBoxDateInMMMTxt>
+                  {DateConvertMMM(item.createdAt)}
+                </HistoryItemBoxDateInMMMTxt>
+              </HistoryItemBoxDateInMMM>
+              <HistoryItemBoxDateInDD>
+                <HistoryItemBoxDateInDDTxt>
+                  {DateConvertDD(item.createdAt)}
+                </HistoryItemBoxDateInDDTxt>
+              </HistoryItemBoxDateInDD>
+            </HistoryItemBoxDate>
+          ) : (
+            <HistoryItemBoxDate style={{height: 50}}>
+              <Icon_Ant
+                name="lock"
+                size={30}
+                color={theme.dark020}
+                style={{marginRight: 3}}
+              />
+            </HistoryItemBoxDate>
+          )}
 
           <VerticalLine />
 
-          <HistoryItemBoxContent>
-            <HistoryItemBoxInTitle>
-              <HistoryItemBoxInTitleTxt>{item.title}</HistoryItemBoxInTitleTxt>
-            </HistoryItemBoxInTitle>
+          {RemainDate(selDiary.endDate) == false ||
+          (RemainDate(selDiary.endDate) != false && item.isSelf == true) ? (
+            <HistoryItemBoxContent>
+              <HistoryItemBoxInTitle>
+                <HistoryItemBoxInTitleTxt>
+                  {item.author.nickname}님의 일기
+                </HistoryItemBoxInTitleTxt>
+              </HistoryItemBoxInTitle>
 
-            <HistoryItemBoxInContent>
-              <HistoryItemBoxInContentTxt>
-                {item.content}
-              </HistoryItemBoxInContentTxt>
-            </HistoryItemBoxInContent>
+              <HistoryItemBoxInContent>
+                <HistoryItemBoxInContentTxt>
+                  {item.title}
+                </HistoryItemBoxInContentTxt>
+              </HistoryItemBoxInContent>
 
-            <HistoryItemBoxInImg>{/* [TODO] Get Image */}</HistoryItemBoxInImg>
-          </HistoryItemBoxContent>
+              <HistoryItemBoxInImg>
+                {item.images.map(item => {
+                  return histotyImageRender(item);
+                })}
+              </HistoryItemBoxInImg>
+            </HistoryItemBoxContent>
+          ) : (
+            <HistoryItemBoxContent>
+              <HistoryItemBoxInTitle>
+                <HistoryItemBoxInTitleTxt>
+                  {item.author.nickname}님의 일기
+                </HistoryItemBoxInTitleTxt>
+              </HistoryItemBoxInTitle>
+            </HistoryItemBoxContent>
+          )}
         </HistoryItemBox>
       </HistoryRow>
     );
   };
-
-  useEffect(() => {
-    console.log(modalVisible);
-    if (!(modalVisible == true || modalVisible == false)) {
-      setHistoryModalVisible(false);
-    }
-  }, []);
 
   return isLoading ? (
     <SpinnerContainer>
@@ -626,7 +594,7 @@ const History = ({navigation, route}) => {
   ) : (
     <Container>
       <HistoryTitleContainer>
-        <HistoryTitleTxt>{History.title}</HistoryTitleTxt>
+        <HistoryTitleTxt>{selDiary.diary.title}</HistoryTitleTxt>
       </HistoryTitleContainer>
 
       <HistoryDateContainer>
@@ -640,7 +608,7 @@ const History = ({navigation, route}) => {
           horizontal={true}
           showsHorizontalScrollIndicator={false}
           keyExtractor={(item, index) => index.toString()}>
-          {History.content.map(item => {
+          {History.map(item => {
             return historyDateSwipeBox(item);
           })}
         </ScrollView>
@@ -648,11 +616,13 @@ const History = ({navigation, route}) => {
 
       <HistoryContentContainer>
         <HistoryContentRemainTimeTxt>
-          {RemainDate(selDiary.endDate)}후 교환
+          {RemainDate(selDiary.endDate) == false
+            ? ''
+            : RemainDate(selDiary.endDate) + '후 교환'}
         </HistoryContentRemainTimeTxt>
         <HistoryContentItemContainer>
           <FlatList
-            data={selDiary.content}
+            data={selDiary.pages}
             renderItem={historyContentItemBox}
             numColumns={1}
           />
@@ -775,3 +745,123 @@ const History = ({navigation, route}) => {
 };
 
 export default History;
+
+/*
+const testHistoryData = {
+  title: route.params.title,
+  content: [
+    {
+      startDate: '2022-07-01 07:11:36.045248',
+      endDate: '2022-07-08 07:11:36.045248',
+      period: 7,
+      content: [
+        {
+          title: '김지은님의 일기',
+          content: '일기 test',
+          createdAt: '2022-08-16 22:41:56.045248',
+          contentImg: ['https://...', 'https://...'],
+          isAdmin: true,
+        },
+        {
+          title: '김반쪽의 일기',
+          content: '일기 test다..',
+          createdAt: '2022-08-18 22:41:56.045248',
+          contentImg: ['https://...', 'https://...'],
+          isAdmin: false,
+        },
+        {
+          title: '여행 계획을 세우자',
+          content: '오늘 김반쪽과 만나기로 했다..',
+          createdAt: '2022-08-03 07:11:36.045248',
+          contentImg: ['https://...', 'https://...'],
+          isAdmin: true,
+        },
+      ],
+    },
+    {
+      startDate: '2022-06-01 07:11:36.045248',
+      endDate: '2022-06-30 07:11:36.045248',
+      period: 30,
+      content: [
+        {
+          title: '김지은님의 일기',
+          content: '일기 test',
+          createdAt: '2022-08-16 22:41:56.045248',
+          contentImg: ['https://...', 'https://...'],
+          isAdmin: true,
+        },
+        {
+          title: '김반쪽의 일기',
+          content: '일기 test다..',
+          createdAt: '2022-08-18 22:41:56.045248',
+          contentImg: ['https://...', 'https://...'],
+          isAdmin: false,
+        },
+        {
+          title: '여행 계획을 세우자',
+          content: '오늘 김반쪽과 만나기로 했다..',
+          createdAt: '2022-08-03 07:11:36.045248',
+          contentImg: ['https://...', 'https://...'],
+          isAdmin: true,
+        },
+      ],
+    },
+    {
+      startDate: '2022-05-15 07:11:36.045248',
+      endDate: '2022-05-30 07:11:36.045248',
+      period: 15,
+      content: [
+        {
+          title: '김지은님의 일기',
+          content: '일기 test',
+          createdAt: '2022-08-16 22:41:56.045248',
+          contentImg: ['https://...', 'https://...'],
+          isAdmin: true,
+        },
+        {
+          title: '김반쪽의 일기',
+          content: '일기 test다..',
+          createdAt: '2022-08-18 22:41:56.045248',
+          contentImg: ['https://...', 'https://...'],
+          isAdmin: false,
+        },
+        {
+          title: '여행 계획을 세우자',
+          content: '오늘 김반쪽과 만나기로 했다..',
+          createdAt: '2022-08-03 07:11:36.045248',
+          contentImg: ['https://...', 'https://...'],
+          isAdmin: true,
+        },
+      ],
+    },
+    {
+      startDate: '2022-05-15 07:11:36.045248',
+      endDate: '2022-05-30 07:11:36.045248',
+      period: 15,
+      content: [
+        {
+          title: '김지은님의 일기',
+          content: '일기 test',
+          createdAt: '2022-08-16 22:41:56.045248',
+          contentImg: ['https://...', 'https://...'],
+          isAdmin: true,
+        },
+        {
+          title: '김반쪽의 일기',
+          content: '일기 test다..',
+          createdAt: '2022-08-18 22:41:56.045248',
+          contentImg: ['https://...', 'https://...'],
+          isAdmin: false,
+        },
+        {
+          title: '여행 계획을 세우자',
+          content: '오늘 김반쪽과 만나기로 했다..',
+          createdAt: '2022-08-03 07:11:36.045248',
+          contentImg: ['https://...', 'https://...'],
+          isAdmin: true,
+        },
+      ],
+    },
+  ],
+};
+*/

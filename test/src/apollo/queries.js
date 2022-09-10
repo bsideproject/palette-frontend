@@ -159,6 +159,42 @@ const EXIT_DIARY = gql`
   }
 `;
 
+const LOOK_UP_HISTORY_PAGE = gql`
+  query histories($diaryId: Long!) {
+    histories(
+      diaryId: $diaryId
+      pageInput: {
+        historyOffset: 0
+        historySize: 1000
+        pageOffset: 0
+        pageSize: 1000
+      }
+    ) {
+      id
+      startDate
+      diary {
+        title
+      }
+      endDate
+      remainingDays
+      pages {
+        id
+        title
+        isSelf
+        author {
+          nickname
+        }
+        images {
+          id
+          domain
+          path
+        }
+        createdAt
+      }
+    }
+  }
+`;
+
 // ---------------------------------------------------------
 const QUERY_ARRAY = {
   COLOR_CODE: COLOR_CODE,
@@ -173,9 +209,10 @@ const QUERY_ARRAY = {
   UPDATE_DIARY_TITLE: UPDATE_DIARY_TITLE,
   UPDATE_DIARY_COLOR: UPDATE_DIARY_COLOR,
   EXIT_DIARY: EXIT_DIARY,
+  LOOK_UP_HISTORY_PAGE: LOOK_UP_HISTORY_PAGE,
 };
 
-export const USE_QUERY = (Query, Token) => {
+export const USE_QUERY = (Query, Token, variable) => {
   return useQuery(QUERY_ARRAY[Query], {
     context: {
       headers: {
@@ -183,6 +220,7 @@ export const USE_QUERY = (Query, Token) => {
         'Content-Type': 'application/json',
       },
     },
+    variables: variable,
   });
 };
 

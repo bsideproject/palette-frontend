@@ -234,7 +234,7 @@ const MainPage = ({navigation, route}) => {
     user.accessToken,
   );
   const focus = useIsFocused();
-  //console.log('UserHome: ', user);
+  // console.log('UserHome: ', user);
   //console.log('Route: ', route.params);
 
   // [EVENT FUNCTION] ------------------------------------------
@@ -554,7 +554,11 @@ const MainPage = ({navigation, route}) => {
     }
     if (sliderIdx > 0) {
       if (memos[sliderIdx].currentHistory == null) {
-        return <MemoEmpty_Text1>교환 일기에 초대해주세요</MemoEmpty_Text1>;
+        return (
+          <MemoEmpty_Text1>
+            교환 일기에 초대 및 기간을 설정해주세요
+          </MemoEmpty_Text1>
+        );
       } else if (memos[sliderIdx].currentHistory.pages.length == 0) {
         return <MemoEmpty_Text1>최근 작성한 교환일기가 없어요</MemoEmpty_Text1>;
       } else {
