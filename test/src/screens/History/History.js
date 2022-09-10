@@ -386,6 +386,7 @@ const History = ({navigation, route}) => {
     user.accessToken,
     {diaryId: diaryId},
   );
+  console.log(diaryId)
   const [
     exitDiary,
     {data: exitDiaryData, loading: exitDiaryLoading, error: exitDiaryError},
@@ -395,7 +396,6 @@ const History = ({navigation, route}) => {
     {loading: loadingRAH, error: errorRAH, data: dataRAH},
   ] = USE_MUTATION('READ_PUSH_HISTORY', user.accessToken);
   const focus = useIsFocused();
-  // console.log('ssss', route.params);
 
   const findIdxfromHistoryId = (HistoryId, data) => {
     let findIdx = -1;

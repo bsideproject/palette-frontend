@@ -43,6 +43,7 @@ const GET_PROFILE = gql`
       profileImg
       socialTypes
       pushEnabled
+      createdAt
       diaries {
         title
         invitationCode
@@ -243,6 +244,37 @@ const GET_PAGE = gql`
   }
 `;
 
+const DELETE_PAGE = gql`
+  mutation deletePage($pageId: Long!) {
+    deletePage(deletePageInput: {pageId: $pageId})
+  }
+`;
+
+const EDIT_PAGE = gql`
+  mutation editPage(
+    $pageId: Long!
+    $title: String
+    $body: String
+    $imageUrls: [String]
+  ) {
+    editPage(
+      editPageInput: {
+        pageId: $pageId
+        title: $title
+        body: $body
+        imageUrls: $imageUrls
+      }
+    ) {
+      id
+      title
+      body
+      images {
+        path
+      }
+    }
+  }
+`;
+
 const READ_PUSH_HISTORY = gql`
   mutation readAlarmHistories($alarmHistoryIds: [Long]!) {
     readAlarmHistories(
@@ -268,6 +300,8 @@ const QUERY_ARRAY = {
   LOOK_UP_HISTORY_PAGE: LOOK_UP_HISTORY_PAGE,
   CREATE_PAGE: CREATE_PAGE,
   GET_PAGE: GET_PAGE,
+  DELETE_PAGE: DELETE_PAGE,
+  EDIT_PAGE: EDIT_PAGE,
   LOOK_UP_PUSH_HISTORY: LOOK_UP_PUSH_HISTORY,
   READ_PUSH_HISTORY: READ_PUSH_HISTORY,
 };

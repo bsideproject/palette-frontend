@@ -1,23 +1,23 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {ThemeContext} from 'styled-components/native';
 import {UserContext} from '@contexts';
 import styled from 'styled-components/native';
 import moment from 'moment';
 import Icon from 'react-native-vector-icons/AntDesign';
 import AsyncStorage from '@react-native-community/async-storage';
-import {USE_MUTATION} from '@apolloClient/queries';
+import {USE_MUTATION, USE_QUERY} from '@apolloClient/queries';
 import {TouchableOpacity} from 'react-native';
 import {delUserApi} from '../api/restfulAPI';
 import Modal from 'react-native-modal';
 
-const checkDateDiff = ts => {
-  // Convert Korea Time
-  const now = moment().add(9, 'hour').startOf('day');
-  const target = moment(ts).startOf('day');
-
-  return now.diff(target, 'day');
+const getCreateTime = time => {
+  const date = new Date(time);
+  return (
+    date.getFullYear() + '.' + (date.getMonth() + 1) + '.' + date.getDate()
+  );
 };
 
+let createTime;
 const UserInfo = ({navigation}) => {
   const {user, setUser} = useContext(UserContext);
   const theme = useContext(ThemeContext);
@@ -26,6 +26,24 @@ const UserInfo = ({navigation}) => {
     'DELETE_FCM_TOKEN',
     user.accessToken,
   );
+  const {loading, error, data, refetch} = USE_QUERY(
+    'GET_PROFILE',
+    user.accessToken,
+  );
+
+  useEffect(() => {
+    if (!loading) {
+      createTime = data.myProfile.createdAt;
+      setUser({
+        accessToken: user.accessToken,
+        email: data.myProfile.email,
+        nickname: data.myProfile.nickname,
+        profileImg: data.myProfile.profileImg,
+        socialTypes: data.myProfile.socialTypes,
+        pushEnabled: data.myProfile.pushEnabled,
+      });
+    }
+  }, [loading]);
 
   const _handleDeleteFcmToken = () => {
     AsyncStorage.getItem('fcmtoken', (err, result) => {
@@ -58,7 +76,7 @@ const UserInfo = ({navigation}) => {
     <Container>
       <UserInfoContainer>
         <UserInfoTitle>가입일자</UserInfoTitle>
-        <UserInfoText>sss</UserInfoText>
+        <UserInfoText>{getCreateTime(createTime)}</UserInfoText>
       </UserInfoContainer>
       <UserInfoContainer>
         <UserInfoTitle>이메일</UserInfoTitle>
@@ -68,7 +86,11 @@ const UserInfo = ({navigation}) => {
         <UserInfoTitle>가입방법</UserInfoTitle>
         <UserInfoText>
           {user.socialTypes[0] === 'KAKAO' ? '카카오' : '네이버'}
-          {user.socialTypes[1] === 'KAKAO' ? ', 카카오' : ', 네이버'}
+          {user.socialTypes[1] === 'KAKAO'
+            ? ', 카카오'
+            : user.socialTypes[1] === 'NAVER'
+            ? ', 네이버'
+            : ''}
         </UserInfoText>
       </UserInfoContainer>
       <DeleteUserText onPress={() => setExitModalVisible(true)}>

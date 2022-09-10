@@ -135,15 +135,6 @@ const ProfileImageSet = ({navigation, route}) => {
     });
   }, []);
 
-  useEffect(() => {
-    if (!!updateResult.data) {
-      console.log(
-        'UPDATE_PROFILE GRAPHQL RESULT DATA 프로필설정',
-        updateResult.data,
-      );
-    }
-  }, [updateResult]);
-
   const ConditionProfileImage = () => {
     return profileImage !== '' ? (
       <ProfileImage source={{uri: profileImage}} />

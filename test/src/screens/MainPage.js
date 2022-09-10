@@ -1,7 +1,7 @@
 import React, {useContext, useState, useEffect} from 'react';
 import {ThemeContext} from 'styled-components/native';
 import styled from 'styled-components/native';
-import {TouchableOpacity, Text} from 'react-native';
+import {TouchableOpacity, Text, Image} from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import moment from 'moment';
 import Spinner from 'react-native-loading-spinner-overlay';

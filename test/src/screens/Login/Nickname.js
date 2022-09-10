@@ -82,15 +82,6 @@ const Nickname = ({navigation, route}) => {
     }
   }, [nickname]);
 
-  useEffect(() => {
-    if (!!updateResult.data) {
-      console.log(
-        'UPDATE_PROFILE GRAPHQL RESULT DATA 닉네임설정',
-        updateResult.data,
-      );
-    }
-  }, [updateResult]);
-
   return (
     <Container>
       <KeyboardAvoidingScrollView

@@ -75,9 +75,13 @@ export const imageUploadApi = async (uploadImage, accessToken) => {
   }
 };
 
-export const imageDeleteApi = async (url, accessToken) => {
+export const imageDeleteApi = async (urls, accessToken) => {
   try {
-    await axios.delete(API_URL + '/file?url=' + url, {
+    let delUrls = '';
+    urls.forEach(url => {
+      delUrls = 'url=' + url + '&';
+    });
+    await axios.delete(API_URL + '/files?' + delUrls, {
       headers: {
         authorization: `Bearer ${accessToken}`,
         'Content-Type': 'multipart/form-data',

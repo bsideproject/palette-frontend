@@ -167,6 +167,7 @@ const WriteDiary = ({navigation, route}) => {
   const theme = useContext(ThemeContext);
   const [uploadImage, setUploadImage] = useState(null);
   const [imageArr, setImageArr] = useState([]);
+  const [delImageArr, setDelImageArr] = useState([]);
   const [exitModalVisible, setExitModalVisible] = useState(false);
   const [isExit, setIsExit] = useState(false);
   const [titlePlaceholder, setTitlePlaceholder] =
@@ -183,6 +184,7 @@ const WriteDiary = ({navigation, route}) => {
     'CREATE_PAGE',
     user.accessToken,
   );
+  const [editPage, editResult] = USE_MUTATION('EDIT_PAGE', user.accessToken);
 
   useEffect(() => {
     if (route.params) {
@@ -297,7 +299,6 @@ const WriteDiary = ({navigation, route}) => {
   };
 
   const _handleDeleteImage = async url => {
-    console.log('delete', imageArr);
     const photo = new FormData();
     imageArr.map((arrUrl, i) => {
       if (arrUrl !== url) {
@@ -311,7 +312,7 @@ const WriteDiary = ({navigation, route}) => {
     });
 
     if (url.includes('palette') === true) {
-      await imageDeleteApi(url);
+      setDelImageArr(prev => [...prev, url]);
     }
     if (imageArr.length === 1) {
       console.log('uploadImage null');
@@ -350,25 +351,50 @@ const WriteDiary = ({navigation, route}) => {
     } else {
       if (uploadImage !== null) {
         const response = await imageUploadApi(uploadImage, user.accessToken);
-        await createPage({
-          variables: {
-            title: titleText,
-            body: contentText,
-            historyId: params.historyId,
-            imageUrls: response.data.urls,
-          },
-        });
-        navigation.goBack();
+        if (params.mode === 'edit') {
+          delImageArr.length > 0 && (await imageDeleteApi(delImageArr));
+          await editPage({
+            variables: {
+              pageId: params.pageId,
+              title: titleText,
+              body: contentText,
+              imageUrls: response.data.urls,
+            },
+          });
+          navigation.pop(2);
+        } else {
+          await createPage({
+            variables: {
+              title: titleText,
+              body: contentText,
+              historyId: params.historyId,
+              imageUrls: response.data.urls,
+            },
+          });
+          navigation.goBack();
+        }
       } else {
-        await createPage({
-          variables: {
-            title: titleText,
-            body: contentText,
-            historyId: params.historyId,
-            imageUrls: [],
-          },
-        });
-        navigation.goBack();
+        if (params.mode === 'edit') {
+          delImageArr.length > 0 && (await imageDeleteApi(delImageArr));
+          await editPage({
+            variables: {
+              pageId: params.pageId,
+              title: titleText,
+              body: contentText,
+            },
+          });
+          navigation.pop(2);
+        } else {
+          await createPage({
+            variables: {
+              title: titleText,
+              body: contentText,
+              historyId: params.historyId,
+              imageUrls: [],
+            },
+          });
+          navigation.goBack();
+        }
       }
     }
   };

@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import FIcon from 'react-native-vector-icons/Feather';
 import AsyncStorage from '@react-native-community/async-storage';
 import {UserContext} from '@contexts';
-import {USE_MUTATION} from '@apolloClient/queries';
+import {USE_MUTATION, USE_QUERY} from '@apolloClient/queries';
 import {
   View,
   Image,
@@ -192,6 +192,10 @@ const Setting = ({navigation}) => {
     'UPDATE_PROFILE',
     user.accessToken,
   );
+  const {loading, error, data, refetch} = USE_QUERY(
+    'GET_PROFILE',
+    user.accessToken,
+  );
 
   const _handleDeleteFcmToken = () => {
     AsyncStorage.getItem('fcmtoken', (err, result) => {
@@ -231,17 +235,25 @@ const Setting = ({navigation}) => {
     setUser({
       accessToken: user.accessToken,
       email: user.email,
-      socialType: user.socialType,
       nickname: user.nickname,
       profileImg: user.profileImg,
-      socialTypes: user.socialType,
+      socialTypes: user.socialTypes,
       pushEnabled: toggle,
     });
   };
 
   useEffect(() => {
     setPushToggle(user.pushEnabled);
-  }, [focus]);
+    refetch();
+    setUser({
+      accessToken: user.accessToken,
+      email: data.myProfile.email,
+      nickname: data.myProfile.nickname,
+      profileImg: data.myProfile.profileImg,
+      socialTypes: data.myProfile.socialTypes,
+      pushEnabled: data.myProfile.pushEnabled,
+    });
+  }, [focus,data]);
 
   const _handleSetNickname = () => {
     setEditModalVisible(false);
