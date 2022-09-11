@@ -387,7 +387,7 @@ const History = ({navigation, route}) => {
     user.accessToken,
     {diaryId: diaryId},
   );
-  console.log('DI', diaryId);
+  // console.log('DI', diaryId);
 
   const [
     exitDiary,
@@ -423,7 +423,7 @@ const History = ({navigation, route}) => {
         console.log('Data Fecting & Data Empty');
         return;
       }
-      console.log('Read Data', data['histories']);
+      //console.log('Read Data', data['histories']);
       //console.log('Read Pages', data['histories'][0]);
 
       // Cur Select Diary
@@ -446,7 +446,7 @@ const History = ({navigation, route}) => {
   };
 
   const _handleExitMemo = () => {
-    console.log('Exit Memo');
+    //console.log('Exit Memo');
     exitDiary({
       variables: {
         diaryId: route.params.id,

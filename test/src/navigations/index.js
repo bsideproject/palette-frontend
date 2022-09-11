@@ -30,6 +30,7 @@ const Navigation = () => {
       setNetConnected(true);
     }
   };
+  console.log('Navi', user.accessToken);
 
   return netConnected ? (
     <NavigationContainer ref={navigationRef}>
