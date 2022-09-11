@@ -254,6 +254,11 @@ const Signin = ({navigation}) => {
   const getAccessToken = async ({email, socialType}) => {
     const response = await loginApi(email, socialType);
     const {data} = response;
+    console.log('login data', data);
+    if (data.code === 'A005') {
+      alert(data.message);
+      return;
+    }
     if (!data.isRegistered) {
       //데이터베이스에 회원이 존재 하지 않는 경우
       setAutoLogin(prev => !prev);

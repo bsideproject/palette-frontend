@@ -47,6 +47,7 @@ const DiaryContent = styled.TextInput.attrs(({theme, isError}) => ({
   border-radius: 6px;
   text-align-vertical: top;
   padding-left: 12px;
+  color: ${({theme}) => theme.dark010};
 `;
 
 const PlusIcon = styled.Image`

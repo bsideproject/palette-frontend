@@ -29,7 +29,7 @@ export const loginApi = async (email, socialType) => {
     });
     return response;
   } catch (error) {
-    console.log('login error', error);
+    return error.response;
   }
 };
 
