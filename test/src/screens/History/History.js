@@ -386,7 +386,7 @@ const History = ({navigation, route}) => {
     user.accessToken,
     {diaryId: diaryId},
   );
-  console.log(diaryId)
+  console.log(diaryId);
   const [
     exitDiary,
     {data: exitDiaryData, loading: exitDiaryLoading, error: exitDiaryError},
@@ -589,7 +589,9 @@ const History = ({navigation, route}) => {
   const historyContentItemBox = ({item}) => {
     return (
       <HistoryRow
-        onPress={() => navigation.navigate('ShowDiary', {diary: item})}>
+        onPress={() =>
+          item.isSelf && navigation.navigate('ShowDiary', {diary: item})
+        }>
         <HistoryPeriodBar>
           <HistoryPeriodBarCircle isAdmin={item.isSelf} />
           <HistoryPeriodBarLine isAdmin={item.isSelf} />

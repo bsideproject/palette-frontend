@@ -2,7 +2,7 @@ import React, {useContext, useEffect} from 'react';
 import {ThemeContext} from 'styled-components/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {TouchableOpacity, Text} from 'react-native';
+import {TouchableOpacity} from 'react-native';
 import {
   MemoMain,
   AddMemo,
@@ -26,6 +26,7 @@ import {
 import Home from './Home';
 import {LogBox} from 'react-native';
 import {HistoryModalContext} from '@contexts';
+import WebView from 'react-native-webview';
 
 const Stack = createStackNavigator();
 
@@ -36,6 +37,16 @@ const Main = () => {
   useEffect(() => {
     LogBox.ignoreLogs(['Animated: `useNativeDriver`']);
   }, []);
+
+  const Introduce = () => {
+    return (
+      <WebView
+        source={{
+          uri: 'https://bitter-humerus-381.notion.site/e61db202f6374facb437b45e4d73736e',
+        }}
+      />
+    );
+  };
 
   return (
     <Stack.Navigator
@@ -180,6 +191,13 @@ const Main = () => {
         component={UserInfo}
         options={{
           title: '계정',
+        }}
+      />
+      <Stack.Screen
+        name="Introduce"
+        component={Introduce}
+        options={{
+          headerShown: false,
         }}
       />
     </Stack.Navigator>

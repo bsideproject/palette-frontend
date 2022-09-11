@@ -7,7 +7,7 @@ import com.facebook.react.ReactActivity;
 public class MainActivity extends ReactActivity {
   @Override
     protected void onCreate(Bundle savedInstanceState) {
-      SplashScreen.show(this); // 추가
+      SplashScreen.show(this, true); // 추가
       super.onCreate(savedInstanceState);
     }
 

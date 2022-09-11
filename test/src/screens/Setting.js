@@ -253,7 +253,7 @@ const Setting = ({navigation}) => {
       socialTypes: data.myProfile.socialTypes,
       pushEnabled: data.myProfile.pushEnabled,
     });
-  }, [focus,data]);
+  }, [focus, data]);
 
   const _handleSetNickname = () => {
     setEditModalVisible(false);
@@ -330,7 +330,7 @@ const Setting = ({navigation}) => {
           <VersionText>v.1.0.1</VersionText>
         </NoneClickContainer>
         <BoundaryContainer />
-        <ClickContainer onPress={() => {}}>
+        <ClickContainer onPress={() => navigation.navigate('Introduce')}>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <SettingText>'반쪽일기' 소개</SettingText>
           </View>

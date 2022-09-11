@@ -25,7 +25,7 @@ const SecondExplain = ({navigation, route}) => {
   return params ? (
     <WebView
       source={{
-        uri: 'https://www.notion.so/78bd4572662f4c8ab653fcce4579639b',
+        uri: 'https://bitter-humerus-381.notion.site/78bd4572662f4c8ab653fcce4579639b',
       }}
     />
   ) : (

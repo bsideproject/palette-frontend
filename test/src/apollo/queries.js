@@ -253,8 +253,8 @@ const DELETE_PAGE = gql`
 const EDIT_PAGE = gql`
   mutation editPage(
     $pageId: Long!
-    $title: String
-    $body: String
+    $title: String!
+    $body: String!
     $imageUrls: [String]
   ) {
     editPage(

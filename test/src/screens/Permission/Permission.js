@@ -1,7 +1,7 @@
 import React, {useContext} from 'react';
 import {Button} from '@components';
 import styled from 'styled-components/native';
-import {View, PermissionsAndroid, Linking} from 'react-native';
+import {View, PermissionsAndroid, Linking, Image} from 'react-native';
 import {ThemeContext} from 'styled-components/native';
 import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
 
@@ -61,6 +61,7 @@ const Title = styled.Text`
   color: ${({theme}) => theme.dark010};
 `;
 
+const CAMERA_PERMISSION = require('/assets/icons/camera_permission.png');
 const Permission = props => {
   const theme = useContext(ThemeContext);
 
@@ -123,6 +124,7 @@ const Permission = props => {
           <SubTitleText>필수 접근 권한</SubTitleText>
           <PermissionContainer>
             <PermissionBox>
+              <Image source={CAMERA_PERMISSION} style={{marginRight: 6}} />
               <View>
                 <PermissionType>카메라</PermissionType>
                 <PermissionDetail>
@@ -131,6 +133,7 @@ const Permission = props => {
               </View>
             </PermissionBox>
             <PermissionBox>
+              <Image source={CAMERA_PERMISSION} style={{marginRight: 6}} />
               <View>
                 <PermissionType>저장공간</PermissionType>
                 <PermissionDetail>
