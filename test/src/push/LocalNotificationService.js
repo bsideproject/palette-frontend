@@ -21,14 +21,18 @@ export const onPushDataToNavigate = notify => {
     }
   } else if (notify && notify.data && notify.data.page == 'history') {
     if (notify.data.diaryId && notify.data.historyId) {
-      const obj = {
-        alarmHistoryId: notify.data.alarmHistoryId,
-        diaryId: notify.data.diaryId,
-        historyId: notify.data.historyId,
-      };
-      AsyncStorage.setItem('PushParams', JSON.stringify(obj), () => {
-        navigate('History', {diaryId: notify.data.diaryId});
-      });
+      if (notify.data.isOut) {
+        console.log('Exit Diary');
+      } else {
+        const obj = {
+          alarmHistoryId: notify.data.alarmHistoryId,
+          diaryId: notify.data.diaryId,
+          historyId: notify.data.historyId,
+        };
+        AsyncStorage.setItem('PushParams', JSON.stringify(obj), () => {
+          navigate('History', {diaryId: notify.data.diaryId});
+        });
+      }
     } else {
       navigate('History');
     }

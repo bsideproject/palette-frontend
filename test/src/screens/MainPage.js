@@ -581,7 +581,6 @@ const MainPage = ({navigation, route}) => {
                 <MemoData_Text2>{item.title}</MemoData_Text2>
                 <MemoBtnItem>
                   <MemoData_Text3 style={{fontSize: 24}}>
-                    {/* D-{item.currentHistory.remainingDays} */}
                     {item.currentHistory != null
                       ? 'D-' + item.currentHistory.remainingDays
                       : 'D-?'}
@@ -641,7 +640,9 @@ const MainPage = ({navigation, route}) => {
             color={theme.dark020}
             style={{marginRight: 3}}
           />
-          <MemoRecent_Text4>D-{checkDateDiff(item.createdAt)}</MemoRecent_Text4>
+          <MemoRecent_Text4>
+            D-{memos[slideIdx].currentHistory.remainingDays}
+          </MemoRecent_Text4>
         </MemoRecentItemLeft>
       );
     } else {

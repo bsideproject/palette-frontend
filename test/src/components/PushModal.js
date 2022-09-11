@@ -86,7 +86,7 @@ const SpinnerContainer = styled.Text`
   font-family: ${({theme}) => theme.fontRegular};
 `;
 
-const PushModal = ({onPressExit, onPressEnd}) => {
+const PushModal = ({onPressEnd}) => {
   const {user, setUser} = useContext(UserContext);
   const [isLoading, setIsLoading] = useState(false);
   const [updateProfile, {loading, error, data}] = USE_MUTATION(
@@ -102,6 +102,8 @@ const PushModal = ({onPressExit, onPressEnd}) => {
       updateProfile({
         variables: {pushEnabled: true},
       });
+    } else {
+      onPressEnd();
     }
   };
 
@@ -127,7 +129,6 @@ const PushModal = ({onPressExit, onPressEnd}) => {
         pushEnabled: true,
       });
       // If Success
-      onPressExit();
       onPressEnd();
       setIsLoading(false);
     }

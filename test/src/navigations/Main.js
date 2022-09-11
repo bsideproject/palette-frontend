@@ -50,6 +50,7 @@ const Main = () => {
 
   return (
     <Stack.Navigator
+      initialRouteName="Home"
       screenOptions={{
         headerTitleAlign: 'center',
         headerTintColor: theme.tintcolor,

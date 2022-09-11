@@ -61,6 +61,7 @@ const CompleteInviteCode = ({navigation, route}) => {
 
   // [EVENT FUNCTION] ------------------------------------------
   const _handleMoveMainPage = () => {
+    setPushModalVisible(false);
     navigation.navigate('Home');
   };
 
@@ -127,10 +128,7 @@ const CompleteInviteCode = ({navigation, route}) => {
           alignItems: 'center',
           flexDirection: 'row',
         }}>
-        <PushModal
-          onPressExit={setPushModalVisible}
-          onPressEnd={_handleMoveMainPage}
-        />
+        <PushModal onPressEnd={_handleMoveMainPage} />
       </Modal>
     </KeyboardAvoidingScrollView>
   );

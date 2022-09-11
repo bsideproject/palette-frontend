@@ -82,7 +82,6 @@ const ProfileImageSet = ({navigation, route}) => {
     'UPDATE_PROFILE',
     accessToken,
   );
-
   const _handleNextButtonPress = async () => {
     if (!!uploadImage) {
       const response = await imageUploadApi(uploadImage, accessToken);
