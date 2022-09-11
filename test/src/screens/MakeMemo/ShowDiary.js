@@ -13,6 +13,7 @@ import Modal from 'react-native-modal';
 import {UserContext} from '@contexts';
 import Carousel, {Pagination} from 'react-native-snap-carousel';
 import {USE_QUERY, USE_MUTATION} from '@apolloClient/queries';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 const Container = styled.ScrollView`
   flex: 1;
@@ -254,13 +255,13 @@ const ShowDiary = ({navigation, route}) => {
 
   const _handleEditDiary = () => {
     setTabModalVisible(false);
-    const sendData={
-      mode:'edit',
+    const sendData = {
+      mode: 'edit',
       title: diaryData.title,
       contents: diaryData.body,
       imgUrl: imageArr,
-      pageId: params.diary.id
-    }
+      pageId: params.diary.id,
+    };
     navigation.navigate('WriteDiary', sendData);
   };
 
@@ -272,131 +273,133 @@ const ShowDiary = ({navigation, route}) => {
         </SubUploadImageContainer>
       )}
       {diaryData !== null && (
-        <Container onScroll={_handleScroll}>
-          <InnerContainer>
-            {imageArr.length > 0 && (
-              <CarouselContainer isHidden={changeImage}>
-                <Carousel
-                  data={imageArr}
-                  ref={isCarousel}
-                  renderItem={CarouselCardItem}
-                  sliderWidth={SLIDER_WIDTH}
-                  itemWidth={SLIDER_WIDTH}
-                  onSnapToItem={index => setIndex(index)}
-                  useScrollView={true}
-                />
-                <Pagination
-                  dotsLength={imageArr.length}
-                  activeDotIndex={index}
-                  carouselRef={isCarousel}
-                  dotStyle={{
-                    width: 10,
-                    height: 10,
-                    borderRadius: 5,
-                    marginHorizontal: 0,
-                    backgroundColor: theme.pointColor,
-                  }}
-                  inactiveDotOpacity={0.4}
-                  inactiveDotScale={0.6}
-                />
-              </CarouselContainer>
-            )}
-            <DiaryTitle>{diaryData.title}</DiaryTitle>
-            <DiaryContent>{diaryData.body}</DiaryContent>
-            {/* <WrittenInfo>{params.date}</WrittenInfo>
+        <KeyboardAwareScrollView>
+          <Container onScroll={_handleScroll}>
+            <InnerContainer>
+              {imageArr.length > 0 && (
+                <CarouselContainer isHidden={changeImage}>
+                  <Carousel
+                    data={imageArr}
+                    ref={isCarousel}
+                    renderItem={CarouselCardItem}
+                    sliderWidth={SLIDER_WIDTH}
+                    itemWidth={SLIDER_WIDTH}
+                    onSnapToItem={index => setIndex(index)}
+                    useScrollView={true}
+                  />
+                  <Pagination
+                    dotsLength={imageArr.length}
+                    activeDotIndex={index}
+                    carouselRef={isCarousel}
+                    dotStyle={{
+                      width: 10,
+                      height: 10,
+                      borderRadius: 5,
+                      marginHorizontal: 0,
+                      backgroundColor: theme.pointColor,
+                    }}
+                    inactiveDotOpacity={0.4}
+                    inactiveDotScale={0.6}
+                  />
+                </CarouselContainer>
+              )}
+              <DiaryTitle>{diaryData.title}</DiaryTitle>
+              <DiaryContent>{diaryData.body}</DiaryContent>
+              {/* <WrittenInfo>{params.date}</WrittenInfo>
           <WrittenInfo>by.{params.written}</WrittenInfo> */}
-          </InnerContainer>
+            </InnerContainer>
 
-          {/* top tab Modal */}
-          <Modal
-            isVisible={tabModalVisible}
-            useNativeDriver={true}
-            onRequestClose={() => {
-              setTabModalVisible(false);
-            }}
-            hideModalContentWhileAnimating={true}>
-            <Pressable
+            {/* top tab Modal */}
+            <Modal
+              isVisible={tabModalVisible}
+              useNativeDriver={true}
+              onRequestClose={() => {
+                setTabModalVisible(false);
+              }}
+              hideModalContentWhileAnimating={true}>
+              <Pressable
+                style={{
+                  flex: 1,
+                  width: '100%',
+                  height: '100%',
+                  backgroundColor: 'transparent',
+                  alignItems: 'flex-end',
+                }}
+                onPress={() => {
+                  setTabModalVisible(false);
+                }}>
+                <StyledModalContainer>
+                  <StyledModalButton onPress={_handleEditDiary}>
+                    <ModalTxt>
+                      <StyledModalText>일기 수정</StyledModalText>
+                    </ModalTxt>
+                    <ModalIcon>
+                      <Icon
+                        name={'edit-2'}
+                        size={16}
+                        color={theme.dark010}
+                        style={{justifyContent: 'center'}}
+                      />
+                    </ModalIcon>
+                  </StyledModalButton>
+
+                  <HorizentalLine />
+
+                  <StyledModalButton
+                    onPress={() => {
+                      setExitModalVisible(true);
+                    }}>
+                    <ModalTxt>
+                      <StyledModalText>일기 삭제</StyledModalText>
+                    </ModalTxt>
+                    <ModalIcon>
+                      <Icon
+                        name={'log-out'}
+                        size={16}
+                        color={theme.dark010}
+                        style={{justifyContent: 'center'}}
+                      />
+                    </ModalIcon>
+                  </StyledModalButton>
+                </StyledModalContainer>
+              </Pressable>
+            </Modal>
+
+            {/* Exit Modal */}
+            <Modal
+              isVisible={exitModalVisible}
+              useNativeDriver={true}
+              onRequestClose={() => setExitModalVisible(false)}
+              hideModalContentWhileAnimating={true}
               style={{
                 flex: 1,
-                width: '100%',
-                height: '100%',
-                backgroundColor: 'transparent',
-                alignItems: 'flex-end',
-              }}
-              onPress={() => {
-                setTabModalVisible(false);
+                justifyContent: 'center',
+                alignItems: 'center',
+                flexDirection: 'row',
               }}>
-              <StyledModalContainer>
-                <StyledModalButton onPress={_handleEditDiary}>
-                  <ModalTxt>
-                    <StyledModalText>일기 수정</StyledModalText>
-                  </ModalTxt>
-                  <ModalIcon>
+              <ExitModalContainer>
+                <ExitModalTop>
+                  <TouchableOpacity
+                    onPress={() => setExitModalVisible(false)}
+                    style={{marginRight: '5%'}}>
                     <Icon
-                      name={'edit-2'}
-                      size={16}
+                      name={'x'}
+                      size={20}
                       color={theme.dark010}
                       style={{justifyContent: 'center'}}
                     />
-                  </ModalIcon>
-                </StyledModalButton>
-
-                <HorizentalLine />
-
-                <StyledModalButton
-                  onPress={() => {
-                    setExitModalVisible(true);
-                  }}>
-                  <ModalTxt>
-                    <StyledModalText>일기 삭제</StyledModalText>
-                  </ModalTxt>
-                  <ModalIcon>
-                    <Icon
-                      name={'log-out'}
-                      size={16}
-                      color={theme.dark010}
-                      style={{justifyContent: 'center'}}
-                    />
-                  </ModalIcon>
-                </StyledModalButton>
-              </StyledModalContainer>
-            </Pressable>
-          </Modal>
-
-          {/* Exit Modal */}
-          <Modal
-            isVisible={exitModalVisible}
-            useNativeDriver={true}
-            onRequestClose={() => setExitModalVisible(false)}
-            hideModalContentWhileAnimating={true}
-            style={{
-              flex: 1,
-              justifyContent: 'center',
-              alignItems: 'center',
-              flexDirection: 'row',
-            }}>
-            <ExitModalContainer>
-              <ExitModalTop>
-                <TouchableOpacity
-                  onPress={() => setExitModalVisible(false)}
-                  style={{marginRight: '5%'}}>
-                  <Icon
-                    name={'x'}
-                    size={20}
-                    color={theme.dark010}
-                    style={{justifyContent: 'center'}}
-                  />
-                </TouchableOpacity>
-              </ExitModalTop>
-              <ExitModalMid>
-                <ExitModalTxt1>정말 삭제하시겠습니까?</ExitModalTxt1>
-              </ExitModalMid>
-              <ExitModalBottom onPress={_handlerExit}>
-                <ExitModalTxt3>삭제하기</ExitModalTxt3>
-              </ExitModalBottom>
-            </ExitModalContainer>
-          </Modal>
-        </Container>
+                  </TouchableOpacity>
+                </ExitModalTop>
+                <ExitModalMid>
+                  <ExitModalTxt1>정말 삭제하시겠습니까?</ExitModalTxt1>
+                </ExitModalMid>
+                <ExitModalBottom onPress={_handlerExit}>
+                  <ExitModalTxt3>삭제하기</ExitModalTxt3>
+                </ExitModalBottom>
+              </ExitModalContainer>
+            </Modal>
+          </Container>
+        </KeyboardAwareScrollView>
       )}
     </>
   );

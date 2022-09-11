@@ -10,6 +10,7 @@ import {launchCamera} from 'react-native-image-picker';
 import {UploadModal} from '@components';
 import {imageUploadApi, imageDeleteApi} from '../../api/restfulAPI';
 import {USE_MUTATION} from '@apolloClient/queries';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 const Container = styled.View`
   flex: 1;
@@ -33,6 +34,7 @@ const DiaryTitle = styled.TextInput.attrs(({theme, isError}) => ({
   margin-top: 44px;
   text-align: center;
   font-weight: bold;
+  color: ${({theme}) => theme.dark010};
 `;
 
 const DiaryContent = styled.TextInput.attrs(({theme, isError}) => ({
@@ -416,87 +418,89 @@ const WriteDiary = ({navigation, route}) => {
   };
 
   return (
-    <Container>
-      <InnerContainer>
-        {imageArr.length > 0 && (
-          <SubUploadImageContainer>
-            <SelectedImage />
-          </SubUploadImageContainer>
-        )}
-        {imageArr.length === 0 && (
-          <UploadImageContainer onPress={() => setSelectModal(true)}>
-            <UploadImageDefault source={IMG_DEFAULT} />
-            <UploadImageText>사진 업로드</UploadImageText>
-            <PlusIconContainer>
-              <PlusIcon source={PLUS_ICON} />
-            </PlusIconContainer>
-          </UploadImageContainer>
-        )}
-        {selectModal && (
-          <UploadModal
-            onClose={() => setSelectModal(false)}
-            visible={selectModal}
-            onLaunchImageLibrary={openPicker}
-            onLaunchCamera={_handleLaunchCamera}
+    <KeyboardAwareScrollView>
+      <Container>
+        <InnerContainer>
+          {imageArr.length > 0 && (
+            <SubUploadImageContainer>
+              <SelectedImage />
+            </SubUploadImageContainer>
+          )}
+          {imageArr.length === 0 && (
+            <UploadImageContainer onPress={() => setSelectModal(true)}>
+              <UploadImageDefault source={IMG_DEFAULT} />
+              <UploadImageText>사진 업로드</UploadImageText>
+              <PlusIconContainer>
+                <PlusIcon source={PLUS_ICON} />
+              </PlusIconContainer>
+            </UploadImageContainer>
+          )}
+          {selectModal && (
+            <UploadModal
+              onClose={() => setSelectModal(false)}
+              visible={selectModal}
+              onLaunchImageLibrary={openPicker}
+              onLaunchCamera={_handleLaunchCamera}
+            />
+          )}
+          <DiaryTitle
+            maxLength={12}
+            placeholder={titlePlaceholder}
+            isError={!titleError}
+            onBlur={_blurTitle}
+            onChangeText={newText => setTitleText(newText)}
+            defaultValue={titleText}
           />
-        )}
-        <DiaryTitle
-          maxLength={12}
-          placeholder={titlePlaceholder}
-          isError={!titleError}
-          onBlur={_blurTitle}
-          onChangeText={newText => setTitleText(newText)}
-          defaultValue={titleText}
-        />
-        <DiaryContent
-          maxLength={500}
-          placeholder={contentPlaceholder}
-          isError={!contentError}
-          isImage={imageArr.length}
-          onBlur={_blurContent}
-          onChangeText={newText => setContentText(newText)}
-          defaultValue={contentText}
-        />
-      </InnerContainer>
+          <DiaryContent
+            maxLength={500}
+            placeholder={contentPlaceholder}
+            isError={!contentError}
+            isImage={imageArr.length}
+            onBlur={_blurContent}
+            onChangeText={newText => setContentText(newText)}
+            defaultValue={contentText}
+          />
+        </InnerContainer>
 
-      {/* Exit Modal */}
-      <Modal
-        isVisible={exitModalVisible}
-        useNativeDriver={true}
-        onRequestClose={() => setExitModalVisible(false)}
-        hideModalContentWhileAnimating={true}
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-          flexDirection: 'row',
-        }}>
-        <ExitModalContainer>
-          <ExitModalTop>
-            <TouchableOpacity
-              onPress={() => setExitModalVisible(false)}
-              style={{marginRight: '5%'}}>
-              <Icon
-                name={'x'}
-                size={20}
-                color={theme.dark010}
-                style={{justifyContent: 'center'}}
-              />
-            </TouchableOpacity>
-          </ExitModalTop>
-          <ExitModalMid>
-            <ExitModalTxt1>이 페이지에서 나가시겠습니까?</ExitModalTxt1>
-            <ExitModalMargin />
-            <ExitModalTxt2>
-              이 페이지를 벗어나면 작성된 내용은{'\n'}저장되지 않습니다.
-            </ExitModalTxt2>
-          </ExitModalMid>
-          <ExitModalBottom onPress={_handlerExit}>
-            <ExitModalTxt3>페이지 나가기</ExitModalTxt3>
-          </ExitModalBottom>
-        </ExitModalContainer>
-      </Modal>
-    </Container>
+        {/* Exit Modal */}
+        <Modal
+          isVisible={exitModalVisible}
+          useNativeDriver={true}
+          onRequestClose={() => setExitModalVisible(false)}
+          hideModalContentWhileAnimating={true}
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            flexDirection: 'row',
+          }}>
+          <ExitModalContainer>
+            <ExitModalTop>
+              <TouchableOpacity
+                onPress={() => setExitModalVisible(false)}
+                style={{marginRight: '5%'}}>
+                <Icon
+                  name={'x'}
+                  size={20}
+                  color={theme.dark010}
+                  style={{justifyContent: 'center'}}
+                />
+              </TouchableOpacity>
+            </ExitModalTop>
+            <ExitModalMid>
+              <ExitModalTxt1>이 페이지에서 나가시겠습니까?</ExitModalTxt1>
+              <ExitModalMargin />
+              <ExitModalTxt2>
+                이 페이지를 벗어나면 작성된 내용은{'\n'}저장되지 않습니다.
+              </ExitModalTxt2>
+            </ExitModalMid>
+            <ExitModalBottom onPress={_handlerExit}>
+              <ExitModalTxt3>페이지 나가기</ExitModalTxt3>
+            </ExitModalBottom>
+          </ExitModalContainer>
+        </Modal>
+      </Container>
+    </KeyboardAwareScrollView>
   );
 };
 

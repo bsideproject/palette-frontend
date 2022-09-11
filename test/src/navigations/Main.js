@@ -67,7 +67,7 @@ const Main = () => {
           fontWeight: '700',
           fontFamily: theme.fontRegular,
         },
-        cardStyle: {backgroundColor: theme.background},
+        cardStyle: {backgroundColor: theme.fullWhite},
       }}>
       <Stack.Screen
         name="Home"
