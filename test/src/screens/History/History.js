@@ -381,12 +381,13 @@ const History = ({navigation, route}) => {
   const [selDiary, setSelDiary] = useState(null);
   const {user} = useContext(UserContext);
   const [diaryId, setDiaryId] = useState(route.params.id);
+  const [isDiscard, setIsDiscard] = useState(false);
   const {loading, error, data, refetch} = USE_QUERY(
     'LOOK_UP_HISTORY_PAGE',
     user.accessToken,
     {diaryId: diaryId},
   );
-  //console.log(diaryId);
+  console.log('DI', diaryId);
 
   const [
     exitDiary,
@@ -422,7 +423,7 @@ const History = ({navigation, route}) => {
         console.log('Data Fecting & Data Empty');
         return;
       }
-      //console.log('Read Data', data['histories'].length);
+      console.log('Read Data', data['histories']);
       //console.log('Read Pages', data['histories'][0]);
 
       // Cur Select Diary
@@ -545,6 +546,11 @@ const History = ({navigation, route}) => {
       setDiaryId(route.params.id);
     } else if (route.params.diaryId) {
       setDiaryId(route.params.diaryId);
+    }
+    if (route.params.isDiscard) {
+      setIsDiscard(true);
+    } else {
+      setIsDiscard(false);
     }
   }, []);
 
@@ -743,62 +749,83 @@ const History = ({navigation, route}) => {
             alignItems: 'flex-end',
           }}
           onPress={() => setHistoryModalVisible(false)}>
-          <StyledModalContainer>
-            <StyledModalButton
-              onPress={() => {
-                _handleMemoData('EXIT');
-              }}>
-              <ModalTxt>
-                <StyledModalText>일기장 나가기</StyledModalText>
-              </ModalTxt>
-              <ModalIcon>
-                <Icon
-                  name={'exit-outline'}
-                  size={20}
-                  color={theme.dark010}
-                  style={{justifyContent: 'center'}}
-                />
-              </ModalIcon>
-            </StyledModalButton>
+          {isDiscard == true ? (
+            <StyledModalContainer style={{height: 50}}>
+              <StyledModalButton
+                onPress={() => {
+                  _handleMemoData('EXIT');
+                }}>
+                <ModalTxt>
+                  <StyledModalText>일기장 나가기</StyledModalText>
+                </ModalTxt>
+                <ModalIcon>
+                  <Icon
+                    name={'exit-outline'}
+                    size={20}
+                    color={theme.dark010}
+                    style={{justifyContent: 'center'}}
+                  />
+                </ModalIcon>
+              </StyledModalButton>
+            </StyledModalContainer>
+          ) : (
+            <StyledModalContainer>
+              <StyledModalButton
+                onPress={() => {
+                  _handleMemoData('EXIT');
+                }}>
+                <ModalTxt>
+                  <StyledModalText>일기장 나가기</StyledModalText>
+                </ModalTxt>
+                <ModalIcon>
+                  <Icon
+                    name={'exit-outline'}
+                    size={20}
+                    color={theme.dark010}
+                    style={{justifyContent: 'center'}}
+                  />
+                </ModalIcon>
+              </StyledModalButton>
 
-            <HorizentalLine />
+              <HorizentalLine />
 
-            <StyledModalButton
-              onPress={() => {
-                _handleMemoData('MODIFY');
-              }}>
-              <ModalTxt>
-                <StyledModalText>일기장 이름 수정</StyledModalText>
-              </ModalTxt>
-              <ModalIcon>
-                <Icon
-                  name={'pencil-outline'}
-                  size={20}
-                  color={theme.dark010}
-                  style={{justifyContent: 'center'}}
-                />
-              </ModalIcon>
-            </StyledModalButton>
+              <StyledModalButton
+                onPress={() => {
+                  _handleMemoData('MODIFY');
+                }}>
+                <ModalTxt>
+                  <StyledModalText>일기장 이름 수정</StyledModalText>
+                </ModalTxt>
+                <ModalIcon>
+                  <Icon
+                    name={'pencil-outline'}
+                    size={20}
+                    color={theme.dark010}
+                    style={{justifyContent: 'center'}}
+                  />
+                </ModalIcon>
+              </StyledModalButton>
 
-            <HorizentalLine />
+              <HorizentalLine />
 
-            <StyledModalButton
-              onPress={() => {
-                _handleMemoData('COLOR');
-              }}>
-              <ModalTxt>
-                <StyledModalText>커버 색상 변경</StyledModalText>
-              </ModalTxt>
-              <ModalIcon>
-                <Icon
-                  name={'color-palette-outline'}
-                  size={20}
-                  color={theme.dark010}
-                  style={{justifyContent: 'center'}}
-                />
-              </ModalIcon>
-            </StyledModalButton>
-          </StyledModalContainer>
+              <StyledModalButton
+                onPress={() => {
+                  _handleMemoData('COLOR');
+                }}>
+                <ModalTxt>
+                  <StyledModalText>커버 색상 변경</StyledModalText>
+                </ModalTxt>
+                <ModalIcon>
+                  <Icon
+                    name={'color-palette-outline'}
+                    size={20}
+                    color={theme.dark010}
+                    style={{justifyContent: 'center'}}
+                  />
+                </ModalIcon>
+              </StyledModalButton>
+            </StyledModalContainer>
+          )}
         </Pressable>
       </Modal>
 

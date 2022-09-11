@@ -17,6 +17,7 @@ import {UserContext} from '@contexts';
 import {USE_QUERY, USE_MUTATION} from '@apolloClient/queries';
 import {useIsFocused} from '@react-navigation/native';
 import AsyncStorage from '@react-native-community/async-storage';
+import Modal from 'react-native-modal';
 
 // Time & Date Function
 const checkDate = ts => {
@@ -222,15 +223,94 @@ const Text_underline = styled.Text`
   text-decoration-line: underline;
 `;
 
+const DiscardContainer = styled.View`
+  flex: 1;
+`;
+
+const DiscardModalContainer = styled.View`
+  flex-direction: column;
+  background-color: ${({theme}) => theme.white};
+  shadow-offset: 0px 2px;
+  shadow-radius: 8px;
+  shadow-color: rgba(0, 0, 0, 0.16);
+  border-radius: 16px;
+  width: 100%;
+  height: 30%;
+`;
+
+const DiscardModalTop = styled.View`
+  flex: 1;
+  align-items: center;
+  margin-bottom: 3%;
+  justify-content: flex-end;
+  align-items: flex-end;
+`;
+
+const DiscardModalMid = styled.View`
+  flex: 3;
+  align-items: center;
+  margin-bottom: 3%;
+`;
+
+const DiscardModalBottom = styled.TouchableOpacity`
+  flex: 2;
+  background-color: ${({theme}) => theme.pointColor};
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+  justify-content: center;
+  align-items: center;
+`;
+
+const DiscardModalTxt1 = styled.Text`
+  font-size: 18px;
+  font-weight: 700;
+  color: ${({theme}) => theme.dark010};
+  font-family: ${({theme}) => theme.fontRegular};
+`;
+
+const DiscardModalTxt2 = styled.Text`
+  font-size: 16px;
+  font-weight: 400;
+  color: ${({theme}) => theme.dark020};
+  font-family: ${({theme}) => theme.fontRegular};
+`;
+
+const DiscardModalTxt3 = styled.Text`
+  font-size: 16px;
+  font-weight: 700;
+  color: ${({theme}) => theme.white};
+  font-family: ${({theme}) => theme.fontRegular};
+`;
+
+const DiscardModalMargin = styled.View`
+  margin-top: 3%;
+`;
+
+const DiscardBottomTxtContainer = styled.View`
+  justify-content: center;
+  align-items: center;
+  margin-top: 5%;
+`;
+
+const DiscardBottomTxt = styled.Text`
+  font-size: 12px;
+  font-weight: 400;
+  color: ${({theme}) => theme.white};
+  font-family: ${({theme}) => theme.fontRegular};
+  text-decoration-line: underline;
+`;
+
 const MainPage = ({navigation, route}) => {
   const theme = useContext(ThemeContext);
   const [memos, setMemos] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const {width} = Dimensions.get('screen');
   const [loadError, setLoadError] = useState(false);
+  const [discardItem, setDiscardItem] = useState(null);
   const [slideIdx, setSlideIdx] = useState(1);
   const {user} = useContext(UserContext);
   const focus = useIsFocused();
+  const [discardModalVisible, setDiscardModalVisible] = useState(false);
   const {loading, error, data, refetch} = USE_QUERY(
     'LOOK_UP_DIARY_PAGE',
     user.accessToken,
@@ -370,11 +450,34 @@ const MainPage = ({navigation, route}) => {
     }
   }, [loadingRAH]);
 
-  useEffect(() => {
-    console.log(slideIdx);
-  }, slideIdx);
-
   // [RENDER FUNCTION] ------------------------------------------
+  const _handleDiscardModal = item => {
+    // Local Storage Check
+    let discardItem = Object.assign({}, item);
+    discardItem.isDiscard = true;
+
+    AsyncStorage.getItem('disableDiscard', (err, result) => {
+      if (result) {
+        navigation.navigate('History', discardItem);
+      } else {
+        setDiscardModalVisible(true);
+        setDiscardItem(discardItem);
+      }
+    });
+  };
+
+  const _handleDiscardToHistory = opt => {
+    setDiscardModalVisible(false);
+    if (opt == 0) {
+      navigation.navigate('History', discardItem);
+    } else {
+      console.log('SET discard');
+      AsyncStorage.setItem('disableDiscard', 'on', () => {
+        navigation.navigate('History', discardItem);
+      });
+    }
+  };
+
   const AddContainer = () => {
     return (
       <TouchableOpacity
@@ -491,7 +594,7 @@ const MainPage = ({navigation, route}) => {
       case 'DISCARD':
         return (
           <TouchableOpacity
-            onPress={() => navigation.navigate('History', item)}
+            onPress={() => _handleDiscardModal(item)}
             style={{
               width: '100%',
               height: '80%',
@@ -712,6 +815,52 @@ const MainPage = ({navigation, route}) => {
         </MemoRecentContainer>
       </MemoFlexBottom>
       <MemoFlexFooter>{renderBtnFooter(slideIdx)}</MemoFlexFooter>
+
+      {/* DisCard Modal */}
+      <Modal
+        isVisible={discardModalVisible}
+        useNativeDriver={true}
+        onRequestClose={() => setDiscardModalVisible(false)}
+        hideModalContentWhileAnimating={true}
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          flexDirection: 'row',
+        }}>
+        <DiscardContainer>
+          <DiscardModalContainer>
+            <DiscardModalTop>
+              <TouchableOpacity
+                onPress={() => setDiscardModalVisible(false)}
+                style={{marginRight: '5%'}}>
+                <Icon
+                  name={'close'}
+                  size={20}
+                  color={theme.dark010}
+                  style={{justifyContent: 'center'}}
+                />
+              </TouchableOpacity>
+            </DiscardModalTop>
+            <DiscardModalMid>
+              <DiscardModalTxt1>일기장이 종료되었습니다.</DiscardModalTxt1>
+              <DiscardModalMargin />
+              <DiscardModalTxt2>
+                종료된 일기장에서는 작성된 글의 수정 및
+              </DiscardModalTxt2>
+              <DiscardModalTxt2>삭제가 불가능합니다.</DiscardModalTxt2>
+            </DiscardModalMid>
+            <DiscardModalBottom onPress={() => _handleDiscardToHistory(0)}>
+              <DiscardModalTxt3>확인</DiscardModalTxt3>
+            </DiscardModalBottom>
+          </DiscardModalContainer>
+          <TouchableOpacity onPress={() => _handleDiscardToHistory(1)}>
+            <DiscardBottomTxtContainer>
+              <DiscardBottomTxt>다시 보지 않기</DiscardBottomTxt>
+            </DiscardBottomTxtContainer>
+          </TouchableOpacity>
+        </DiscardContainer>
+      </Modal>
     </MemoDataContainer>
   );
 };

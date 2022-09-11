@@ -215,6 +215,7 @@ const Setting = ({navigation}) => {
     AsyncStorage.removeItem('access_token');
     AsyncStorage.removeItem('email');
     AsyncStorage.removeItem('fcmtoken');
+    AsyncStorage.removeItem('disableDiscard');
     setUser({
       accessToken: null,
       email: null,
