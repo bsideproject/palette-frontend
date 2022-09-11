@@ -16,6 +16,7 @@ import {Button} from '@components';
 import {UserContext} from '@contexts';
 import {USE_QUERY, USE_MUTATION} from '@apolloClient/queries';
 import {useIsFocused} from '@react-navigation/native';
+import AsyncStorage from '@react-native-community/async-storage';
 
 // Time & Date Function
 const checkDate = ts => {
@@ -40,7 +41,7 @@ const checkDateDiff = ts => {
 };
 
 const checkTime = ts => {
-  return moment(ts).format('hh:mm A');
+  return moment(ts).add(9, 'hour').format('hh:mm A');
 };
 
 // Spinner
@@ -239,8 +240,6 @@ const MainPage = ({navigation, route}) => {
     {loading: loadingRAH, error: errorRAH, data: dataRAH},
   ] = USE_MUTATION('READ_PUSH_HISTORY', user.accessToken);
 
-  // console.log('USER', user);
-
   // [EVENT FUNCTION] ------------------------------------------
   const findIdxfromDiaryId = (diaryId, data) => {
     let findIdx = -1;
@@ -253,23 +252,22 @@ const MainPage = ({navigation, route}) => {
     return findIdx + 1;
   };
 
-  const _pushDataHandle = data => {
-    if (route.params != undefined && route.params.diaryId) {
-      let sidx = findIdxfromDiaryId(route.params.diaryId, data);
-      console.log('Diary Id: ', route.params.diaryId, sidx, data);
-      if (sidx != -1) {
-        setSlideIdx(sidx);
-      }
-      // Process Alarm Read Flag
-      if (route.params.hasOwnProperty('alarmHistoryId')) {
-        let alarmHistoryArray = [route.params.alarmHistoryId];
-        console.log('Send Alarm History Id:!!!!!', alarmHistoryArray);
-        readAlarmHistory({
-          variables: {
-            alarmHistoryIds: alarmHistoryArray,
-          },
-        });
-      }
+  const _pushDataHandle = (data, pushParams) => {
+    let sidx = findIdxfromDiaryId(pushParams.diaryId, data);
+    console.log('Diary Id: ', pushParams.diaryId, sidx, data);
+    setSlideIdx(sidx);
+    // Process Alarm Read Flag
+    if (pushParams.alarmHistoryId) {
+      let alarmHistoryArray = [pushParams.alarmHistoryId];
+      console.log('Send Alarm History Id:!!!!!', alarmHistoryArray);
+      readAlarmHistory({
+        variables: {
+          alarmHistoryIds: alarmHistoryArray,
+        },
+      });
+    } else {
+      AsyncStorage.removeItem('PushParams');
+      setIsLoading(false);
     }
   };
 
@@ -323,27 +321,33 @@ const MainPage = ({navigation, route}) => {
         return;
       }
 
-      // Push Data Handled
-      if (route.params && route.params.hasOwnProperty('diaryId')) {
-        setIsLoading(true);
-        _pushDataHandle(data['diaries']);
-        route.params = null;
-        return;
-      }
-
-      let origData = memos.slice(1);
-      if (data['diaries'].every(item => origData.includes(item))) {
-        setIsLoading(false);
-      } else if (data['diaries'].length + 1 != memos.length) {
-        setSlideIdx(1);
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 1000);
-      } else {
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 1000);
-      }
+      AsyncStorage.getItem('PushParams', (err, result) => {
+        // Push Data Handled
+        if (result) {
+          console.log('1.Push Event');
+          let obj = JSON.parse(result);
+          console.log(obj);
+          _pushDataHandle(data['diaries'], obj);
+        } else {
+          // Normal Data Handled
+          let origData = memos.slice(1);
+          if (data['diaries'].every(item => origData.includes(item))) {
+            console.log('2.Normal Event');
+            setIsLoading(false);
+          } else if (data['diaries'].length + 1 != memos.length) {
+            console.log('3.Add Diray Event');
+            setSlideIdx(1);
+            setTimeout(() => {
+              setIsLoading(false);
+            }, 1000);
+          } else {
+            console.log('4.Diary Change Event');
+            setTimeout(() => {
+              setIsLoading(false);
+            }, 1000);
+          }
+        }
+      });
     }
   }, [focus, loading, data, route.params]);
 
@@ -359,9 +363,14 @@ const MainPage = ({navigation, route}) => {
       }
       // If Success
       console.log('PUSH READ SUCCESS: ', dataRAH);
+      AsyncStorage.removeItem('PushParams');
       setIsLoading(false);
     }
   }, [loadingRAH]);
+
+  useEffect(() => {
+    console.log(slideIdx);
+  }, slideIdx);
 
   // [RENDER FUNCTION] ------------------------------------------
   const AddContainer = () => {
@@ -461,13 +470,16 @@ const MainPage = ({navigation, route}) => {
               style={{width: '100%', height: '100%', borderRadius: 6}}>
               <MemoDataItem>
                 <MemoData_Text1>
-                  {item.joinedUsers[0].nickname}님과
+                  {item.joinedUsers[0].nickname}님과&nbsp;
                   {item.joinedUsers[1].nickname}님의
                 </MemoData_Text1>
                 <MemoData_Text2>{item.title}</MemoData_Text2>
                 <MemoBtnItem>
                   <MemoData_Text3 style={{fontSize: 24}}>
-                    D-{item.currentHistory.remainingDays}
+                    {/* D-{item.currentHistory.remainingDays} */}
+                    {item.currentHistory != null
+                      ? 'D-' + item.currentHistory.remainingDays
+                      : 'D-?'}
                   </MemoData_Text3>
                 </MemoBtnItem>
               </MemoDataItem>
@@ -488,7 +500,7 @@ const MainPage = ({navigation, route}) => {
               style={{width: '100%', height: '100%', borderRadius: 6}}>
               <MemoDataItem>
                 <MemoData_Text1>
-                  {item.joinedUsers[0].nickname}님과
+                  {item.joinedUsers[0].nickname}님과&nbsp;
                   {item.joinedUsers[1].nickname}님의
                 </MemoData_Text1>
                 <MemoData_Text2>{item.title}</MemoData_Text2>

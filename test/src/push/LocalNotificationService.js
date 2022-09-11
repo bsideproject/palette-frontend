@@ -1,56 +1,36 @@
 import PushNotification from 'react-native-push-notification';
 import {navigate} from '../RootNavigation';
+import AsyncStorage from '@react-native-community/async-storage';
 
-export const onPushDataToNavigate = (notify, idx) => {
-  console.log('notify data', notify.data, idx);
+export const onPushDataToNavigate = notify => {
+  console.log('notify data', notify.data);
 
   // * Make Diary => Page Main
   // * Make History, Make Page, Complete History => Page History
   if (notify && notify.data && notify.data.page == 'home') {
-    if (idx == 1) {
-      setTimeout(() => {
-        if (notify.data.diaryId) {
-          navigate('Home', notify.data, {
-            diaryId: notify.data.diaryId,
-            alarmHistoryId: notify.data.alarmHistoryId,
-          });
-        } else {
-          navigate('Home', notify.data);
-        }
-      }, 2000);
+    if (notify.data.diaryId) {
+      const obj = {
+        alarmHistoryId: notify.data.alarmHistoryId,
+        diaryId: notify.data.diaryId,
+      };
+      AsyncStorage.setItem('PushParams', JSON.stringify(obj), () => {
+        navigate('Home', obj);
+      });
     } else {
-      if (notify.data.diaryId) {
-        navigate('Home', notify.data, {
-          diaryId: notify.data.diaryId,
-          alarmHistoryId: notify.data.alarmHistoryId,
-        });
-      } else {
-        navigate('Home', notify.data);
-      }
+      navigate('Home');
     }
   } else if (notify && notify.data && notify.data.page == 'history') {
-    if (idx == 1) {
-      setTimeout(() => {
-        if (notify.data.diaryId && notify.data.historyId) {
-          navigate('History', notify.data, {
-            diaryId: notify.data.diaryId,
-            historyId: notify.data.historyId,
-            alarmHistoryId: notify.data.alarmHistoryId,
-          });
-        } else {
-          navigate('History', notify.data);
-        }
-      }, 1000);
+    if (notify.data.diaryId && notify.data.historyId) {
+      const obj = {
+        alarmHistoryId: notify.data.alarmHistoryId,
+        diaryId: notify.data.diaryId,
+        historyId: notify.data.historyId,
+      };
+      AsyncStorage.setItem('PushParams', JSON.stringify(obj), () => {
+        navigate('History', {diaryId: notify.data.diaryId});
+      });
     } else {
-      if (notify.data.diaryId && notify.data.historyId) {
-        navigate('History', notify.data, {
-          diaryId: notify.data.diaryId,
-          historyId: notify.data.historyId,
-          alarmHistoryId: notify.data.alarmHistoryId,
-        });
-      } else {
-        navigate('History', notify.data);
-      }
+      navigate('History');
     }
   }
 };
@@ -61,18 +41,14 @@ class LocalNotificationService {
       onRegister: function (token) {
         console.log('[LocalNotificationService] onRegister:', token);
       },
-      onNotification: function (notification, idx) {
-        console.log(
-          '[LocalNotificationService] onNotification:',
-          notification,
-          idx,
-        );
+      onNotification: function (notification) {
+        console.log('[LocalNotificationService] onNotification:', notification);
         if (!notification?.data) {
           return;
         }
         notification.userInteraction = true;
         if (notification?.channelId == 'half-diary') {
-          onPushDataToNavigate(notification.data, idx);
+          onPushDataToNavigate(notification.data);
         }
       },
       // IOS ONLY (optional): default: all - Permissions to register.

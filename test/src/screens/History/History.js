@@ -15,6 +15,7 @@ import {UserContext} from '@contexts';
 import {useIsFocused} from '@react-navigation/native';
 import AutoHeightImage from 'react-native-auto-height-image';
 import Icon_Ant from 'react-native-vector-icons/AntDesign';
+import AsyncStorage from '@react-native-community/async-storage';
 
 const DateTime = ts => {
   return moment(utcToKst(ts)).format('YYYY년 MM월 DD일');
@@ -380,13 +381,13 @@ const History = ({navigation, route}) => {
   const [selDiary, setSelDiary] = useState(null);
   const {user} = useContext(UserContext);
   const [diaryId, setDiaryId] = useState(route.params.id);
-
   const {loading, error, data, refetch} = USE_QUERY(
     'LOOK_UP_HISTORY_PAGE',
     user.accessToken,
     {diaryId: diaryId},
   );
   console.log(diaryId);
+
   const [
     exitDiary,
     {data: exitDiaryData, loading: exitDiaryLoading, error: exitDiaryError},
@@ -405,43 +406,41 @@ const History = ({navigation, route}) => {
         break;
       }
     }
-    return findIdx;
+    return findIdx == -1 ? 0 : findIdx;
   };
 
   // [QUERY EVENT FUNCTION] --------------------------------------
-  const getData = isPushEvent => {
-    console.log(error, loading, data);
+  const getData = (isHistoryId, pushObj) => {
+    //console.log(error, loading, data);
     if (error != undefined) {
-      console.log('ERROR: ', JSON.stringify(error));
-      // [TODO] Go to Error Page
+      if (diaryId != 0) {
+        console.log('ERROR: ', JSON.stringify(error));
+        // [TODO] Go to Error Page
+      }
     } else {
       if (loading || data == undefined) {
         console.log('Data Fecting & Data Empty');
         return;
       }
-      // console.log('Read Data', data['histories']);
-      // console.log('Read Pages', data['histories'][0]);
+      //console.log('Read Data', data['histories'].length);
+      //console.log('Read Pages', data['histories'][0]);
 
       // Cur Select Diary
       setHistory(data['histories']);
-
-      if (isPushEvent) {
+      if (isHistoryId) {
         let historyIdx = findIdxfromHistoryId(
-          route.params.historyId,
+          pushObj.historyId,
           data['histories'],
         );
-        if (historyIdx == -1) {
-          setSelDiary(data['histories'][0]);
-        } else {
-          setSelDiary(data['histories'][historyIdx]);
-        }
+        //console.log('Push Sel', data['histories'][historyIdx]);
+        setSelDiary(data['histories'][historyIdx]);
+        _pushDataHandle(pushObj);
       } else {
         setSelDiary(data['histories'][0]);
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 100);
       }
-
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 100);
     }
   };
 
@@ -455,31 +454,49 @@ const History = ({navigation, route}) => {
     setExitModalVisible(false);
   };
 
+  const _pushDataHandle = obj => {
+    // Process Alarm Read Flag
+    if (obj.alarmHistoryId) {
+      let alarmHistoryArray = [obj.alarmHistoryId];
+      console.log('Send Alarm History Id:!!!!!', alarmHistoryArray);
+      readAlarmHistory({
+        variables: {
+          alarmHistoryIds: alarmHistoryArray,
+        },
+      });
+    } else {
+      AsyncStorage.removeItem('PushParams');
+      setIsLoading(false);
+    }
+  };
+
   // [USE EFFECT] -----------------------------------------------
   useEffect(() => {
     if (focus) {
-      let isPushEvent = false;
       setIsLoading(true);
-      if (route.params.hasOwnProperty('id')) {
-        setDiaryId(route.params.id);
-      } else if (route.params.hasOwnProperty('diaryId')) {
-        setDiaryId(route.params.diaryId);
-        if (route.params.hasOwnProperty('historyId')) {
-          isPushEvent = true;
+
+      AsyncStorage.getItem('PushParams', (err, result) => {
+        // Push Data Handled
+        let isHistoryId = false;
+        let pushObj = null;
+        if (result) {
+          console.log('1.Push Event');
+          let obj = JSON.parse(result);
+          if (obj.diaryId) {
+            console.log('[History Push] Diary Id: ', obj.diaryId);
+            setDiaryId(Number(obj.diaryId));
+          }
+          if (obj.historyId) {
+            isHistoryId = true;
+            pushObj = obj;
+          }
+        } else {
+          console.log('2.Normal/Change Event');
+          setDiaryId(route.params.id);
         }
-        // Process Alarm Read Flag
-        if (route.params.hasOwnProperty('alarmHistoryId')) {
-          let alarmHistoryArray = [route.params.alarmHistoryId];
-          console.log('Send Alarm History Id:!!!!!', alarmHistoryArray);
-          readAlarmHistory({
-            variables: {
-              alarmHistoryIds: alarmHistoryArray,
-            },
-          });
-        }
-      }
-      refetch();
-      getData(isPushEvent);
+        refetch();
+        getData(isHistoryId, pushObj);
+      });
     }
   }, [focus, loading, data, route.params]);
 
@@ -512,6 +529,8 @@ const History = ({navigation, route}) => {
       }
       // If Success
       console.log('PUSH READ SUCCESS: ', dataRAH);
+      AsyncStorage.removeItem('PushParams');
+      setIsLoading(false);
     }
   }, [loadingRAH]);
 
@@ -520,11 +539,17 @@ const History = ({navigation, route}) => {
     if (!(modalVisible == true || modalVisible == false)) {
       setHistoryModalVisible(false);
     }
+    // Set Initial Diary Id
+    console.log('Initial', route);
+    if (route.params.id) {
+      setDiaryId(route.params.id);
+    } else if (route.params.diaryId) {
+      setDiaryId(route.params.diaryId);
+    }
   }, []);
 
   // [RENDER FUNCTION] ------------------------------------------
   const _handleMemoData = status => {
-    console.log(status);
     // [TODO]
     switch (status) {
       case 'EXIT':
@@ -641,7 +666,7 @@ const History = ({navigation, route}) => {
               </HistoryItemBoxInContent>
 
               <HistoryItemBoxInImg>
-                {item.images.map(item => {
+                {item.images.map((item, index) => {
                   return histotyImageRender(item);
                 })}
               </HistoryItemBoxInImg>
@@ -698,6 +723,7 @@ const History = ({navigation, route}) => {
             data={selDiary.pages}
             renderItem={historyContentItemBox}
             numColumns={1}
+            keyExtractor={item => item.id}
           />
         </HistoryContentItemContainer>
       </HistoryContentContainer>

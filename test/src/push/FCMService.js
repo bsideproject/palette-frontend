@@ -84,7 +84,7 @@ class FCMService {
       );
       if (remoteMessage) {
         const notification = remoteMessage;
-        onOpenNotification(notification, 0);
+        onOpenNotification(notification);
       }
     });
 
@@ -99,7 +99,7 @@ class FCMService {
         if (remoteMessage) {
           const notification = remoteMessage;
           localNotificationService.cancelAllLocalNotifications();
-          onOpenNotification(notification, 1);
+          onOpenNotification(notification);
         }
       });
 
@@ -113,7 +113,7 @@ class FCMService {
         } else {
           notification = remoteMessage;
         }
-        onNotification(notification, 0);
+        onNotification(notification);
       }
     });
 

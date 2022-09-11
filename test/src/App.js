@@ -52,8 +52,8 @@ const App = () => {
     );
   };
 
-  const onOpenNotification = async (notify, idx) => {
-    onPushDataToNavigate(notify, idx);
+  const onOpenNotification = async notify => {
+    onPushDataToNavigate(notify);
   };
 
   return (

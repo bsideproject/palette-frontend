@@ -1,5 +1,5 @@
 import {gql} from '@apollo/client';
-import {useQuery, useMutation} from '@apollo/client';
+import {useQuery, useMutation, useLazyQuery} from '@apollo/client';
 
 // Query
 const COLOR_CODE = gql`
@@ -315,6 +315,17 @@ export const USE_QUERY = (Query, Token, variable) => {
       },
     },
     variables: variable,
+  });
+};
+
+export const USE_LAZY_QUERY = (Query, Token) => {
+  return useLazyQuery(QUERY_ARRAY[Query], {
+    context: {
+      headers: {
+        authorization: `Bearer ${Token}`,
+        'Content-Type': 'application/json',
+      },
+    },
   });
 };
 
