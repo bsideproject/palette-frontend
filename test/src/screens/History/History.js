@@ -386,7 +386,7 @@ const History = ({navigation, route}) => {
     user.accessToken,
     {diaryId: diaryId},
   );
-  console.log(diaryId);
+  //console.log(diaryId);
 
   const [
     exitDiary,

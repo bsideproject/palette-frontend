@@ -333,18 +333,20 @@ const MainPage = ({navigation, route}) => {
           let origData = memos.slice(1);
           if (data['diaries'].every(item => origData.includes(item))) {
             console.log('2.Normal Event');
-            setIsLoading(false);
+            setTimeout(() => {
+              setIsLoading(false);
+            }, 500);
           } else if (data['diaries'].length + 1 != memos.length) {
             console.log('3.Add Diray Event');
             setSlideIdx(1);
             setTimeout(() => {
               setIsLoading(false);
-            }, 1000);
+            }, 500);
           } else {
             console.log('4.Diary Change Event');
             setTimeout(() => {
               setIsLoading(false);
-            }, 1000);
+            }, 500);
           }
         }
       });
@@ -543,7 +545,11 @@ const MainPage = ({navigation, route}) => {
       return (
         <MemoRecentItemLeft>
           <MemoRecent_Text1>{item.title}</MemoRecent_Text1>
-          <MemoRecent_Text2>{item.body}</MemoRecent_Text2>
+          <MemoRecent_Text2>
+            {item.body.length >= 50
+              ? item.body.substr(0, 50) + '....'
+              : item.body}
+          </MemoRecent_Text2>
         </MemoRecentItemLeft>
       );
     }

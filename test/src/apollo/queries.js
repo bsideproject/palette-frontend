@@ -220,7 +220,7 @@ const CREATE_PAGE = gql`
 
 const LOOK_UP_PUSH_HISTORY = gql`
   query {
-    alarmHistories {
+    alarmHistories(alarmHistoryPageInput: {offset: 0, size: 50}) {
       id
       body
       isRead
