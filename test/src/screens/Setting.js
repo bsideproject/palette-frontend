@@ -258,12 +258,12 @@ const Setting = ({navigation}) => {
 
   const _handleSetNickname = () => {
     setEditModalVisible(false);
-    navigation.navigate('Nickname', {setting: true});
+    navigation.navigate('Nickname2', {setting: true});
   };
 
   const _handleSetProfileImage = () => {
     setEditModalVisible(false);
-    navigation.navigate('ProfileImageSet', {setting: true});
+    navigation.navigate('ProfileImageSet2', {setting: true});
   };
 
   return (
@@ -271,7 +271,7 @@ const Setting = ({navigation}) => {
       <InnerContainer>
         <ProfileContainer>
           {user.profileImg ? (
-            <ProfileImage source={{uri: user.profileImg}} />
+            <ProfileImage source={{uri: user.profileImg}} resizeMethod={"resize"} />
           ) : (
             <ProfileImage source={PROFILE_DEFAULT} />
           )}

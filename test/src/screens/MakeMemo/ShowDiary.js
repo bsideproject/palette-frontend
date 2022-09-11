@@ -211,7 +211,7 @@ const ShowDiary = ({navigation, route}) => {
   const SelectedImage = () => {
     return imageArr.map((arr, i) => (
       <View style={{position: 'relative'}} key={i}>
-        <SubUploadImage source={{uri: arr.imgUrl}} />
+        <SubUploadImage source={{uri: arr.imgUrl}} resizeMethod={"resize"} />
       </View>
     ));
   };
@@ -239,6 +239,7 @@ const ShowDiary = ({navigation, route}) => {
         <Image
           source={{uri: item}}
           style={{width: SLIDER_WIDTH, height: SLIDER_WIDTH}}
+          resizeMethod={"resize"}
         />
       </View>
     );

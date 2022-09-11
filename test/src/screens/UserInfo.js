@@ -61,6 +61,7 @@ const UserInfo = ({navigation}) => {
     AsyncStorage.removeItem('refresh_token');
     AsyncStorage.removeItem('access_token');
     AsyncStorage.removeItem('email');
+    AsyncStorage.removeItem('social_type');
     AsyncStorage.removeItem('fcmtoken');
     setUser({
       accessToken: null,

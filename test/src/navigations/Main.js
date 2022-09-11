@@ -174,20 +174,6 @@ const Main = () => {
         }}
       />
       <Stack.Screen
-        name="Nickname"
-        component={Nickname}
-        options={{
-          title: '닉네임 설정',
-        }}
-      />
-      <Stack.Screen
-        name="ProfileImageSet"
-        component={ProfileImageSet}
-        options={{
-          title: '프로필 사진 설정',
-        }}
-      />
-      <Stack.Screen
         name="UserInfo"
         component={UserInfo}
         options={{
@@ -199,6 +185,20 @@ const Main = () => {
         component={Introduce}
         options={{
           headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="Nickname2"
+        component={Nickname}
+        options={{
+          title: '닉네임 설정',
+        }}
+      />
+      <Stack.Screen
+        name="ProfileImageSet2"
+        component={ProfileImageSet}
+        options={{
+          title: '프로필 사진 설정',
         }}
       />
     </Stack.Navigator>

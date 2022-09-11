@@ -86,6 +86,7 @@ const ProfileImageSet = ({navigation, route}) => {
     if (!!uploadImage) {
       const response = await imageUploadApi(uploadImage, accessToken);
       const {data} = response;
+      console.log('프로필 등록 ', data);
       //유저 프로필 이미지 업로드
       updateProfile({
         variables: {profileImg: data.urls[0]},

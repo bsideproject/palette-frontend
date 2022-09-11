@@ -94,7 +94,7 @@ const Home = ({navigation, route}) => {
             <ProfileContainer>
               {user.profileImg ? (
                 <ProfileRow>
-                  <ProfileImage source={{uri: user.profileImg}} />
+                  <ProfileImage source={{uri: user.profileImg}} resizeMethod={"resize"} />
                   <ProfileNickname>{curScreenName}</ProfileNickname>
                 </ProfileRow>
               ) : (

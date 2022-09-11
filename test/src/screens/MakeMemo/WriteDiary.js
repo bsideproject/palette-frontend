@@ -330,7 +330,7 @@ const WriteDiary = ({navigation, route}) => {
   const SelectedImage = () => {
     return imageArr.map((image, i) => (
       <View style={{position: 'relative'}} key={i}>
-        <SubUploadImage source={{uri: image}} />
+        <SubUploadImage source={{uri: image}} resizeMethod={"resize"} />
         <TouchableOpacity onPress={() => _handleDeleteImage(image, i)}>
           <CloseIcon source={CLOSE_ICON} />
         </TouchableOpacity>
@@ -460,6 +460,7 @@ const WriteDiary = ({navigation, route}) => {
             onBlur={_blurContent}
             onChangeText={newText => setContentText(newText)}
             defaultValue={contentText}
+            multiline={true}
           />
         </InnerContainer>
 
