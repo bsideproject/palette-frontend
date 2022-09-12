@@ -7,6 +7,8 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
 import {USE_MUTATION} from '@apolloClient/queries';
 import AsyncStorage from '@react-native-community/async-storage';
+import {ErrorAlert} from '@components';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 const Container = styled.View`
   flex: 1;
@@ -30,6 +32,14 @@ const ButtonContainer = styled.View`
   margin-bottom: 106px;
 `;
 
+const SpinnerContainer = styled.Text`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  font-family: ${({theme}) => theme.fontRegular};
+`;
+
 const Nickname = ({navigation, route}) => {
   const {params} = route;
   const [pass, setPass] = useState(false);
@@ -38,9 +48,10 @@ const Nickname = ({navigation, route}) => {
   const theme = useContext(ThemeContext);
   const [errorMessage, setErrorMessage] = useState('');
   const [isError, setIsError] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const pattern_spc = /[~!@#$%^&*()_+|<>?:{}\s]/; // 특수문자
   const [accessToken, setAccessToken] = useState(null);
-  const [updateProfile, updateResult] = USE_MUTATION(
+  const [updateProfile, {data, loading, error}] = USE_MUTATION(
     'UPDATE_PROFILE',
     accessToken,
   );
@@ -56,13 +67,31 @@ const Nickname = ({navigation, route}) => {
       setErrorMessage('특수문자와 공백을 제외한 닉네임을 입력해주세요.');
     } else {
       setIsError(false);
+      setIsLoading(true);
       updateProfile({
         variables: {nickname: nickname, socialTypes: [socialType]},
       });
-      if(params) navigation.goBack();
-      else navigation.navigate('ProfileImageSet');
     }
   };
+
+  useEffect(() => {
+    if (error != undefined) {
+      let jsonData = JSON.parse(JSON.stringify(error));
+      console.log(jsonData);
+      setIsLoading(false);
+      ErrorAlert();
+    } else {
+      if (loading || data == undefined) {
+        console.log('Data Fecting & Data Empty');
+        return;
+      }
+      // Not Check Data Is True..
+      console.log(data);
+      setIsLoading(false);
+      if (params) navigation.goBack();
+      else navigation.navigate('ProfileImageSet');
+    }
+  }, [loading]);
 
   useEffect(() => {
     AsyncStorage.getItem('access_token', (err, result) => {
@@ -81,7 +110,11 @@ const Nickname = ({navigation, route}) => {
     }
   }, [nickname]);
 
-  return (
+  return isLoading ? (
+    <SpinnerContainer>
+      <Spinner visible={isLoading} textContent={'닉네임 설정 중...'} />
+    </SpinnerContainer>
+  ) : (
     <Container>
       <KeyboardAvoidingScrollView
         containerStyle={{

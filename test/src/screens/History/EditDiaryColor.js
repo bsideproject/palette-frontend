@@ -9,6 +9,7 @@ import {USE_QUERY, USE_MUTATION} from '@apolloClient/queries';
 import {UserContext} from '@contexts';
 import {Button, ErrorMessage} from '@components';
 import LinearGradient from 'react-native-linear-gradient';
+import {ErrorAlert} from '@components';
 
 const Container = styled.View`
   flex: 1;
@@ -74,11 +75,15 @@ const EditDiaryColor = ({navigation, route}) => {
     updateDiaryColor,
     {loading: loadingDiaryColor, error: errorDiaryColor, data: dataDiaryColor},
   ] = USE_MUTATION('UPDATE_DIARY_COLOR', user.accessToken);
+  const [loadingMessage, setLoadingMessage] =
+    useState('표지 색상 불러오는 중...');
 
   const getData = () => {
     if (error != undefined) {
       console.log('ERROR: ', JSON.stringify(error));
       // [TODO] Go to Error Page
+      setIsLoading(false);
+      ErrorAlert();
     } else {
       if (loading || data == undefined) {
         console.log('Data Fecting & Data Empty');
@@ -98,6 +103,29 @@ const EditDiaryColor = ({navigation, route}) => {
     }
   };
 
+  useEffect(() => {
+    getData();
+  }, [loading]);
+
+  useEffect(() => {
+    if (errorDiaryColor != undefined) {
+      let jsonData = JSON.parse(JSON.stringify(errorDiaryColor));
+      console.log(jsonData);
+      setIsLoading(false);
+      ErrorAlert();
+    } else {
+      if (loadingDiaryColor || dataDiaryColor == undefined) {
+        console.log('Data Fecting & Data Empty');
+        return;
+      }
+      // Not Check Data Is True..
+      setIsLoading(false);
+      console.log('Success Data', dataDiaryColor);
+      // If Success
+      navigation.goBack();
+    }
+  }, [loadingDiaryColor]);
+
   const _handleSetCompleteMemo = () => {
     if (selectedColor == null) {
       setErrorMessage('표지 색상을 선택해주세요.');
@@ -105,6 +133,8 @@ const EditDiaryColor = ({navigation, route}) => {
     } else {
       setIsError(false);
       console.log('Set Memo: ', route.params, selectedColor.id);
+      setIsLoading(true);
+      setLoadingMessage('표지 색상 변경 중...');
       updateDiaryColor({
         variables: {
           diaryId: route.params,
@@ -175,30 +205,9 @@ const EditDiaryColor = ({navigation, route}) => {
     );
   };
 
-  useEffect(() => {
-    getData();
-  }, [loading]);
-
-  useEffect(() => {
-    if (errorDiaryColor != undefined) {
-      let jsonData = JSON.parse(JSON.stringify(errorDiaryColor));
-      console.log(jsonData);
-      // [TODO] Go to Error Page
-    } else {
-      if (loadingDiaryColor || dataDiaryColor == undefined) {
-        console.log('Data Fecting & Data Empty');
-        return;
-      }
-      // Not Check Data Is True..
-      console.log('Success Data', dataDiaryColor);
-      // If Success
-      navigation.goBack();
-    }
-  }, [loadingDiaryColor]);
-
   return isLoading ? (
     <SpinnerContainer>
-      <Spinner visible={isLoading} textContent={'표지 색상 불러오는 중...'} />
+      <Spinner visible={isLoading} textContent={loadingMessage} />
     </SpinnerContainer>
   ) : (
     <KeyboardAvoidingScrollView

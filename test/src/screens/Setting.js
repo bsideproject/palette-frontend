@@ -17,6 +17,8 @@ import {logoutApi} from '../api/restfulAPI';
 import SwitchToggle from 'react-native-switch-toggle';
 import {useIsFocused} from '@react-navigation/native';
 import Modal from 'react-native-modal';
+import Spinner from 'react-native-loading-spinner-overlay';
+import {ErrorAlert} from '@components';
 
 const Container = styled.ScrollView`
   flex: 1;
@@ -172,6 +174,15 @@ const ModalTxt = styled.View`
   margin-left: 5%;
 `;
 
+// Spinner
+const SpinnerContainer = styled.Text`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  font-family: ${({theme}) => theme.fontRegular};
+`;
+
 const PROFILE_DEFAULT = require('/assets/icons/default_profile.png');
 const NOTION_LOGO = require('/assets/logos/notion_logo.png');
 const {width, height} = Dimensions.get('window');
@@ -182,20 +193,21 @@ const Setting = ({navigation}) => {
   const [logoutModalVisible, setLogoutModalVisible] = useState(false);
   const {setUser, user} = useContext(UserContext);
   const [pushToggle, setPushToggle] = useState(user.pushEnabled);
-  const focus = useIsFocused();
-
-  const [deleteFcmToken, deleteFcmTokenResult] = USE_MUTATION(
-    'DELETE_FCM_TOKEN',
-    user.accessToken,
-  );
-  const [updateProfile, updateResult] = USE_MUTATION(
-    'UPDATE_PROFILE',
-    user.accessToken,
-  );
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadingMessage, setLoadingMessage] = useState('프로필 불러오는 중...');
+  const [
+    deleteFcmToken,
+    {loading: loadingFCM, error: errorFCM, data: dataFCM},
+  ] = USE_MUTATION('DELETE_FCM_TOKEN', user.accessToken);
+  const [
+    updateProfile,
+    {loading: loadingProfile, error: errorProfile, data: dataProfile},
+  ] = USE_MUTATION('UPDATE_PROFILE', user.accessToken);
   const {loading, error, data, refetch} = USE_QUERY(
     'GET_PROFILE',
     user.accessToken,
   );
+  const focus = useIsFocused();
 
   const _handleDeleteFcmToken = () => {
     AsyncStorage.getItem('fcmtoken', (err, result) => {
@@ -208,53 +220,112 @@ const Setting = ({navigation}) => {
   };
 
   const _handleLogout = async () => {
+    setIsLoading(true);
+    setLoadingMessage('로그아웃 중...');
     const response = await logoutApi();
     console.log('로그아웃', response);
     _handleDeleteFcmToken();
-    AsyncStorage.removeItem('refresh_token');
-    AsyncStorage.removeItem('access_token');
-    AsyncStorage.removeItem('email');
-    AsyncStorage.removeItem('fcmtoken');
-    AsyncStorage.removeItem('disableDiscard');
-    setUser({
-      accessToken: null,
-      email: null,
-      nickname: null,
-      profileImg: null,
-      socialTypes: null,
-      pushEnabled: null,
-    });
   };
 
   const _handlePushEnabled = () => {
     let toggle = !pushToggle;
     console.log('Toggle : ', toggle);
     setPushToggle(toggle);
+    setIsLoading(true);
+    setLoadingMessage('푸시 알림 설정 중...');
     updateProfile({
       variables: {pushEnabled: toggle},
-    });
-    setUser({
-      accessToken: user.accessToken,
-      email: user.email,
-      nickname: user.nickname,
-      profileImg: user.profileImg,
-      socialTypes: user.socialTypes,
-      pushEnabled: toggle,
     });
   };
 
   useEffect(() => {
-    setPushToggle(data.myProfile.pushEnabled);
-    refetch();
-    setUser({
-      accessToken: user.accessToken,
-      email: data.myProfile.email,
-      nickname: data.myProfile.nickname,
-      profileImg: data.myProfile.profileImg,
-      socialTypes: data.myProfile.socialTypes,
-      pushEnabled: data.myProfile.pushEnabled,
-    });
-  }, [focus, data]);
+    if (errorProfile != undefined) {
+      let jsonData = JSON.parse(JSON.stringify(errorProfile));
+      console.log(jsonData);
+      setIsLoading(false);
+      ErrorAlert();
+    } else {
+      if (loadingProfile || dataProfile == undefined) {
+        console.log('Data Fecting & Data Empty');
+        return;
+      }
+      // Not Check Data Is True..
+      console.log('Data', dataProfile);
+      setUser({
+        accessToken: user.accessToken,
+        email: user.email,
+        nickname: user.nickname,
+        profileImg: user.profileImg,
+        socialTypes: user.socialTypes,
+        pushEnabled: pushToggle,
+      });
+      setIsLoading(false);
+    }
+  }, [loadingProfile]);
+
+  useEffect(() => {
+    if (errorFCM != undefined) {
+      let jsonData = JSON.parse(JSON.stringify(errorFCM));
+      console.log(jsonData);
+      setIsLoading(false);
+      ErrorAlert();
+    } else {
+      if (loadingFCM || dataFCM == undefined) {
+        console.log('Data Fecting & Data Empty');
+        return;
+      }
+      // Logout.
+      console.log('DataFCM', dataFCM);
+      AsyncStorage.removeItem('refresh_token');
+      AsyncStorage.removeItem('access_token');
+      AsyncStorage.removeItem('email');
+      AsyncStorage.removeItem('fcmtoken');
+      AsyncStorage.removeItem('disableDiscard');
+      setUser({
+        accessToken: null,
+        email: null,
+        nickname: null,
+        profileImg: null,
+        socialTypes: null,
+        pushEnabled: null,
+      });
+      setIsLoading(false);
+    }
+  }, [loadingFCM]);
+
+  const getData = () => {
+    if (error != undefined) {
+      let jsonData = JSON.parse(JSON.stringify(error));
+      console.log(jsonData);
+      setIsLoading(false);
+      ErrorAlert();
+    } else {
+      if (loading || data == undefined) {
+        console.log('Data Fecting & Data Empty');
+        return;
+      }
+      // Not Check Data Is True..
+      console.log('Data', data);
+      setPushToggle(data.myProfile.pushEnabled);
+      setUser({
+        accessToken: user.accessToken,
+        email: data.myProfile.email,
+        nickname: data.myProfile.nickname,
+        profileImg: data.myProfile.profileImg,
+        socialTypes: data.myProfile.socialTypes,
+        pushEnabled: data.myProfile.pushEnabled,
+      });
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (focus) {
+      setIsLoading(true);
+      refetch();
+      getData();
+    }
+  }, [focus, loading]);
 
   const _handleSetNickname = () => {
     setEditModalVisible(false);
@@ -266,7 +337,11 @@ const Setting = ({navigation}) => {
     navigation.navigate('ProfileImageSet2', {setting: true});
   };
 
-  return (
+  return isLoading ? (
+    <SpinnerContainer>
+      <Spinner visible={isLoading} textContent={loadingMessage} />
+    </SpinnerContainer>
+  ) : (
     <Container>
       <InnerContainer>
         <ProfileContainer>

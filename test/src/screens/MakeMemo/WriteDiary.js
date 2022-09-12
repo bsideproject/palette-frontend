@@ -124,7 +124,7 @@ const ExitModalTop = styled.View`
 `;
 
 const ExitModalMid = styled.View`
-  flex: 3;
+  flex: 4;
   align-items: center;
 `;
 
@@ -182,7 +182,6 @@ const WriteDiary = ({navigation, route}) => {
   const [imageArr, setImageArr] = useState([]);
   const [delImageArr, setDelImageArr] = useState([]);
   const [exitModalVisible, setExitModalVisible] = useState(false);
-  const [isExit, setIsExit] = useState(false);
   const [titlePlaceholder, setTitlePlaceholder] =
     useState('제목을 써보세요! (최대 12자)');
   const [titleError, setTitleError] = useState(false);
@@ -273,12 +272,6 @@ const WriteDiary = ({navigation, route}) => {
   }, [loadingEdit]);
 
   useEffect(() => {
-    if (isExit) {
-      navigation.goBack();
-    }
-  }, [isExit]);
-
-  useEffect(() => {
     if (titleError) {
       setTitlePlaceholder('제목을 작성해 주세요!');
     }
@@ -292,7 +285,7 @@ const WriteDiary = ({navigation, route}) => {
 
   const _handlerExit = () => {
     setExitModalVisible(false);
-    setIsExit(true);
+    navigation.goBack();
   };
 
   const openPicker = async () => {

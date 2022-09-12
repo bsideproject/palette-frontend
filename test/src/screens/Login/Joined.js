@@ -9,6 +9,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import {USE_QUERY, USE_MUTATION} from '@apolloClient/queries';
 import {loginApi} from '../../api/restfulAPI';
 import Spinner from 'react-native-loading-spinner-overlay';
+import {ErrorAlert} from '@components';
 
 const Container = styled.View`
   flex: 1;
@@ -51,14 +52,17 @@ const Joined = ({navigation}) => {
   const {loading, error, data} = USE_QUERY('GET_PROFILE', accessToken);
   const JOIN_IMG = require('/assets/icons/join.png');
   const [isLoading, setIsLoading] = useState(true);
+  const [loadingMessage, setLoadingMessage] = useState('데이터 로딩 중...');
   const [addFcmToken, {loading: loadingFCM, error: errorFCM, data: dataFCM}] =
     USE_MUTATION('ADD_FCM_TOKEN', accessToken);
-  const [updateProfile, updateResult] = USE_MUTATION(
-    'UPDATE_PROFILE',
-    accessToken,
-  );
+  const [
+    updateProfile,
+    {loading: loadingProfile, error: errorProfile, data: dataProfile},
+  ] = USE_MUTATION('UPDATE_PROFILE', accessToken);
 
   const _handleNextButtonPress = async () => {
+    setLoadingMessage('가입 진행 중...');
+    setIsLoading(true);
     const response = await loginApi(email, socialType);
     const {data} = response;
     AsyncStorage.setItem('access_token', data.accessToken, () => {
@@ -67,7 +71,7 @@ const Joined = ({navigation}) => {
 
       // Save FCM Token
       AsyncStorage.getItem('fcmtoken', (err, result) => {
-        console.log('fcm token: ', result);
+        console.log('fcm_token: ', result);
         addFcmToken({
           variables: {
             token: result,
@@ -92,35 +96,53 @@ const Joined = ({navigation}) => {
     if (error != undefined) {
       let jsonData = JSON.parse(JSON.stringify(error));
       console.log(jsonData);
-      // [TODO] Go to Error Page
+      setIsLoading(false);
+      ErrorAlert();
     } else {
       if (loading || data == undefined) {
         console.log('Data Fecting & Data Empty');
         return;
       }
+      console.log(data);
       // If Success
+      setIsLoading(false);
       console.log('Joined Get Data From GraphQL', data);
     }
-  }, [loading, accessToken]);
+  }, [loading]);
 
   useEffect(() => {
     if (errorFCM != undefined) {
       let jsonData = JSON.parse(JSON.stringify(errorFCM));
       console.log(jsonData);
-      // [TODO] Go to Error Page
+      setIsLoading(false);
+      ErrorAlert();
     } else {
       if (loadingFCM || dataFCM == undefined) {
         console.log('Data Fecting & Data Empty');
         return;
       }
       console.log('FCM Data', dataFCM);
-
       AsyncStorage.getItem('is_push', (err, result) => {
         updateProfile({
           variables: {pushEnabled: result},
         });
       });
+    }
+  }, [loadingFCM]);
 
+  useEffect(() => {
+    if (errorProfile != undefined) {
+      let jsonData = JSON.parse(JSON.stringify(errorProfile));
+      console.log(jsonData);
+      setIsLoading(false);
+      ErrorAlert();
+    } else {
+      if (loadingProfile || dataProfile == undefined) {
+        console.log('Data Fecting & Data Empty');
+        return;
+      }
+      console.log('Login Success Data', dataProfile);
+      setIsLoading(false);
       //최종 로그인
       console.log(
         'Login Success',
@@ -140,11 +162,11 @@ const Joined = ({navigation}) => {
         pushEnabled: data.myProfile.pushEnabled,
       });
     }
-  }, [loadingFCM]);
+  }, [loadingProfile]);
 
   return isLoading ? (
     <SpinnerContainer>
-      <Spinner visible={isLoading} textContent={'데이터 로딩 중...'} />
+      <Spinner visible={isLoading} textContent={loadingMessage} />
     </SpinnerContainer>
   ) : (
     <Container>

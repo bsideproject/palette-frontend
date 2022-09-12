@@ -6,6 +6,7 @@ import {ThemeContext} from 'styled-components/native';
 import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
 import {USE_MUTATION} from '@apolloClient/queries';
 import AsyncStorage from '@react-native-community/async-storage';
+import {ErrorAlert} from '@components';
 import Spinner from 'react-native-loading-spinner-overlay';
 
 const Container = styled.View`
@@ -50,22 +51,30 @@ const SocialEmail = styled.Text`
   font-family: ${({theme}) => theme.fontRegular};
 `;
 
+const SpinnerContainer = styled.Text`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  font-family: ${({theme}) => theme.fontRegular};
+`;
+
 const AccountConnect = ({navigation, route}) => {
   const theme = useContext(ThemeContext);
   const socialType = route.params.socialType;
   const alreadyType = socialType === 'KAKAO' ? 'NAVER' : 'KAKAO';
   const userEmail = route.params.email;
   const accessToken = route.params.accessToken;
-  const [spinner, setSpinner] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [connected, setConnected] = useState(false);
-  const [updateProfile, updateResult] = USE_MUTATION(
+  const [updateProfile, {data, loading, error}] = USE_MUTATION(
     'UPDATE_PROFILE',
     accessToken,
   );
 
   const _handleNextButtonPress = () => {
     if (!connected) {
-      setSpinner(true);
+      setIsLoading(true);
       setTimeout(() => {
         updateProfile({
           variables: {socialTypes: [alreadyType, socialType]},
@@ -77,19 +86,29 @@ const AccountConnect = ({navigation, route}) => {
   };
 
   useEffect(() => {
-    if (!!updateResult.data) {
+    if (error != undefined) {
+      let jsonData = JSON.parse(JSON.stringify(error));
+      console.log(jsonData);
+      setIsLoading(false);
+      ErrorAlert();
+    } else {
+      if (loading || data == undefined) {
+        console.log('Data Fecting & Data Empty');
+        return;
+      }
+      console.log(data);
+      // Not Check Data Is True..
+      setIsLoading(false);
       setConnected(true);
-      setSpinner(false);
     }
-  }, [updateResult]);
+  }, [loading]);
 
-  return (
+  return isLoading ? (
+    <SpinnerContainer>
+      <Spinner visible={isLoading} textContent={'계정 연동 중...'} />
+    </SpinnerContainer>
+  ) : (
     <Container>
-      <Spinner
-        visible={spinner}
-        textContent={'연동 중'}
-        textStyle={{color: theme.white}}
-      />
       <KeyboardAvoidingScrollView
         containerStyle={{
           backgroundColor: theme.fullWhite,

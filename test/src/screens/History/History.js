@@ -380,8 +380,10 @@ const History = ({navigation, route}) => {
   // History
   const [selDiary, setSelDiary] = useState(null);
   const {user} = useContext(UserContext);
-  const [diaryId, setDiaryId] = useState(0);
+  const [diaryId, setDiaryId] = useState(-1);
   const [isDiscard, setIsDiscard] = useState(false);
+  const [loadingMessage, setLoadingMessage] =
+    useState('히스토리 데이터 로딩 중...');
   const {loading, error, data, refetch} = USE_QUERY(
     'LOOK_UP_HISTORY_PAGE',
     user.accessToken,
@@ -414,9 +416,12 @@ const History = ({navigation, route}) => {
   const getData = (isHistoryId, pushObj) => {
     //console.log(error, loading, data);
     if (error != undefined) {
-      if (diaryId != 0) {
+      if (diaryId != -1) {
         console.log('ERROR: ', JSON.stringify(error));
-        // [TODO] Go to Error Page
+        setIsLoading(false);
+        ErrorAlert();
+      } else {
+        console.log('Not Init Diary Id');
       }
     } else {
       if (loading || data == undefined) {
@@ -440,13 +445,15 @@ const History = ({navigation, route}) => {
         setSelDiary(data['histories'][0]);
         setTimeout(() => {
           setIsLoading(false);
-        }, 100);
+        }, 300);
       }
     }
   };
 
   const _handleExitMemo = () => {
     //console.log('Exit Memo');
+    setIsLoading(true);
+    setLoadingMessage('일기장 나가는 중...');
     exitDiary({
       variables: {
         diaryId: route.params.id,
@@ -505,13 +512,15 @@ const History = ({navigation, route}) => {
     if (exitDiaryError != undefined) {
       let jsonData = JSON.parse(JSON.stringify(exitDiaryError));
       console.log(jsonData);
-      // [TODO] Go to Error Page
+      setIsLoading(false);
+      ErrorAlert();
     } else {
       if (exitDiaryLoading || exitDiaryData == undefined) {
         console.log('Data Fecting & Data Empty');
         return;
       }
       // Not Check Data Is True..
+      setIsLoading(false);
       console.log('Success Data', exitDiaryData);
       // If Success
       navigation.navigate('Home');
@@ -522,7 +531,8 @@ const History = ({navigation, route}) => {
     if (errorRAH != undefined) {
       let jsonData = JSON.parse(JSON.stringify(errorRAH));
       console.log(jsonData);
-      // [TODO] Go to Error Page
+      // Only Print Console Log
+      setIsLoading(false);
     } else {
       if (loadingRAH || dataRAH == undefined) {
         console.log('Data Fecting & Data Empty');
@@ -693,7 +703,7 @@ const History = ({navigation, route}) => {
 
   return isLoading ? (
     <SpinnerContainer>
-      <Spinner visible={isLoading} textContent={'히스토리 데이터 로딩 중...'} />
+      <Spinner visible={isLoading} textContent={loadingMessage} />
     </SpinnerContainer>
   ) : (
     <Container>

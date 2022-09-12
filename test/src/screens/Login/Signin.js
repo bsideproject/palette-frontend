@@ -27,6 +27,7 @@ import {Permission, PushCheck} from '@screens';
 import {responsePathAsArray} from 'graphql';
 import {requestUserPermission} from '../../push/PushNotification_helper';
 import {refreshApi, loginApi} from '../../api/restfulAPI';
+import {ErrorAlert} from '@components';
 
 const Container = styled.View`
   flex: 1;
@@ -193,7 +194,7 @@ const Signin = ({navigation}) => {
     if (errorFCM != undefined) {
       let jsonData = JSON.parse(JSON.stringify(errorFCM));
       console.log(jsonData);
-      // [TODO] Go to Error Page
+      ErrorAlert();
     } else {
       if (loadingFCM || dataFCM == undefined) {
         console.log('Data Fecting & Data Empty');

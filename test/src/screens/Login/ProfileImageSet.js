@@ -8,6 +8,8 @@ import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {USE_MUTATION} from '@apolloClient/queries';
 import AsyncStorage from '@react-native-community/async-storage';
 import {imageUploadApi} from '../../api/restfulAPI';
+import {ErrorAlert} from '@components';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 const Container = styled.View`
   flex: 1;
@@ -69,6 +71,14 @@ const ProfileImage = styled.Image`
   border-radius: 70px;
 `;
 
+const SpinnerContainer = styled.Text`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  font-family: ${({theme}) => theme.fontRegular};
+`;
+
 const PROFILEIMG_DEFAULT = require('/assets/icons/set_profileImg.png');
 const UPLOAD = require('/assets/icons/upload.png');
 
@@ -78,7 +88,8 @@ const ProfileImageSet = ({navigation, route}) => {
   const [profileImage, setProfileImage] = useState('');
   const [accessToken, setAccessToken] = useState(null);
   const [uploadImage, setUploadImage] = useState(null);
-  const [updateProfile, updateResult] = USE_MUTATION(
+  const [isLoading, setIsLoading] = useState(false);
+  const [updateProfile, {data, loading, error}] = USE_MUTATION(
     'UPDATE_PROFILE',
     accessToken,
   );
@@ -86,18 +97,15 @@ const ProfileImageSet = ({navigation, route}) => {
     if (!!uploadImage) {
       const response = await imageUploadApi(uploadImage, accessToken);
       const {data} = response;
+      setIsLoading(true);
       updateProfile({
         variables: {profileImg: data.urls[0]},
       });
-
-      if (params) navigation.goBack();
-      else navigation.navigate('Joined');
     } else {
+      setIsLoading(true);
       updateProfile({
         variables: {profileImg: ''},
       });
-      if (params) navigation.goBack();
-      else navigation.navigate('Joined');
     }
   };
 
@@ -134,6 +142,25 @@ const ProfileImageSet = ({navigation, route}) => {
     });
   }, []);
 
+  useEffect(() => {
+    if (error != undefined) {
+      let jsonData = JSON.parse(JSON.stringify(error));
+      console.log(jsonData);
+      setIsLoading(false);
+      ErrorAlert();
+    } else {
+      if (loading || data == undefined) {
+        console.log('Data Fecting & Data Empty');
+        return;
+      }
+      // Not Check Data Is True..
+      console.log(data);
+      setIsLoading(false);
+      if (params) navigation.goBack();
+      else navigation.navigate('Joined');
+    }
+  }, [loading]);
+
   const ConditionProfileImage = () => {
     return profileImage !== '' ? (
       <ProfileImage source={{uri: profileImage}} />
@@ -142,7 +169,11 @@ const ProfileImageSet = ({navigation, route}) => {
     );
   };
 
-  return (
+  return isLoading ? (
+    <SpinnerContainer>
+      <Spinner visible={isLoading} textContent={'프로필 설정 중...'} />
+    </SpinnerContainer>
+  ) : (
     <Container>
       <KeyboardAvoidingScrollView
         containerStyle={{

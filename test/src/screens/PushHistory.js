@@ -7,6 +7,7 @@ import {USE_QUERY, USE_MUTATION} from '@apolloClient/queries';
 import {FlatList} from 'react-native-gesture-handler';
 import moment from 'moment';
 import {useIsFocused} from '@react-navigation/native';
+import {ErrorAlert} from '@components';
 
 const checkDateDiff = ts => {
   // Convert Korea Time
@@ -99,7 +100,8 @@ const PushHistory = ({navigation}) => {
   const getData = () => {
     if (error != undefined) {
       console.log('ERROR: ', JSON.stringify(error));
-      // [TODO] Go to Error Page
+      setIsLoading(false);
+      ErrorAlert();
     } else {
       if (loading || data == undefined) {
         console.log('Data Fecting & Data Empty');
@@ -149,7 +151,8 @@ const PushHistory = ({navigation}) => {
     if (errorRAH != undefined) {
       let jsonData = JSON.parse(JSON.stringify(errorRAH));
       console.log(jsonData);
-      // [TODO] Go to Error Page
+      // Only Print Console Log
+      setIsLoading(false);
     } else {
       if (loadingRAH || dataRAH == undefined) {
         console.log('Data Fecting & Data Empty');

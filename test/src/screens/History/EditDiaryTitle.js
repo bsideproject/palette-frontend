@@ -4,8 +4,10 @@ import styled from 'styled-components/native';
 import {Text} from 'react-native';
 import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
 import {Button, Input, ErrorMessage} from '@components';
-import {USE_QUERY, USE_MUTATION} from '@apolloClient/queries';
+import {USE_MUTATION} from '@apolloClient/queries';
 import {UserContext} from '@contexts';
+import {ErrorAlert} from '@components';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 const Container = styled.View`
   flex: 1;
@@ -13,6 +15,14 @@ const Container = styled.View`
   flex-direction: column;
   padding-right: 5%;
   padding-left: 5%;
+`;
+
+const SpinnerContainer = styled.Text`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  font-family: ${({theme}) => theme.fontRegular};
 `;
 
 const TitleTextContainer = styled.Text`
@@ -35,6 +45,7 @@ const EditDiaryTitle = ({navigation, route}) => {
   const theme = useContext(ThemeContext);
   const [errorMessage, setErrorMessage] = useState('');
   const [isError, setIsError] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const pattern_spc = /[~!@#$%^&*()_+|<>?:{}]/; // 특수문자
   const {user} = useContext(UserContext);
   const [updateDiaryTitle, {data, loading, error}] = USE_MUTATION(
@@ -54,6 +65,7 @@ const EditDiaryTitle = ({navigation, route}) => {
     } else {
       setIsError(false);
       console.log('Receive Data: ', route.params, name);
+      setIsLoading(true);
       updateDiaryTitle({
         variables: {
           diaryId: route.params,
@@ -68,20 +80,26 @@ const EditDiaryTitle = ({navigation, route}) => {
     if (error != undefined) {
       let jsonData = JSON.parse(JSON.stringify(error));
       console.log(jsonData);
-      // [TODO] Go to Error Page
+      setIsLoading(false);
+      ErrorAlert();
     } else {
       if (loading || data == undefined) {
         console.log('Data Fecting & Data Empty');
         return;
       }
       // Not Check Data Is True..
+      setIsLoading(false);
       console.log('Success Data', data);
       // If Success
       navigation.goBack();
     }
   }, [loading]);
 
-  return (
+  return isLoading ? (
+    <SpinnerContainer>
+      <Spinner visible={isLoading} textContent={'일기 제목 수정 중...'} />
+    </SpinnerContainer>
+  ) : (
     <KeyboardAvoidingScrollView
       containerStyle={{
         backgroundColor: theme.fullWhite,

@@ -7,6 +7,8 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
 import {USE_MUTATION} from '@apolloClient/queries';
 import AsyncStorage from '@react-native-community/async-storage';
+import {ErrorAlert} from '@components';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 const Container = styled.View`
   flex: 1;
@@ -54,17 +56,25 @@ const ButtonContainer = styled.View`
   margin-bottom: 106px;
 `;
 
+const SpinnerContainer = styled.Text`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  font-family: ${({theme}) => theme.fontRegular};
+`;
+
 const Agree = ({navigation}) => {
   const [allCheck, setAllCheck] = useState(false);
   const [check1, setCheck1] = useState(false);
   const [check2, setCheck2] = useState(false);
   const theme = useContext(ThemeContext);
   const [accessToken, setAccessToken] = useState(null);
-  const [updateProfile, updateResult] = USE_MUTATION(
+  const [updateProfile, {data, loading, error}] = USE_MUTATION(
     'UPDATE_PROFILE',
     accessToken,
   );
-
+  const [isLoading, setIsLoading] = useState(false);
   const CHECKBOX_DEFAULT = require('/assets/icons/checkbox_default.png');
   const CHECKBOX_SELECTED = require('/assets/icons/checkbox_selected.png');
 
@@ -98,10 +108,10 @@ const Agree = ({navigation}) => {
   };
 
   const _handleNextButtonPress = () => {
+    setIsLoading(true);
     updateProfile({
       variables: {agreeWithTerms: true},
     });
-    navigation.navigate('Nickname');
   };
 
   const CheckBox = ({check}) => {
@@ -126,7 +136,29 @@ const Agree = ({navigation}) => {
     }
   }, [check1, check2]);
 
-  return (
+  useEffect(() => {
+    if (error != undefined) {
+      let jsonData = JSON.parse(JSON.stringify(error));
+      console.log(jsonData);
+      setIsLoading(false);
+      ErrorAlert();
+    } else {
+      if (loading || data == undefined) {
+        console.log('Data Fecting & Data Empty');
+        return;
+      }
+      // Not Check Data Is True..
+      console.log('Data', data);
+      setIsLoading(false);
+      navigation.navigate('Nickname');
+    }
+  }, [loading]);
+
+  return isLoading ? (
+    <SpinnerContainer>
+      <Spinner visible={isLoading} textContent={'동의 확인 중...'} />
+    </SpinnerContainer>
+  ) : (
     <Container>
       <KeyboardAvoidingScrollView
         containerStyle={{
@@ -138,7 +170,8 @@ const Agree = ({navigation}) => {
               title="다음 단계로"
               onPress={_handleNextButtonPress}
               containerStyle={{
-                backgroundColor: check1 && check2 ? theme.pointColor : theme.dark040,
+                backgroundColor:
+                  check1 && check2 ? theme.pointColor : theme.dark040,
                 alignItems: 'center',
                 justifyContent: 'center',
               }}

@@ -5,6 +5,7 @@ import {Button} from '@components';
 import {UserContext} from '@contexts';
 import {USE_MUTATION} from '@apolloClient/queries';
 import Spinner from 'react-native-loading-spinner-overlay';
+import {ErrorAlert} from '@components';
 
 const SetMemoFlexTop = styled.View`
   justify-content: center;
@@ -89,7 +90,8 @@ const SetMemoPeriod = ({navigation, route}) => {
   useEffect(() => {
     if (error != undefined) {
       console.log('ERROR: ', JSON.stringify(error));
-      // [TODO] Go to Error Page
+      setIsLoading(false);
+      ErrorAlert();
     } else {
       if (loading || data == undefined) {
         console.log('Data Fecting & Data Empty');
@@ -101,6 +103,8 @@ const SetMemoPeriod = ({navigation, route}) => {
         navigation.navigate('Home');
       } else {
         console.log('Loading or Error', data);
+        setIsLoading(false);
+        ErrorAlert();
       }
     }
   }, [loading]);
@@ -131,7 +135,7 @@ const SetMemoPeriod = ({navigation, route}) => {
 
   return isLoading ? (
     <SpinnerContainer>
-      <Spinner visible={isLoading} textContent={'설정 적용 중...'} />
+      <Spinner visible={isLoading} textContent={'기간 설정 중...'} />
     </SpinnerContainer>
   ) : (
     <Container>

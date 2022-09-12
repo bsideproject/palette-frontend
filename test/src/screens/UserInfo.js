@@ -9,6 +9,8 @@ import {USE_MUTATION, USE_QUERY} from '@apolloClient/queries';
 import {TouchableOpacity} from 'react-native';
 import {delUserApi} from '../api/restfulAPI';
 import Modal from 'react-native-modal';
+import Spinner from 'react-native-loading-spinner-overlay';
+import {ErrorAlert} from '@components';
 
 const getCreateTime = time => {
   const date = new Date(time);
@@ -17,22 +19,44 @@ const getCreateTime = time => {
   );
 };
 
+// Spinner
+const SpinnerContainer = styled.Text`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  font-family: ${({theme}) => theme.fontRegular};
+`;
+
 let createTime;
 const UserInfo = ({navigation}) => {
   const {user, setUser} = useContext(UserContext);
   const theme = useContext(ThemeContext);
   const [exitModalVisible, setExitModalVisible] = useState(false);
-  const [deleteFcmToken, deleteFcmTokenResult] = USE_MUTATION(
-    'DELETE_FCM_TOKEN',
-    user.accessToken,
-  );
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadingMessage, setLoadingMessage] = useState('프로필 불러오는 중...');
+  const [
+    deleteFcmToken,
+    {loading: loadingFCM, error: errorFCM, data: dataFCM},
+  ] = USE_MUTATION('DELETE_FCM_TOKEN', user.accessToken);
   const {loading, error, data, refetch} = USE_QUERY(
     'GET_PROFILE',
     user.accessToken,
   );
 
   useEffect(() => {
-    if (!loading) {
+    if (error != undefined) {
+      let jsonData = JSON.parse(JSON.stringify(error));
+      console.log(jsonData);
+      setIsLoading(false);
+      ErrorAlert();
+    } else {
+      if (loading || data == undefined) {
+        console.log('Data Fecting & Data Empty');
+        return;
+      }
+      console.log('DATA', data);
+      // If Success
       createTime = data.myProfile.createdAt;
       setUser({
         accessToken: user.accessToken,
@@ -42,8 +66,38 @@ const UserInfo = ({navigation}) => {
         socialTypes: data.myProfile.socialTypes,
         pushEnabled: data.myProfile.pushEnabled,
       });
+      setIsLoading(false);
     }
   }, [loading]);
+
+  useEffect(() => {
+    if (errorFCM != undefined) {
+      let jsonData = JSON.parse(JSON.stringify(errorFCM));
+      console.log(jsonData);
+      setIsLoading(false);
+      ErrorAlert();
+    } else {
+      if (loadingFCM || dataFCM == undefined) {
+        console.log('Data Fecting & Data Empty');
+        return;
+      }
+      console.log('FCM Data', dataFCM);
+      AsyncStorage.removeItem('refresh_token');
+      AsyncStorage.removeItem('access_token');
+      AsyncStorage.removeItem('email');
+      AsyncStorage.removeItem('social_type');
+      AsyncStorage.removeItem('fcmtoken');
+      setUser({
+        accessToken: null,
+        email: null,
+        nickname: null,
+        profileImg: null,
+        socialTypes: null,
+        pushEnabled: null,
+      });
+      setIsLoading(false);
+    }
+  }, [loadingFCM]);
 
   const _handleDeleteFcmToken = () => {
     AsyncStorage.getItem('fcmtoken', (err, result) => {
@@ -56,24 +110,17 @@ const UserInfo = ({navigation}) => {
   };
 
   const _handleDelUser = async () => {
+    setIsLoading(true);
+    setLoadingMessage('탈퇴 진행 중...');
     await delUserApi(user.accessToken);
     _handleDeleteFcmToken();
-    AsyncStorage.removeItem('refresh_token');
-    AsyncStorage.removeItem('access_token');
-    AsyncStorage.removeItem('email');
-    AsyncStorage.removeItem('social_type');
-    AsyncStorage.removeItem('fcmtoken');
-    setUser({
-      accessToken: null,
-      email: null,
-      nickname: null,
-      profileImg: null,
-      socialTypes: null,
-      pushEnabled: null,
-    });
   };
 
-  return (
+  return isLoading ? (
+    <SpinnerContainer>
+      <Spinner visible={isLoading} textContent={loadingMessage} />
+    </SpinnerContainer>
+  ) : (
     <Container>
       <UserInfoContainer>
         <UserInfoTitle>가입일자</UserInfoTitle>

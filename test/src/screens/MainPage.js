@@ -23,7 +23,7 @@ import Modal from 'react-native-modal';
 const checkDate = ts => {
   // [TODO] UTC Time Convert
   const now = moment().add(9, 'hour').startOf('day');
-  const target = moment(ts).startOf('day');
+  const target = moment(ts).add(9, 'hour').startOf('day');
 
   // Today Check
   if (now.diff(target, 'day') > 0) {
@@ -359,7 +359,7 @@ const MainPage = ({navigation, route}) => {
   const getData = () => {
     if (error != undefined) {
       console.log('ERROR: ', JSON.stringify(error));
-      // [TODO] Go to Error Page
+      // Show as much as possible
       console.log('Data is Error');
       setLoadError(true);
       setSlideIdx(0);
@@ -417,9 +417,7 @@ const MainPage = ({navigation, route}) => {
           let origData = memos.slice(1);
           if (data['diaries'].every(item => origData.includes(item))) {
             console.log('2.Normal Event');
-            setTimeout(() => {
-              setIsLoading(false);
-            }, 500);
+            setIsLoading(false);
           } else if (data['diaries'].length + 1 != memos.length) {
             console.log('3.Add Diray Event');
             setSlideIdx(1);
@@ -440,8 +438,9 @@ const MainPage = ({navigation, route}) => {
   useEffect(() => {
     if (errorRAH != undefined) {
       let jsonData = JSON.parse(JSON.stringify(errorRAH));
+      // Only Print Console Log
       console.log(jsonData);
-      // [TODO] Go to Error Page
+      setIsLoading(false);
     } else {
       if (loadingRAH || dataRAH == undefined) {
         console.log('Data Fecting & Data Empty');
