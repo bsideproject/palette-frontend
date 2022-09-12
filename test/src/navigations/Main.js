@@ -24,7 +24,6 @@ import {
   PushHistory,
 } from '@screens';
 import Home from './Home';
-import {LogBox} from 'react-native';
 import {HistoryModalContext} from '@contexts';
 import WebView from 'react-native-webview';
 
@@ -33,10 +32,6 @@ const Stack = createStackNavigator();
 const Main = () => {
   const theme = useContext(ThemeContext);
   const {setHistoryModalVisible} = useContext(HistoryModalContext);
-
-  useEffect(() => {
-    LogBox.ignoreLogs(['Animated: `useNativeDriver`']);
-  }, []);
 
   const Introduce = () => {
     return (

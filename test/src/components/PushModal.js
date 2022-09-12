@@ -164,7 +164,7 @@ const PushModal = ({onPressEnd}) => {
 };
 
 PushModal.propTypes = {
-  onPressExit: PropTypes.func.isRequired,
+  onPressEnd: PropTypes.func.isRequired,
 };
 
 export default PushModal;

@@ -53,7 +53,7 @@ const BtnContainer = styled.View`
   padding-right: 5%;
   padding-left: 5%;
   margin-top: 10%;
-  margin-bottom: 30%;
+  margin-bottom: 20%;
 `;
 
 const ColorTransParent = styled.View`

@@ -77,8 +77,6 @@ const Joined = ({navigation}) => {
     });
   };
 
-  console.log('User', user);
-
   useEffect(() => {
     setIsLoading(true);
     AsyncStorage.getItem('email', (err, result) => {
@@ -115,7 +113,7 @@ const Joined = ({navigation}) => {
         console.log('Data Fecting & Data Empty');
         return;
       }
-      console.log('FCM DAt', dataFCM);
+      console.log('FCM Data', dataFCM);
 
       AsyncStorage.getItem('is_push', (err, result) => {
         updateProfile({

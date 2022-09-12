@@ -7,8 +7,9 @@ import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-
 import {FlatList} from 'react-native-gesture-handler';
 import {USE_QUERY, USE_MUTATION} from '@apolloClient/queries';
 import {UserContext} from '@contexts';
-import {Button, ErrorMessage} from '@components';
+import {Button, ErrorMessage, ErrorAlert} from '@components';
 import LinearGradient from 'react-native-linear-gradient';
+import {LogBox} from 'react-native';
 
 const Container = styled.View`
   flex: 1;
@@ -53,7 +54,7 @@ const BtnContainer = styled.View`
   padding-right: 5%;
   padding-left: 5%;
   margin-top: 10%;
-  margin-bottom: 30%;
+  margin-bottom: 20%;
 `;
 
 const ColorTransParent = styled.View`
@@ -71,16 +72,22 @@ const AddMemoColor = ({navigation, route}) => {
   const [isError, setIsError] = useState(false);
   const {user} = useContext(UserContext);
   const {loading, error, data} = USE_QUERY('COLOR_CODE', user.accessToken);
+  const [loadingMessage, setLoadingMessage] =
+    useState('표지 색상 불러오는 중...');
   const [
     registerMemo,
     {loading: loadingRegister, error: errorRegister, data: dataRegister},
   ] = USE_MUTATION('REGISTER_MEMO', user.accessToken);
+  // Disable FlatList Log
+  LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
 
   // [QUERY EVENT FUNCTION] --------------------------------------
   const getData = () => {
     if (error != undefined) {
       console.log('ERROR: ', JSON.stringify(error));
       // [TODO] Go to Error Page
+      setIsLoading(false);
+      ErrorAlert();
     } else {
       if (loading || data == undefined) {
         console.log('Data Fecting & Data Empty');
@@ -112,7 +119,8 @@ const AddMemoColor = ({navigation, route}) => {
 
       console.log('Set Memo: ', receivedName, selectedColor.id);
       console.log('token: ', user.accessToken);
-
+      setIsLoading(true);
+      setLoadingMessage('일기 생성 중...');
       registerMemo({
         variables: {
           title: receivedName,
@@ -131,7 +139,8 @@ const AddMemoColor = ({navigation, route}) => {
     if (errorRegister != undefined) {
       let jsonData = JSON.parse(JSON.stringify(errorRegister));
       console.log(jsonData);
-      // [TODO] Go to Error Page
+      setIsLoading(false);
+      ErrorAlert();
     } else {
       if (loadingRegister || dataRegister == undefined) {
         console.log('Data Fecting & Data Empty');
@@ -140,11 +149,14 @@ const AddMemoColor = ({navigation, route}) => {
       // If Success
       console.log('DATA', dataRegister);
       if (dataRegister?.createDiary.invitationCode) {
+        setIsLoading(false);
         navigation.navigate('CompleteMemo', {
           invitationCode: dataRegister.createDiary.invitationCode,
         });
       } else {
         console.log('Loading or Error', dataRegister);
+        setIsLoading(false);
+        ErrorAlert();
       }
     }
   }, [loadingRegister]);
@@ -213,7 +225,7 @@ const AddMemoColor = ({navigation, route}) => {
 
   return isLoading ? (
     <SpinnerContainer>
-      <Spinner visible={isLoading} textContent={'표지 색상 불러오는 중...'} />
+      <Spinner visible={isLoading} textContent={loadingMessage} />
     </SpinnerContainer>
   ) : (
     <KeyboardAvoidingScrollView

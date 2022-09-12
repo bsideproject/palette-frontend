@@ -14,6 +14,8 @@ import {UserContext} from '@contexts';
 import Carousel, {Pagination} from 'react-native-snap-carousel';
 import {USE_QUERY, USE_MUTATION} from '@apolloClient/queries';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import {ErrorAlert} from '@components';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 const Container = styled.ScrollView`
   flex: 1;
@@ -162,37 +164,38 @@ const CarouselContainer = styled.View`
   ${({isHidden}) => isHidden && `opacity:0`}
 `;
 
+const SpinnerContainer = styled.Text`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  font-family: ${({theme}) => theme.fontRegular};
+`;
+
 const ShowDiary = ({navigation, route}) => {
   const {params} = route;
   const {user} = useContext(UserContext);
   const theme = useContext(ThemeContext);
+  const [isLoading, setIsLoading] = useState(true);
   const [changeImage, setChangeImage] = useState(false);
   const [exitModalVisible, setExitModalVisible] = useState(false);
-  const [isExit, setIsExit] = useState(false);
   const [tabModalVisible, setTabModalVisible] = useState(false);
   const [index, setIndex] = useState(0);
   const isCarousel = useRef(null);
   const [imageArr, setImageArr] = useState([]);
+  const [loadingMessage, setLoadingMessage] = useState('페이지 불러오는 중...');
+  const [diaryData, setDiaryData] = useState(null);
   const {loading, error, data, refetch} = USE_QUERY(
     'GET_PAGE',
     user.accessToken,
     {id: params.diary.id},
   );
-  const [deletePage, deleteResult] = USE_MUTATION(
-    'DELETE_PAGE',
-    user.accessToken,
-  );
-  const [diaryData, setDiaryData] = useState(null);
+  const [
+    deletePage,
+    {loading: loadingDelete, error: errorDelete, data: dataDelete},
+  ] = USE_MUTATION('DELETE_PAGE', user.accessToken);
 
-  useEffect(() => {
-    if (!loading) {
-      data.page.images.map(image => {
-        setImageArr(prev => [...prev, image.domain + image.path]);
-      });
-      setDiaryData({...data.page});
-    }
-  }, [loading]);
-
+  // [USE EFFECT] -----------------------------------------------
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -208,28 +211,62 @@ const ShowDiary = ({navigation, route}) => {
     });
   }, []);
 
+  useEffect(() => {
+    if (error != undefined) {
+      let jsonData = JSON.parse(JSON.stringify(error));
+      console.log(jsonData);
+      setIsLoading(false);
+      ErrorAlert();
+    } else {
+      if (loading || data == undefined) {
+        console.log('Data Fecting & Data Empty');
+        return;
+      }
+      // If Success
+      data.page.images.map(image => {
+        setImageArr(prev => [...prev, image.domain + image.path]);
+      });
+      setDiaryData({...data.page});
+      setIsLoading(false);
+    }
+  }, [loading]);
+
+  useEffect(() => {
+    if (errorDelete != undefined) {
+      let jsonData = JSON.parse(JSON.stringify(errorDelete));
+      console.log(jsonData);
+      setIsLoading(false);
+      ErrorAlert();
+    } else {
+      if (loadingDelete || dataDelete == undefined) {
+        console.log('Data Fecting & Data Empty');
+        return;
+      }
+      setIsLoading(false);
+      console.log('DATA', dataDelete);
+      // If Success
+      navigation.goBack();
+    }
+  }, [loadingDelete]);
+
   const SelectedImage = () => {
     return imageArr.map((arr, i) => (
       <View style={{position: 'relative'}} key={i}>
-        <SubUploadImage source={{uri: arr.imgUrl}} resizeMethod={"resize"} />
+        <SubUploadImage source={{uri: arr.imgUrl}} resizeMethod={'resize'} />
       </View>
     ));
   };
 
-  useEffect(() => {
-    if (isExit) {
-      navigation.goBack();
-    }
-  }, [isExit]);
-
-  const _handlerExit = async () => {
-    await deletePage({
+  const _handlerExit = () => {
+    setIsLoading(true);
+    setLoadingMessage('일기 삭제 중...');
+    setExitModalVisible(false);
+    setTabModalVisible(false);
+    deletePage({
       variables: {
         pageId: params.diary.id,
       },
     });
-    setExitModalVisible(false);
-    setIsExit(true);
   };
   const SLIDER_WIDTH = Dimensions.get('window').width - 30;
 
@@ -239,7 +276,7 @@ const ShowDiary = ({navigation, route}) => {
         <Image
           source={{uri: item}}
           style={{width: SLIDER_WIDTH, height: SLIDER_WIDTH}}
-          resizeMethod={"resize"}
+          resizeMethod={'resize'}
         />
       </View>
     );
@@ -266,7 +303,11 @@ const ShowDiary = ({navigation, route}) => {
     navigation.navigate('WriteDiary', sendData);
   };
 
-  return (
+  return isLoading ? (
+    <SpinnerContainer>
+      <Spinner visible={isLoading} textContent={loadingMessage} />
+    </SpinnerContainer>
+  ) : (
     <>
       {changeImage && (
         <SubUploadImageContainer>
@@ -330,7 +371,7 @@ const ShowDiary = ({navigation, route}) => {
                   setTabModalVisible(false);
                 }}>
                 <StyledModalContainer>
-                  <StyledModalButton onPress={_handleEditDiary}>
+                  <StyledModalButton onPress={() => _handleEditDiary()}>
                     <ModalTxt>
                       <StyledModalText>일기 수정</StyledModalText>
                     </ModalTxt>
@@ -394,7 +435,10 @@ const ShowDiary = ({navigation, route}) => {
                 <ExitModalMid>
                   <ExitModalTxt1>정말 삭제하시겠습니까?</ExitModalTxt1>
                 </ExitModalMid>
-                <ExitModalBottom onPress={_handlerExit}>
+                <ExitModalBottom
+                  onPress={() => {
+                    _handlerExit();
+                  }}>
                   <ExitModalTxt3>삭제하기</ExitModalTxt3>
                 </ExitModalBottom>
               </ExitModalContainer>

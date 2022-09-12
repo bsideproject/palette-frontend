@@ -5,7 +5,8 @@ import {UserContext} from '@contexts';
 import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
 import {ThemeContext} from 'styled-components/native';
 import {USE_MUTATION} from '@apolloClient/queries';
-import {Button, Input, ErrorMessage} from '@components';
+import {Button, Input, ErrorMessage, ErrorAlert} from '@components';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 const Container = styled.View`
   flex: 1;
@@ -13,6 +14,14 @@ const Container = styled.View`
   flex-direction: column;
   padding-right: 5%;
   padding-left: 5%;
+`;
+
+const SpinnerContainer = styled.Text`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  font-family: ${({theme}) => theme.fontRegular};
 `;
 
 const TitleTextContainer = styled.Text`
@@ -27,12 +36,13 @@ const BtnContainer = styled.View`
   padding-left: 5%;
   justify-content: center;
   align-items: center;
-  margin-bottom: 30%;
+  margin-bottom: 20%;
 `;
 
 const AddInviteCode = ({navigation}) => {
   const [code, setCode] = useState('');
   const theme = useContext(ThemeContext);
+  const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('유효하지 않은 코드입니다.');
   const [isError, setIsError] = useState(false);
   const {user} = useContext(UserContext);
@@ -44,6 +54,7 @@ const AddInviteCode = ({navigation}) => {
   // [QUERY EVENT FUNCTION] --------------------------------------
   const _handleSetInviteComplete = () => {
     // Set Invite Code
+    setIsLoading(true);
     setInviteCode({
       variables: {
         InviteCode: code,
@@ -56,7 +67,13 @@ const AddInviteCode = ({navigation}) => {
     if (error != undefined) {
       setIsError(true);
       let jsonData = JSON.parse(JSON.stringify(error));
-      setErrorMessage(jsonData.message);
+      if (jsonData.networkError) {
+        ErrorAlert();
+        setErrorMessage('네트워크 에러');
+      } else {
+        setErrorMessage(jsonData.message);
+      }
+      setIsLoading(false);
     } else {
       if (loading || data == undefined) {
         console.log('Data Fecting & Data Empty');
@@ -64,6 +81,7 @@ const AddInviteCode = ({navigation}) => {
       }
       // If Success
       if (data?.inviteDiary.adminUser) {
+        setIsLoading(false);
         // [TODO] Invite Code Status
         console.log('DATA', data.inviteDiary);
         // If Success
@@ -71,11 +89,19 @@ const AddInviteCode = ({navigation}) => {
           userName: data.inviteDiary.adminUser.nickname,
           memoName: data.inviteDiary.diary.title,
         });
+      } else {
+        console.log(data);
+        setIsLoading(false);
+        ErrorAlert();
       }
     }
   }, [loading]);
 
-  return (
+  return isLoading ? (
+    <SpinnerContainer>
+      <Spinner visible={isLoading} textContent={'초대 코드 확인 중...'} />
+    </SpinnerContainer>
+  ) : (
     <KeyboardAvoidingScrollView
       containerStyle={{
         backgroundColor: theme.fullWhite,

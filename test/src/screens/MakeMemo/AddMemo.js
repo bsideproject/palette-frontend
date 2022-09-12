@@ -25,7 +25,7 @@ const BtnContainer = styled.View`
   padding-left: 5%;
   justify-content: center;
   align-items: center;
-  margin-bottom: 30%;
+  margin-bottom: 20%;
 `;
 
 const AddMemo = ({navigation}) => {

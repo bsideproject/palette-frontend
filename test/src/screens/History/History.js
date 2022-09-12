@@ -380,7 +380,7 @@ const History = ({navigation, route}) => {
   // History
   const [selDiary, setSelDiary] = useState(null);
   const {user} = useContext(UserContext);
-  const [diaryId, setDiaryId] = useState(route.params.id);
+  const [diaryId, setDiaryId] = useState(0);
   const [isDiscard, setIsDiscard] = useState(false);
   const {loading, error, data, refetch} = USE_QUERY(
     'LOOK_UP_HISTORY_PAGE',

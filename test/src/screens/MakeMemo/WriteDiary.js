@@ -11,6 +11,8 @@ import {UploadModal} from '@components';
 import {imageUploadApi, imageDeleteApi} from '../../api/restfulAPI';
 import {USE_MUTATION} from '@apolloClient/queries';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import {ErrorAlert} from '@components';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 const Container = styled.View`
   flex: 1;
@@ -160,6 +162,14 @@ const ExitModalMargin = styled.View`
   margin-top: 5%;
 `;
 
+const SpinnerContainer = styled.Text`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  font-family: ${({theme}) => theme.fontRegular};
+`;
+
 const IMG_DEFAULT = require('/assets/icons/set_diaryImg.png');
 const PLUS_ICON = require('/assets/icons/plus.png');
 const CLOSE_ICON = require('/assets/icons/close_circle.png');
@@ -183,12 +193,16 @@ const WriteDiary = ({navigation, route}) => {
   const [titleText, setTitleText] = useState('');
   const [contentText, setContentText] = useState('');
   const [selectModal, setSelectModal] = useState(false);
-  const [createPage, createResult] = USE_MUTATION(
-    'CREATE_PAGE',
-    user.accessToken,
-  );
-  const [editPage, editResult] = USE_MUTATION('EDIT_PAGE', user.accessToken);
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState('');
+  const [
+    createPage,
+    {loading: loadingCreate, error: errorCreate, data: dataCreate},
+  ] = USE_MUTATION('CREATE_PAGE', user.accessToken);
+  const [editPage, {loading: loadingEdit, error: errorEdit, data: dataEdit}] =
+    USE_MUTATION('EDIT_PAGE', user.accessToken);
 
+  // [USE EFFECT] -----------------------------------------------
   useEffect(() => {
     if (route.params) {
       params = route.params;
@@ -221,6 +235,42 @@ const WriteDiary = ({navigation, route}) => {
       ),
     });
   }, [titleText, contentText, imageArr]);
+
+  useEffect(() => {
+    if (errorCreate != undefined) {
+      let jsonData = JSON.parse(JSON.stringify(errorCreate));
+      console.log(jsonData);
+      setIsLoading(false);
+      ErrorAlert();
+    } else {
+      if (loadingCreate || dataCreate == undefined) {
+        console.log('Data Fecting & Data Empty');
+        return;
+      }
+      // If Success
+      setIsLoading(false);
+      console.log(dataCreate);
+      navigation.goBack();
+    }
+  }, [loadingCreate]);
+
+  useEffect(() => {
+    if (errorEdit != undefined) {
+      let jsonData = JSON.parse(JSON.stringify(errorEdit));
+      console.log(jsonData);
+      setIsLoading(false);
+      ErrorAlert();
+    } else {
+      if (loadingEdit || dataEdit == undefined) {
+        console.log('Data Fecting & Data Empty');
+        return;
+      }
+      // If Success
+      setIsLoading(false);
+      console.log(dataEdit);
+      navigation.pop(2);
+    }
+  }, [loadingEdit]);
 
   useEffect(() => {
     if (isExit) {
@@ -330,7 +380,7 @@ const WriteDiary = ({navigation, route}) => {
   const SelectedImage = () => {
     return imageArr.map((image, i) => (
       <View style={{position: 'relative'}} key={i}>
-        <SubUploadImage source={{uri: image}} resizeMethod={"resize"} />
+        <SubUploadImage source={{uri: image}} resizeMethod={'resize'} />
         <TouchableOpacity onPress={() => _handleDeleteImage(image, i)}>
           <CloseIcon source={CLOSE_ICON} />
         </TouchableOpacity>
@@ -356,7 +406,9 @@ const WriteDiary = ({navigation, route}) => {
         const response = await imageUploadApi(uploadImage, user.accessToken);
         if (params.mode === 'edit') {
           delImageArr.length > 0 && (await imageDeleteApi(delImageArr));
-          await editPage({
+          setIsLoading(true);
+          setLoadingMessage('일기장 수정 중...');
+          editPage({
             variables: {
               pageId: params.pageId,
               title: titleText,
@@ -364,9 +416,10 @@ const WriteDiary = ({navigation, route}) => {
               imageUrls: response.data.urls,
             },
           });
-          navigation.pop(2);
         } else {
-          await createPage({
+          setIsLoading(true);
+          setLoadingMessage('일기장 생성 중...');
+          createPage({
             variables: {
               title: titleText,
               body: contentText,
@@ -374,21 +427,23 @@ const WriteDiary = ({navigation, route}) => {
               imageUrls: response.data.urls,
             },
           });
-          navigation.goBack();
         }
       } else {
         if (params.mode === 'edit') {
           delImageArr.length > 0 && (await imageDeleteApi(delImageArr));
-          await editPage({
+          setIsLoading(true);
+          setLoadingMessage('일기장 수정 중...');
+          editPage({
             variables: {
               pageId: params.pageId,
               title: titleText,
               body: contentText,
             },
           });
-          navigation.pop(2);
         } else {
-          await createPage({
+          setIsLoading(true);
+          setLoadingMessage('일기장 생성 중...');
+          createPage({
             variables: {
               title: titleText,
               body: contentText,
@@ -396,7 +451,6 @@ const WriteDiary = ({navigation, route}) => {
               imageUrls: [],
             },
           });
-          navigation.goBack();
         }
       }
     }
@@ -418,7 +472,11 @@ const WriteDiary = ({navigation, route}) => {
     }
   };
 
-  return (
+  return isLoading ? (
+    <SpinnerContainer>
+      <Spinner visible={isLoading} textContent={loadingMessage} />
+    </SpinnerContainer>
+  ) : (
     <KeyboardAwareScrollView>
       <Container>
         <InnerContainer>
@@ -496,7 +554,7 @@ const WriteDiary = ({navigation, route}) => {
                 이 페이지를 벗어나면 작성된 내용은{'\n'}저장되지 않습니다.
               </ExitModalTxt2>
             </ExitModalMid>
-            <ExitModalBottom onPress={_handlerExit}>
+            <ExitModalBottom onPress={() => _handlerExit()}>
               <ExitModalTxt3>페이지 나가기</ExitModalTxt3>
             </ExitModalBottom>
           </ExitModalContainer>

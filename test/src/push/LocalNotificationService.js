@@ -20,14 +20,16 @@ export const onPushDataToNavigate = notify => {
       navigate('Home');
     }
   } else if (notify && notify.data && notify.data.page == 'history') {
-    if (notify.data.diaryId && notify.data.historyId) {
-      if (notify.data.isOut) {
-        console.log('Exit Diary');
+    if (notify.data.diaryId) {
+      if (notify.data.isOut && notify.data.isOut == '1') {
+        console.log('Exit Diary', notify.data.isOut);
       } else {
+        let historyId = notify.data.historyId ? notify.data.historyId : 0;
+        console.log('[Push]History Id', historyId);
         const obj = {
           alarmHistoryId: notify.data.alarmHistoryId,
           diaryId: notify.data.diaryId,
-          historyId: notify.data.historyId,
+          historyId: historyId,
         };
         AsyncStorage.setItem('PushParams', JSON.stringify(obj), () => {
           navigate('History', {diaryId: notify.data.diaryId});

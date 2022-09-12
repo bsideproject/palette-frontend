@@ -24,7 +24,7 @@ const BtnContainer = styled.View`
   justify-content: center;
   align-items: center;
   text-align: 'center',
-  margin-bottom: 30%;
+  margin-bottom: 20%;
 `;
 
 const ImgContainer = styled.View`
