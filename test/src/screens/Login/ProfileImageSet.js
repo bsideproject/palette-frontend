@@ -86,8 +86,6 @@ const ProfileImageSet = ({navigation, route}) => {
     if (!!uploadImage) {
       const response = await imageUploadApi(uploadImage, accessToken);
       const {data} = response;
-      console.log('프로필 등록 ', data);
-      //유저 프로필 이미지 업로드
       updateProfile({
         variables: {profileImg: data.urls[0]},
       });
@@ -95,7 +93,6 @@ const ProfileImageSet = ({navigation, route}) => {
       if (params) navigation.goBack();
       else navigation.navigate('Joined');
     } else {
-      //등록 프로필 이미지 없는 경우
       if (params) navigation.goBack();
       else navigation.navigate('Joined');
     }
@@ -115,7 +112,6 @@ const ProfileImageSet = ({navigation, route}) => {
       } else if (response.error) {
         alert('에러 발생');
       } else {
-        console.log('사진첩 결과물 ===> ', response);
         setProfileImage(() => response.assets[0].uri);
         const photo = new FormData();
         let file = {

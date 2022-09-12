@@ -119,15 +119,6 @@ const Agree = ({navigation}) => {
   }, []);
 
   useEffect(() => {
-    if (!!updateResult.data) {
-      console.log(
-        'UPDATE_PROFILE GRAPHQL RESULT DATA 약관동의',
-        updateResult.data,
-      );
-    }
-  }, [updateResult]);
-
-  useEffect(() => {
     if (check1 && check2) {
       setAllCheck(true);
     } else {

@@ -61,7 +61,6 @@ const Joined = ({navigation}) => {
       console.log('Joined AsyncStorage access_token Save!', data.accessToken);
       setAccessToken(data.accessToken);
 
-      setIsLoading(true);
       // Save FCM Token
       AsyncStorage.getItem('fcmtoken', (err, result) => {
         console.log('fcm token: ', result);
@@ -133,10 +132,6 @@ const Joined = ({navigation}) => {
         socialTypes: data.myProfile.socialTypes,
         pushEnabled: data.myProfile.pushEnabled,
       });
-      setTimeout(() => {
-        setIsLoading(false);
-        navigation.reset({index: 0, routes: [{name: 'Home'}]});
-      }, 1000);
     }
   }, [loadingFCM]);
 

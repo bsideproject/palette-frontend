@@ -78,10 +78,6 @@ const AccountConnect = ({navigation, route}) => {
 
   useEffect(() => {
     if (!!updateResult.data) {
-      console.log(
-        'UPDATE_PROFILE GRAPHQL RESULT DATA 계정연동',
-        updateResult.data,
-      );
       setConnected(true);
       setSpinner(false);
     }

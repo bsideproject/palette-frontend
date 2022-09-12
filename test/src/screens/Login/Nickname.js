@@ -69,7 +69,6 @@ const Nickname = ({navigation, route}) => {
       setAccessToken(result);
     });
     AsyncStorage.getItem('social_type', (err, result) => {
-      console.log(result);
       setSocialType(result);
     });
   }, []);

@@ -77,7 +77,7 @@ const UserInfo = ({navigation}) => {
     <Container>
       <UserInfoContainer>
         <UserInfoTitle>가입일자</UserInfoTitle>
-        <UserInfoText>{getCreateTime(createTime)}</UserInfoText>
+        <UserInfoText>{createTime && getCreateTime(createTime)}</UserInfoText>
       </UserInfoContainer>
       <UserInfoContainer>
         <UserInfoTitle>이메일</UserInfoTitle>
