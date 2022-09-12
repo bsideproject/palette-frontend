@@ -322,6 +322,8 @@ const MainPage = ({navigation, route}) => {
     {loading: loadingRAH, error: errorRAH, data: dataRAH},
   ] = USE_MUTATION('READ_PUSH_HISTORY', user.accessToken);
 
+  console.log(user);
+
   // [EVENT FUNCTION] ------------------------------------------
   const findIdxfromDiaryId = (diaryId, data) => {
     let findIdx = -1;
@@ -716,11 +718,7 @@ const MainPage = ({navigation, route}) => {
     }
     if (sliderIdx > 0) {
       if (memos[sliderIdx].currentHistory == null) {
-        return (
-          <MemoEmpty_Text1>
-            교환 일기에 초대 및 기간을 설정해주세요
-          </MemoEmpty_Text1>
-        );
+        return <MemoEmpty_Text1>최근 작성한 교환일기가 없어요</MemoEmpty_Text1>;
       } else if (memos[sliderIdx].currentHistory.pages.length == 0) {
         return <MemoEmpty_Text1>최근 작성한 교환일기가 없어요</MemoEmpty_Text1>;
       } else {
@@ -816,7 +814,7 @@ const MainPage = ({navigation, route}) => {
           data={memos}
           renderItem={renderItem1}
           sliderWidth={width * 0.9}
-          itemWidth={width * 0.9}
+          itemWidth={width * 0.75}
           firstItem={slideIdx}
           onBeforeSnapToItem={slideIndex => setSlideIdx(slideIndex)}
           initialNumToRender={memos.length}

@@ -139,13 +139,13 @@ const Signin = ({navigation}) => {
         await refetch()
           .then(data => {
             if (data.data.myProfile.nickname !== '') {
-              setUser({
-                accessToken: accessToken,
-                email: data.data.myProfile.email,
-                nickname: data.data.myProfile.nickname,
-                profileImg: data.data.myProfile.profileImg,
-                socialTypes: data.data.myProfile.socialTypes,
-                pushEnabled: data.data.myProfile.pushEnabled,
+              AsyncStorage.getItem('fcmtoken', (err, result) => {
+                console.log('[Auto Login]fcm token', result);
+                addFcmToken({
+                  variables: {
+                    token: result,
+                  },
+                });
               });
             }
           })
@@ -169,7 +169,7 @@ const Signin = ({navigation}) => {
       } else {
         if (accessToken) {
           AsyncStorage.getItem('fcmtoken', (err, result) => {
-            console.log('fcm token', result);
+            console.log('[IsRegisterLogin]fcm token', result);
             addFcmToken({
               variables: {
                 token: result,
@@ -192,7 +192,7 @@ const Signin = ({navigation}) => {
         return;
       }
       //최종 로그인
-      console.log('Login Success', dataFCM);
+      console.log('Login Success', dataFCM, data);
       setUser({
         accessToken: accessToken,
         email: data.myProfile.email,
