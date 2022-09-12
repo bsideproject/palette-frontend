@@ -17,6 +17,7 @@ import {
   onPushDataToNavigate,
 } from './push/LocalNotificationService';
 import {navigate} from './RootNavigation';
+import AsyncStorage from '@react-native-community/async-storage';
 
 const apolloClient = createApolloClient();
 
@@ -31,7 +32,7 @@ const App = () => {
   const onRegister = token => {
     console.log('[App] FCM Token', token);
     AsyncStorage.setItem('fcmtoken', token, () => {
-      console.log('AsyncStorage fcm token Save!');
+      console.log('AsyncStorage fcm token Save!', token);
     });
   };
 
