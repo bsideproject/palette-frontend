@@ -147,7 +147,7 @@ const MemoRecentContainer = styled.View`
   flex: 1;
 `;
 
-const MemoRecentItemContainer = styled.View`
+const MemoRecentItemContainer = styled.TouchableOpacity`
   border-radius: 10px;
   flex: 1;
   flex-direction: row;
@@ -662,6 +662,9 @@ const MainPage = ({navigation, route}) => {
   const Item2 = ({item}) => (
     //[TODO] Item.user.profileImg using
     <MemoRecentItemContainer
+      onPress={() =>
+        item.isSelf && navigation.navigate('ShowDiary', {diary: item})
+      }
       color={item.isSelf ? theme.white : theme.homeColor}>
       <MemoRecent_Icon>
         <AutoHeightImage
