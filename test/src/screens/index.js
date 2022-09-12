@@ -23,6 +23,7 @@ import EditDiaryColor from './History/EditDiaryColor';
 import EditDiaryTitle from './History/EditDiaryTitle';
 // Permission
 import Permission from './Permission/Permission';
+import PushCheck from './Permission/PushCheck';
 // Network
 import NetworkContainer from './Network/NetworkContainer';
 // User Info Page
@@ -57,6 +58,7 @@ export {
   EditDiaryColor,
   EditDiaryTitle,
   Permission,
+  PushCheck,
   NetworkContainer,
   UserInfo,
 };

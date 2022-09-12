@@ -23,7 +23,7 @@ import {
   NaverLogin,
   getProfile as getNaverProfile,
 } from '@react-native-seoul/naver-login';
-import {Permission} from '@screens';
+import {Permission, PushCheck} from '@screens';
 import {responsePathAsArray} from 'graphql';
 import {requestUserPermission} from '../../push/PushNotification_helper';
 import {refreshApi, loginApi} from '../../api/restfulAPI';
@@ -87,11 +87,19 @@ const Signin = ({navigation}) => {
   const [isRegistered, setIsRegistered] = useState(false);
   const [autoLogin, setAutoLogin] = useState(false);
   const [permission, setPermission] = useState(false);
+  const [pushPage, setPushPage] = useState(null);
   const {loading, error, data, refetch} = USE_QUERY('GET_PROFILE', accessToken);
   const [addFcmToken, {loading: loadingFCM, error: errorFCM, data: dataFCM}] =
     USE_MUTATION('ADD_FCM_TOKEN', accessToken);
 
+  const _checkPushPage = () => {
+    AsyncStorage.getItem('is_push', (err, result) => {
+      setPushPage(result);
+    });
+  };
+
   useEffect(() => {
+    _checkPushPage();
     PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.CAMERA)
       .then(response => {
         if (!response) {
@@ -349,6 +357,8 @@ const Signin = ({navigation}) => {
 
   return permission ? (
     <Permission onChange={() => setPermission(false)} />
+  ) : !pushPage ? (
+    <PushCheck onClick={_checkPushPage} />
   ) : (
     <KeyboardAwareScrollView
       extraScrollHeight={20}

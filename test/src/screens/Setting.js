@@ -244,7 +244,7 @@ const Setting = ({navigation}) => {
   };
 
   useEffect(() => {
-    setPushToggle(user.pushEnabled);
+    setPushToggle(data.myProfile.pushEnabled);
     refetch();
     setUser({
       accessToken: user.accessToken,
@@ -271,7 +271,10 @@ const Setting = ({navigation}) => {
       <InnerContainer>
         <ProfileContainer>
           {user.profileImg ? (
-            <ProfileImage source={{uri: user.profileImg}} resizeMethod={"resize"} />
+            <ProfileImage
+              source={{uri: user.profileImg}}
+              resizeMethod={'resize'}
+            />
           ) : (
             <ProfileImage source={PROFILE_DEFAULT} />
           )}

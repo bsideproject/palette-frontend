@@ -53,6 +53,10 @@ const Joined = ({navigation}) => {
   const [isLoading, setIsLoading] = useState(true);
   const [addFcmToken, {loading: loadingFCM, error: errorFCM, data: dataFCM}] =
     USE_MUTATION('ADD_FCM_TOKEN', accessToken);
+  const [updateProfile, updateResult] = USE_MUTATION(
+    'UPDATE_PROFILE',
+    accessToken,
+  );
 
   const _handleNextButtonPress = async () => {
     const response = await loginApi(email, socialType);
@@ -112,6 +116,12 @@ const Joined = ({navigation}) => {
         return;
       }
       console.log('FCM DAt', dataFCM);
+
+      AsyncStorage.getItem('is_push', (err, result) => {
+        updateProfile({
+          variables: {pushEnabled: result},
+        });
+      });
 
       //최종 로그인
       console.log(
