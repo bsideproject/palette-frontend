@@ -88,10 +88,8 @@ const Signin = ({navigation}) => {
   const [autoLogin, setAutoLogin] = useState(false);
   const [permission, setPermission] = useState(false);
   const {loading, error, data, refetch} = USE_QUERY('GET_PROFILE', accessToken);
-  const [addFcmToken, addFcmTokenResult] = USE_MUTATION(
-    'ADD_FCM_TOKEN',
-    accessToken,
-  );
+  const [addFcmToken, {loading: loadingFCM, error: errorFCM, data: dataFCM}] =
+    USE_MUTATION('ADD_FCM_TOKEN', accessToken);
 
   useEffect(() => {
     PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.CAMERA)
@@ -169,22 +167,32 @@ const Signin = ({navigation}) => {
         //닉네임 설정을 안한 회원
         navigation.navigate('Nickname');
       } else {
-        AsyncStorage.getItem('fcmtoken', (err, result) => {
-          console.log('fcm token: ', result);
-          addFcmToken({
-            variables: {
-              token: result,
-            },
+        if (accessToken) {
+          AsyncStorage.getItem('fcmtoken', (err, result) => {
+            console.log('fcm token', result);
+            addFcmToken({
+              variables: {
+                token: result,
+              },
+            });
           });
-        });
+        }
       }
     }
-  }, [isRegistered]);
+  }, [isRegistered, accessToken]);
 
   useEffect(() => {
-    if (addFcmTokenResult.data?.addFcmToken) {
+    if (errorFCM != undefined) {
+      let jsonData = JSON.parse(JSON.stringify(errorFCM));
+      console.log(jsonData);
+      // [TODO] Go to Error Page
+    } else {
+      if (loadingFCM || dataFCM == undefined) {
+        console.log('Data Fecting & Data Empty');
+        return;
+      }
       //최종 로그인
-      console.log('Login Success');
+      console.log('Login Success', dataFCM);
       setUser({
         accessToken: accessToken,
         email: data.myProfile.email,
@@ -194,7 +202,7 @@ const Signin = ({navigation}) => {
         pushEnabled: data.myProfile.pushEnabled,
       });
     }
-  }, [addFcmTokenResult]);
+  }, [loadingFCM]);
 
   const androidKeys = {
     kConsumerKey: 'w4cSPEHXMDrXw_OcULnX',

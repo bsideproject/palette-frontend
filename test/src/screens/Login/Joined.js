@@ -102,7 +102,6 @@ const Joined = ({navigation}) => {
   }, [loading, accessToken]);
 
   useEffect(() => {
-    console.log('FCMccc', loadingFCM, errorFCM, data);
     if (errorFCM != undefined) {
       let jsonData = JSON.parse(JSON.stringify(errorFCM));
       console.log(jsonData);
