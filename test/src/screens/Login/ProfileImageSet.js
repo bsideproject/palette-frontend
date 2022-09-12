@@ -93,6 +93,9 @@ const ProfileImageSet = ({navigation, route}) => {
       if (params) navigation.goBack();
       else navigation.navigate('Joined');
     } else {
+      updateProfile({
+        variables: {profileImg: ''},
+      });
       if (params) navigation.goBack();
       else navigation.navigate('Joined');
     }
