@@ -646,13 +646,17 @@ const MainPage = ({navigation, route}) => {
         </MemoRecentItemLeft>
       );
     } else {
+      let body_content = item.body;
+      if (item.body.includes('\n')) {
+        body_content = item.body.split('\n')[0];
+      }
       return (
         <MemoRecentItemLeft>
           <MemoRecent_Text1>{item.title}</MemoRecent_Text1>
           <MemoRecent_Text2>
-            {item.body.length >= 50
-              ? item.body.substr(0, 50) + '....'
-              : item.body}
+            {body_content.length >= 20
+              ? body_content.substr(0, 20) + '....'
+              : body_content}
           </MemoRecent_Text2>
         </MemoRecentItemLeft>
       );
