@@ -6,10 +6,7 @@ import {createApolloClient} from '@apolloClient/ApolloClient';
 import {theme} from './theme';
 import Navigation from '@navigations';
 import {UserProvider, HistoryModalProvider} from '@contexts';
-import {
-  requestUserPermission,
-  NotificationListner,
-} from './push/PushNotification_helper';
+import {NotificationListner} from './push/PushNotification_helper';
 import {createChannel} from './push/LocalNotification';
 import {fcmService} from './push/FCMService';
 import {

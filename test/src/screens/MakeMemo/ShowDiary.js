@@ -33,6 +33,7 @@ const DiaryTitle = styled.Text`
   text-align: center;
   font-size: 16px;
   font-family: ${({theme}) => theme.fontBold};
+  ${({isMargin}) => isMargin && `margin-top: 20px;`};
 `;
 
 const DiaryContent = styled.Text`
@@ -275,7 +276,7 @@ const ShowDiary = ({navigation, route}) => {
       <View key={index} style={{width: SLIDER_WIDTH, height: SLIDER_WIDTH}}>
         <Image
           source={{uri: item}}
-          style={{width: SLIDER_WIDTH, height: SLIDER_WIDTH}}
+          style={{width: SLIDER_WIDTH, height: SLIDER_WIDTH, borderRadius: 6}}
           resizeMethod={'resize'}
         />
       </View>
@@ -301,6 +302,13 @@ const ShowDiary = ({navigation, route}) => {
       pageId: params.diary.id,
     };
     navigation.navigate('WriteDiary', sendData);
+  };
+
+  const getCreateTime = time => {
+    const date = new Date(time);
+    return (
+      date.getFullYear() + '.' + (date.getMonth() + 1) + '.' + date.getDate()
+    );
   };
 
   return isLoading ? (
@@ -345,10 +353,12 @@ const ShowDiary = ({navigation, route}) => {
                   />
                 </CarouselContainer>
               )}
-              <DiaryTitle>{diaryData.title}</DiaryTitle>
+              <DiaryTitle isMargin={imageArr.length === 1 ? true : false}>
+                {diaryData.title}
+              </DiaryTitle>
               <DiaryContent>{diaryData.body}</DiaryContent>
-              {/* <WrittenInfo>{params.date}</WrittenInfo>
-          <WrittenInfo>by.{params.written}</WrittenInfo> */}
+              <WrittenInfo>{getCreateTime(diaryData.createdAt)}</WrittenInfo>
+              <WrittenInfo>by.{diaryData.author.nickname}</WrittenInfo>
             </InnerContainer>
 
             {/* top tab Modal */}

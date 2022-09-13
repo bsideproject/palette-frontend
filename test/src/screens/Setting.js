@@ -356,14 +356,14 @@ const Setting = ({navigation}) => {
             <ProfileImage source={PROFILE_DEFAULT} />
           )}
           <ProfileRow>
+            <ProfileNickname>{user.nickname}</ProfileNickname>
             <FIcon
               name={'edit-2'}
               size={16}
               color={theme.dark010}
-              style={{justifyContent: 'center', marginRight: 3}}
+              style={{justifyContent: 'center', marginLeft: 3}}
               onPress={() => setEditModalVisible(true)}
             />
-            <ProfileNickname>{user.nickname}</ProfileNickname>
           </ProfileRow>
         </ProfileContainer>
         <NoneClickContainer>

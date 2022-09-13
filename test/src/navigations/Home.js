@@ -80,7 +80,7 @@ const Home = ({navigation, route}) => {
         },
         headerTitleStyle: {
           color: theme.dark010,
-          fontSize: 20,
+          fontSize: 16,
           fontFamily: theme.fontBold,
         },
         headerStyle: {

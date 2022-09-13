@@ -240,6 +240,10 @@ const GET_PAGE = gql`
         path
         domain
       }
+      createdAt
+      author {
+        nickname
+      }
     }
   }
 `;
