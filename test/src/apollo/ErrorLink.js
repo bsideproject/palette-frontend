@@ -1,9 +1,10 @@
 import {onError} from '@apollo/client/link/error';
 import {_handleRefreshApi} from '../api/tokenAPI';
 import {fromPromise, concat} from 'apollo-link';
+import {getCookie} from '../api/Cookie';
 
 export const errorLink = onError(
-  ({graphQLErrors, networkError, response, operation}) => {
+  ({graphQLErrors, networkError, response, operation, forward}) => {
     if (graphQLErrors) {
       for (const error of graphQLErrors) {
         console.error(
@@ -21,7 +22,18 @@ export const errorLink = onError(
         return fromPromise(
           _handleRefreshApi()
             .then(({accessToken, refreshToken}) => {
-			  // Get Refresh Token Save in Cookie
+              // Get Refresh Token Save in Cookie
+              console.log('Retry Query', getCookie('access_token'));
+              const oldHeaders = operation.getContext().headers;
+              console.log('OOOO', oldHeaders);
+              operation.setContext({
+                headers: {
+                  authorization: 'Bearer ' + getCookie('access_token'),
+                  'Content-Type': 'application/json',
+                },
+              });
+              const newHeaders = operation.getContext().headers;
+              console.log('NNNNN', newHeaders);
               return forward(operation);
             })
             .catch(error => {

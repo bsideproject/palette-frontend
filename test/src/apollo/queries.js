@@ -1,5 +1,6 @@
 import {gql} from '@apollo/client';
 import {useQuery, useMutation, useLazyQuery} from '@apollo/client';
+import {getCookie} from '../api/Cookie';
 
 // Query
 const COLOR_CODE = gql`
@@ -314,7 +315,7 @@ export const USE_QUERY = (Query, Token, variable) => {
   return useQuery(QUERY_ARRAY[Query], {
     context: {
       headers: {
-        authorization: `Bearer ${Token}`,
+        authorization: `Bearer ${getCookie('access_token')}`,
         'Content-Type': 'application/json',
       },
     },
@@ -326,7 +327,7 @@ export const USE_LAZY_QUERY = (Query, Token) => {
   return useLazyQuery(QUERY_ARRAY[Query], {
     context: {
       headers: {
-        authorization: `Bearer ${Token}`,
+        authorization: `Bearer ${getCookie('access_token')}`,
         'Content-Type': 'application/json',
       },
     },
@@ -337,7 +338,7 @@ export const USE_MUTATION = (Query, Token) => {
   return useMutation(QUERY_ARRAY[Query], {
     context: {
       headers: {
-        authorization: `Bearer ${Token}`,
+        authorization: `Bearer ${getCookie('access_token')}`,
         'Content-Type': 'application/json',
       },
     },
