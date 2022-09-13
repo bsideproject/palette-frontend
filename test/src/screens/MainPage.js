@@ -18,6 +18,7 @@ import {USE_QUERY, USE_MUTATION} from '@apolloClient/queries';
 import {useIsFocused} from '@react-navigation/native';
 import AsyncStorage from '@react-native-community/async-storage';
 import Modal from 'react-native-modal';
+import {getCookie} from './../api/Cookie';
 
 // Time & Date Function
 const checkDate = ts => {
@@ -307,14 +308,15 @@ const MainPage = ({navigation, route}) => {
   const [discardModalVisible, setDiscardModalVisible] = useState(false);
   const {loading, error, data, refetch} = USE_QUERY(
     'LOOK_UP_DIARY_PAGE',
-    user.accessToken,
+    getCookie('access_token'),
   );
   const [
     readAlarmHistory,
     {loading: loadingRAH, error: errorRAH, data: dataRAH},
-  ] = USE_MUTATION('READ_PUSH_HISTORY', user.accessToken);
+  ] = USE_MUTATION('READ_PUSH_HISTORY', getCookie('access_token'));
 
   console.log(user);
+  //console.log('CCCCokie', getCookie('access_token'));
 
   // [EVENT FUNCTION] ------------------------------------------
   const findIdxfromDiaryId = (diaryId, data) => {

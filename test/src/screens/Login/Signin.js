@@ -160,7 +160,7 @@ const Signin = ({navigation}) => {
           })
           .catch(error => {
             if (error.networkError.statusCode === 401) {
-              _handleRefreshApi();
+              //_handleRefreshApi();
             }
           })
           .then(() => console.log('refetch success'));
@@ -293,10 +293,15 @@ const Signin = ({navigation}) => {
       'refresh_token',
       response.headers['set-cookie'][0].split(' ')[0],
       () => {
+        console.log(
+          'Refresh Token',
+          response.headers['set-cookie'][0].split(' ')[0],
+        );
         console.log('AsyncStorage refresh_token Save!');
       },
     );
     AsyncStorage.setItem('access_token', data.accessToken, () => {
+      console.log('Access Token', data.accessToken);
       console.log('AsyncStorage access_token Save!');
       setAccessToken(data.accessToken);
     });
@@ -320,25 +325,6 @@ const Signin = ({navigation}) => {
 
   const _handleNavSecondExplain = () => {
     navigation.navigate('SecondExplain');
-  };
-
-  const _handleRefreshApi = async () => {
-    const response = await refreshApi();
-    if (response === 'A001') {
-      return;
-    }
-    const {data} = response;
-    setAccessToken(data.accessToken);
-    AsyncStorage.setItem('access_token', data.accessToken, () => {
-      console.log('refresh and save access_token');
-    });
-    AsyncStorage.setItem(
-      'refresh_token',
-      response.headers['set-cookie'][0].split(' ')[0],
-      () => {
-        console.log('refresh and refresh_token save');
-      },
-    );
   };
 
   const LastLogin = () => {

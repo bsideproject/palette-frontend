@@ -15,6 +15,7 @@ import {
 } from './push/LocalNotificationService';
 import {navigate} from './RootNavigation';
 import AsyncStorage from '@react-native-community/async-storage';
+import {_handleRefreshApi} from './api/tokenAPI';
 
 const apolloClient = createApolloClient();
 
@@ -24,6 +25,9 @@ const App = () => {
     fcmService.registerAppWithFCM();
     fcmService.register(onRegister, onNotification, onOpenNotification);
     localNotificationService.configure(onOpenNotification);
+
+    // Refresh Token Get Access Token
+    _handleRefreshApi();
   }, []);
 
   const onRegister = token => {

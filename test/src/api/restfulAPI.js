@@ -6,6 +6,7 @@ const API_URL = 'http://61.97.190.252:8080/api/v1';
 
 export const refreshApi = async () => {
   const refreshToken = await AsyncStorage.getItem('refresh_token');
+  // console.log('Read Refresh Token From Async Storage', refreshToken);
   if (refreshToken) {
     try {
       const response = await axios.post(API_URL + '/token', {
