@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
+import {ErrorAlert} from '@components';
 
 const API_URL = 'http://61.97.190.252:8080/api/v1';
 
@@ -72,6 +73,7 @@ export const imageUploadApi = async (uploadImage, accessToken) => {
     return response;
   } catch (error) {
     console.log('imageUpload error', error);
+    ErrorAlert();
   }
 };
 
@@ -89,5 +91,6 @@ export const imageDeleteApi = async (urls, accessToken) => {
     });
   } catch (error) {
     console.log('imageUpload error', error);
+    ErrorAlert();
   }
 };

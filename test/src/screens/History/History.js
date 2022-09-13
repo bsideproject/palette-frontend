@@ -16,6 +16,7 @@ import {useIsFocused} from '@react-navigation/native';
 import AutoHeightImage from 'react-native-auto-height-image';
 import Icon_Ant from 'react-native-vector-icons/AntDesign';
 import AsyncStorage from '@react-native-community/async-storage';
+import {ErrorAlert} from '@components';
 
 const DateTime = ts => {
   return moment(utcToKst(ts)).format('YYYY년 MM월 DD일');

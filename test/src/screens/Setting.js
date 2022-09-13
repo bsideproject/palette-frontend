@@ -268,6 +268,7 @@ const Setting = ({navigation}) => {
       let jsonData = JSON.parse(JSON.stringify(errorFCM));
       console.log(jsonData);
       setIsLoading(false);
+      setLogoutModalVisible(false);
       ErrorAlert();
     } else {
       if (loadingFCM || dataFCM == undefined) {
@@ -290,6 +291,7 @@ const Setting = ({navigation}) => {
         pushEnabled: null,
       });
       setIsLoading(false);
+      setLogoutModalVisible(false);
     }
   }, [loadingFCM]);
 

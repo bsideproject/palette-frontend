@@ -33,14 +33,6 @@ const checkDate = ts => {
   }
 };
 
-const checkDateDiff = ts => {
-  // Convert Korea Time
-  const now = moment().add(9, 'hour').startOf('day');
-  const target = moment(ts).startOf('day');
-
-  return now.diff(target, 'day');
-};
-
 const checkTime = ts => {
   return moment(ts).add(9, 'hour').format('hh:mm A');
 };
@@ -417,7 +409,9 @@ const MainPage = ({navigation, route}) => {
           let origData = memos.slice(1);
           if (data['diaries'].every(item => origData.includes(item))) {
             console.log('2.Normal Event');
-            setIsLoading(false);
+            setTimeout(() => {
+              setIsLoading(false);
+            }, 500);
           } else if (data['diaries'].length + 1 != memos.length) {
             console.log('3.Add Diray Event');
             setSlideIdx(1);
@@ -710,7 +704,11 @@ const MainPage = ({navigation, route}) => {
       memos == undefined ||
       (slideIdx != 0 && memos[sliderIdx] == undefined)
     ) {
-      return <MemoEmpty_Text1>데이터 불러오기 실패</MemoEmpty_Text1>;
+      return (
+        <MemoEmpty_Text1 style={{fontSize: 20, fontFamily: theme.fontBold}}>
+          데이터 불러오기 실패
+        </MemoEmpty_Text1>
+      );
     }
     if (slideIdx == 0 && memos.length == 1) {
       return <MemoEmpty_Text1>새로운 일기를 만들어보세요</MemoEmpty_Text1>;

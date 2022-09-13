@@ -45,6 +45,16 @@ const PushItemContainer = styled.View`
   padding-left: 7%;
 `;
 
+const PushItemTop = styled.View`
+  justify-content: center;
+  flex: 3;
+`;
+
+const PushItemBottom = styled.View`
+  flex: 1;
+  margin-bottom: 2%;
+`;
+
 const PushItemTitle = styled.Text`
   font-size: 16px;
   font-weight: 600;
@@ -166,19 +176,26 @@ const PushHistory = ({navigation}) => {
 
   const Item = ({item}) => (
     <PushItemContainer>
-      <PushItemTitle>
-        {item.isRead == false ? (
-          <NewIcon>
-            <NewIconTxt>N</NewIconTxt>
-          </NewIcon>
-        ) : (
-          <NewIconReaded />
-        )}
-        &nbsp;&nbsp;
-        {item.body}
-      </PushItemTitle>
-      <IntervalPushItem />
-      <PushItemDate>{checkDateDiff(item.createdAt)}일 전</PushItemDate>
+      <PushItemTop>
+        <PushItemTitle>
+          {item.isRead == false ? (
+            <NewIcon>
+              <NewIconTxt>N</NewIconTxt>
+            </NewIcon>
+          ) : (
+            <NewIconReaded />
+          )}
+          &nbsp;&nbsp;
+          {item.body}
+        </PushItemTitle>
+      </PushItemTop>
+      <PushItemBottom>
+        <PushItemDate>
+          {checkDateDiff(item.createdAt) == 0
+            ? '오늘'
+            : checkDateDiff(item.createdAt) + '일 전'}
+        </PushItemDate>
+      </PushItemBottom>
     </PushItemContainer>
   );
 
