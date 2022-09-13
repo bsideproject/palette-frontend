@@ -88,7 +88,7 @@ const Signin = ({navigation}) => {
   const [isRegistered, setIsRegistered] = useState(false);
   const [autoLogin, setAutoLogin] = useState(false);
   const [permission, setPermission] = useState(false);
-  const [pushPage, setPushPage] = useState(null);
+  const [pushPage, setPushPage] = useState(true);
   const {loading, error, data, refetch} = USE_QUERY('GET_PROFILE', accessToken);
   const [addFcmToken, {loading: loadingFCM, error: errorFCM, data: dataFCM}] =
     USE_MUTATION('ADD_FCM_TOKEN', accessToken);
