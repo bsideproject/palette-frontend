@@ -220,11 +220,14 @@ const Setting = ({navigation}) => {
     });
   };
 
-  const _handleLogout = async () => {
-    setIsLoading(true);
-    setLoadingMessage('로그아웃 중...');
+  const _handleAwaitLogout = async () => {
     const response = await logoutApi();
     console.log('로그아웃', response);
+  };
+
+  const _handleLogout = () => {
+    setIsLoading(true);
+    setLoadingMessage('로그아웃 중...');
     _handleDeleteFcmToken();
   };
 
@@ -278,6 +281,7 @@ const Setting = ({navigation}) => {
       }
       // Logout.
       console.log('DataFCM', dataFCM);
+      _handleAwaitLogout();
       AsyncStorage.removeItem('refresh_token');
       AsyncStorage.removeItem('access_token');
       AsyncStorage.removeItem('email');

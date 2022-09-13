@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 import {ErrorAlert} from '@components';
+import {getCookie} from './Cookie';
 
 const API_URL = 'http://61.97.190.252:8080/api/v1';
 
@@ -55,7 +56,7 @@ export const delUserApi = async token => {
   try {
     await axios.delete(API_URL + '/user', {
       headers: {
-        authorization: `Bearer ${token}`,
+        authorization: `Bearer ${getCookie('access_token')}`,
       },
     });
   } catch (error) {
@@ -67,7 +68,7 @@ export const imageUploadApi = async (uploadImage, accessToken) => {
   try {
     const response = await axios.post(API_URL + '/upload', uploadImage, {
       headers: {
-        authorization: `Bearer ${accessToken}`,
+        authorization: `Bearer ${getCookie('access_token')}`,
         'Content-Type': 'multipart/form-data',
       },
     });
@@ -86,7 +87,7 @@ export const imageDeleteApi = async (urls, accessToken) => {
     });
     await axios.delete(API_URL + '/files?' + delUrls, {
       headers: {
-        authorization: `Bearer ${accessToken}`,
+        authorization: `Bearer ${getCookie('access_token')}`,
         'Content-Type': 'multipart/form-data',
       },
     });
