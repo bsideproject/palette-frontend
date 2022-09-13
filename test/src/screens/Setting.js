@@ -19,6 +19,7 @@ import {useIsFocused} from '@react-navigation/native';
 import Modal from 'react-native-modal';
 import Spinner from 'react-native-loading-spinner-overlay';
 import {ErrorAlert} from '@components';
+import {setCookie} from '../api/Cookie';
 
 const Container = styled.ScrollView`
   flex: 1;
@@ -282,6 +283,8 @@ const Setting = ({navigation}) => {
       AsyncStorage.removeItem('email');
       AsyncStorage.removeItem('fcmtoken');
       AsyncStorage.removeItem('disableDiscard');
+      // Logout Set Access token -> Null Value
+      setCookie('access_token', null);
       setUser({
         accessToken: null,
         email: null,

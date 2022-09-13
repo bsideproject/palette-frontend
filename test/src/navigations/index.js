@@ -7,15 +7,44 @@ import {UserContext} from '@contexts';
 import {useNetInfo} from '@react-native-community/netinfo';
 import {NetworkContainer} from '@screens';
 import {navigationRef} from '../RootNavigation';
+import {getCookie} from '../api/Cookie';
+import Spinner from 'react-native-loading-spinner-overlay';
+import {USE_LAZY_QUERY} from '@apolloClient/queries';
+import styled from 'styled-components/native';
+
+// Spinner
+const SpinnerContainer = styled.Text`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  font-family: ${({theme}) => theme.fontRegular};
+`;
 
 const Navigation = () => {
-  const {user} = useContext(UserContext);
+  const {setUser, user} = useContext(UserContext);
   const [netConnected, setNetConnected] = useState(true);
   const netinfo = useNetInfo();
+  const [isLoading, setIsLoading] = useState(true);
+  const [get_profile, {loading, error, data}] = USE_LAZY_QUERY(
+    'GET_PROFILE',
+    getCookie('access_token'),
+  );
 
   useEffect(() => {
     setTimeout(() => {
       SplashScreen.hide();
+      console.log('Access Token From Cookie', getCookie('access_token'));
+      if (
+        getCookie('access_token') == null ||
+        getCookie('access_token') == undefined
+      ) {
+        console.log('LogOut Status');
+        setIsLoading(false);
+      } else {
+        console.log('LogIn Status');
+        get_profile();
+      }
     }, 1000);
   }, []);
 
@@ -30,12 +59,46 @@ const Navigation = () => {
       setNetConnected(true);
     }
   };
-  console.log('Navi', user.accessToken);
+
+  const getInitialData = () => {
+    if (error != undefined) {
+      let jsonData = JSON.parse(JSON.stringify(error));
+      console.log(jsonData);
+    } else {
+      if (loading || data == undefined) {
+        console.log('Data Fecting & Data Empty');
+        return;
+      }
+      console.log('Success', data);
+      setIsLoading(false);
+      // If Success
+      setUser({
+        accessToken: getCookie('access_token'),
+        email: data.myProfile.email,
+        nickname: data.myProfile.nickname,
+        profileImg: data.myProfile.profileImg,
+        socialTypes: data.myProfile.socialTypes,
+        pushEnabled: data.myProfile.pushEnabled,
+      });
+    }
+  };
+
+  useEffect(() => {
+    getInitialData();
+  }, [loading]);
+  //console.log('Navi', user.accessToken, getCookie('access_token'), isLoading);
 
   return netConnected ? (
     <NavigationContainer ref={navigationRef}>
-      {user.accessToken ? <Main /> : <Auth />}
-      {/* <Main /> */}
+      {isLoading ? (
+        <SpinnerContainer>
+          <Spinner visible={isLoading} textContent={'유저 로그인 검사 중...'} />
+        </SpinnerContainer>
+      ) : user.accessToken ? (
+        <Main />
+      ) : (
+        <Auth />
+      )}
     </NavigationContainer>
   ) : (
     <NetworkContainer handleNetwork={_handleNetwork} />
