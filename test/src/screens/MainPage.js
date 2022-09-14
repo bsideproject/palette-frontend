@@ -23,8 +23,8 @@ import {getCookie} from './../api/Cookie';
 // Time & Date Function
 const checkDate = ts => {
   // [TODO] UTC Time Convert
-  const now = moment().add(9, 'hour').startOf('day');
-  const target = moment(ts).add(9, 'hour').startOf('day');
+  const now = moment().startOf('day');
+  const target = moment(ts).startOf('day');
 
   // Today Check
   if (now.diff(target, 'day') > 0) {
@@ -35,7 +35,7 @@ const checkDate = ts => {
 };
 
 const checkTime = ts => {
-  return moment(ts).add(9, 'hour').format('hh:mm A');
+  return moment(ts).format('hh:mm A');
 };
 
 // Spinner
@@ -315,8 +315,8 @@ const MainPage = ({navigation, route}) => {
     {loading: loadingRAH, error: errorRAH, data: dataRAH},
   ] = USE_MUTATION('READ_PUSH_HISTORY', getCookie('access_token'));
 
-  console.log(user);
-  //console.log('CCCCokie', getCookie('access_token'));
+  // console.log(user);
+  // console.log('Access Token', getCookie('access_token'));
 
   // [EVENT FUNCTION] ------------------------------------------
   const findIdxfromDiaryId = (diaryId, data) => {

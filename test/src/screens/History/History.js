@@ -19,7 +19,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import {ErrorAlert} from '@components';
 
 const DateTime = ts => {
-  return moment(utcToKst(ts)).format('YYYY년 MM월 DD일');
+  return moment(ts).format('YYYY년 MM월 DD일');
 };
 
 // Time & Date Function
@@ -27,15 +27,16 @@ const RemainDate = ts => {
   // [TODO] UTC Time Convert
   const now = moment().utc();
   const target = moment(ts, 'YYYY-MM-DD HH:mm').utc();
-  const diff = moment.duration(now.diff(target));
+  const diff = moment.duration(target.diff(now));
+  //console.log(diff);
 
-  if (diff > 0) {
+  if (diff < 0) {
     return false;
   }
   const day_diff = Math.floor(diff.asDays());
   const hour_diff = Math.floor(diff.asHours()) % 24;
   const min_diff = Math.floor(diff.asMinutes()) % 60;
-  return -day_diff + '일 ' + -hour_diff + '시간 ' + -min_diff + '분 ';
+  return day_diff + '일 ' + hour_diff + '시간 ' + min_diff + '분 ';
 };
 
 const PeriodDiff = (startDate, endDate) => {
@@ -47,11 +48,11 @@ const PeriodDiff = (startDate, endDate) => {
 };
 
 const DateConvertMMM = ts => {
-  return moment(utcToKst(ts)).format('MMM');
+  return moment(ts).format('MMM');
 };
 
 const DateConvertDD = ts => {
-  return moment(utcToKst(ts)).format('DD');
+  return moment(ts).format('DD');
 };
 
 const Container = styled.View`
@@ -390,7 +391,7 @@ const History = ({navigation, route}) => {
     user.accessToken,
     {diaryId: diaryId},
   );
-  // console.log('DI', diaryId);
+  //console.log('DI', diaryId);
 
   const [
     exitDiary,
