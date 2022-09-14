@@ -506,61 +506,70 @@ const MainPage = ({navigation, route}) => {
     switch (item.diaryStatus) {
       case 'WAIT':
         return (
-          <LinearGradient
-            start={{x: 0, y: 0}}
-            end={{x: 1, y: 0}}
-            colors={[item.color.startCode, item.color.endCode]}
+          <TouchableOpacity
+            onPress={() => navigation.navigate('History', item)}
             style={{
               width: '100%',
               height: '80%',
               marginTop: '8%',
-              borderRadius: 6,
             }}>
-            <MemoDataItem>
-              <MemoData_Text1>
-                {item.joinedUsers[0].nickname}님의
-              </MemoData_Text1>
-              <MemoData_Text2>{item.title}</MemoData_Text2>
-              <MemoBtnItem>
-                <TouchableOpacity
-                  onPress={() => Clipboard.setString(item.invitationCode)}>
-                  <MemoData_Text3>
-                    <Text_underline>초대코드 복사하기</Text_underline>
-                    &nbsp;&nbsp;
-                    <Icon_Ionicons
-                      name={'copy-outline'}
-                      size={18}
-                      color={theme.white}
-                    />
-                  </MemoData_Text3>
-                </TouchableOpacity>
-              </MemoBtnItem>
-            </MemoDataItem>
-          </LinearGradient>
+            <LinearGradient
+              start={{x: 0, y: 0}}
+              end={{x: 1, y: 0}}
+              colors={[item.color.startCode, item.color.endCode]}
+              style={{width: '100%', height: '100%', borderRadius: 6}}>
+              <MemoDataItem>
+                <MemoData_Text1>
+                  {item.joinedUsers[0].nickname}님의
+                </MemoData_Text1>
+                <MemoData_Text2>{item.title}</MemoData_Text2>
+                <MemoBtnItem>
+                  <TouchableOpacity
+                    onPress={() => {
+                      console.log(item);
+                      Clipboard.setString(item.invitationCode);
+                    }}>
+                    <MemoData_Text3>
+                      <Text_underline>초대코드 복사하기</Text_underline>
+                      &nbsp;&nbsp;
+                      <Icon_Ionicons
+                        name={'copy-outline'}
+                        size={18}
+                        color={theme.white}
+                      />
+                    </MemoData_Text3>
+                  </TouchableOpacity>
+                </MemoBtnItem>
+              </MemoDataItem>
+            </LinearGradient>
+          </TouchableOpacity>
         );
       case 'READY':
         return (
-          <LinearGradient
-            colors={[item.color.startCode, item.color.endCode]}
+          <TouchableOpacity
+            onPress={() => navigation.navigate('History', item)}
             style={{
               width: '100%',
               height: '80%',
               marginTop: '8%',
-              borderRadius: 6,
             }}>
-            <MemoDataItem>
-              <MemoData_Text1>
-                {item.joinedUsers[0].nickname}님과&nbsp;
-                {item.joinedUsers[1].nickname}님의
-              </MemoData_Text1>
-              <MemoData_Text2>{item.title}</MemoData_Text2>
-              <MemoBtnItem>
-                <MemoData_Text3>
-                  <Text_underline>진행중인 교환일기가 없어요!</Text_underline>
-                </MemoData_Text3>
-              </MemoBtnItem>
-            </MemoDataItem>
-          </LinearGradient>
+            <LinearGradient
+              colors={[item.color.startCode, item.color.endCode]}
+              style={{width: '100%', height: '100%', borderRadius: 6}}>
+              <MemoDataItem>
+                <MemoData_Text1>
+                  {item.joinedUsers[0].nickname}님과&nbsp;
+                  {item.joinedUsers[1].nickname}님의
+                </MemoData_Text1>
+                <MemoData_Text2>{item.title}</MemoData_Text2>
+                <MemoBtnItem>
+                  <MemoData_Text3>
+                    <Text_underline>진행중인 교환일기가 없어요!</Text_underline>
+                  </MemoData_Text3>
+                </MemoBtnItem>
+              </MemoDataItem>
+            </LinearGradient>
+          </TouchableOpacity>
         );
       case 'START':
         return (
@@ -718,16 +727,36 @@ const MainPage = ({navigation, route}) => {
       return <MemoEmpty_Text1>새로운 일기를 만들어보세요</MemoEmpty_Text1>;
     }
     if (sliderIdx > 0) {
-      if (memos[sliderIdx].currentHistory == null) {
+      if (
+        memos[sliderIdx].currentHistory == null &&
+        memos[sliderIdx].pastHistories == null
+      ) {
         return <MemoEmpty_Text1>최근 작성한 교환일기가 없어요</MemoEmpty_Text1>;
-      } else if (memos[sliderIdx].currentHistory.pages.length == 0) {
-        return <MemoEmpty_Text1>최근 작성한 교환일기가 없어요</MemoEmpty_Text1>;
-      } else {
+      } else if (
+        memos[sliderIdx].currentHistory == null &&
+        memos[sliderIdx].pastHistories != null
+      ) {
+        console.log('Past');
+        return (
+          <FlatList
+            data={memos[sliderIdx].pastHistories.pages}
+            renderItem={renderItem2}
+            numColumns={1}
+            keyExtractor={(item, index) => {
+              item.id;
+            }}
+          />
+        );
+      } else if (memos[sliderIdx].currentHistory != null) {
+        console.log('Current');
         return (
           <FlatList
             data={memos[sliderIdx].currentHistory.pages}
             renderItem={renderItem2}
             numColumns={1}
+            keyExtractor={(item, index) => {
+              item.id;
+            }}
           />
         );
       }

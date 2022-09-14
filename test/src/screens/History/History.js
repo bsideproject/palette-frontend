@@ -17,6 +17,9 @@ import AutoHeightImage from 'react-native-auto-height-image';
 import Icon_Ant from 'react-native-vector-icons/AntDesign';
 import AsyncStorage from '@react-native-community/async-storage';
 import {ErrorAlert} from '@components';
+import Clipboard from '@react-native-clipboard/clipboard';
+import Icon_Ionicons from 'react-native-vector-icons/Ionicons';
+import {Button} from '@components';
 
 const DateTime = ts => {
   return moment(ts).format('YYYY년 MM월 DD일');
@@ -372,6 +375,54 @@ const VerticalLine = styled.View`
   align-items: center;
 `;
 
+const HistoryItemNoContainer = styled.View`
+  flex: 3;
+  justify-content: center;
+  align-items: center;
+`;
+
+const HistoryItemNoTitle = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+`;
+
+const HistoryItemNoBtn = styled.View`
+  flex: 1;
+`;
+
+const HistoryItemNo = styled.Text`
+  font-size: 16px;
+  font-weight: 400;
+  color: ${({theme}) => theme.dark010};
+  text-align: center;
+  margin-bottom: 30%;
+`;
+
+const MemoBtnItem = styled.View`
+  align-items: center;
+  justify-content: center;
+  padding-left: 5%;
+`;
+
+const MemoData_Text3 = styled.Text`
+  font-size: 18px;
+  font-weight: 400;
+  color: ${({theme}) => theme.dark010};
+  font-family: ${({theme}) => theme.fontRegular};
+`;
+
+const Text_underline = styled.Text`
+  text-decoration-line: underline;
+`;
+
+const BtnContainer = styled.View`
+  justify-content: center;
+  align-items: center;
+  padding-right: 5%;
+  padding-left: 5%;
+`;
+
 const History = ({navigation, route}) => {
   const theme = useContext(ThemeContext);
   const {modalVisible, setHistoryModalVisible} =
@@ -383,6 +434,7 @@ const History = ({navigation, route}) => {
   const [selDiary, setSelDiary] = useState(null);
   const {user} = useContext(UserContext);
   const [diaryId, setDiaryId] = useState(-1);
+  const [diaryStatus, setDiaryStatus] = useState(null);
   const [isDiscard, setIsDiscard] = useState(false);
   const [loadingMessage, setLoadingMessage] =
     useState('히스토리 데이터 로딩 중...');
@@ -435,6 +487,11 @@ const History = ({navigation, route}) => {
 
       // Cur Select Diary
       setHistory(data['histories']);
+
+      if (diaryStatus == 'WAIT' || diaryStatus == 'READY') {
+        setIsLoading(false);
+        return;
+      }
       if (isHistoryId) {
         let historyIdx = findIdxfromHistoryId(
           pushObj.historyId,
@@ -554,6 +611,9 @@ const History = ({navigation, route}) => {
     }
     // Set Initial Diary Id
     console.log('Initial', route);
+    if (route.params.diaryStatus) {
+      setDiaryStatus(route.params.diaryStatus);
+    }
     if (route.params.id) {
       setDiaryId(route.params.id);
     } else if (route.params.diaryId) {
@@ -710,43 +770,127 @@ const History = ({navigation, route}) => {
     </SpinnerContainer>
   ) : (
     <Container>
-      <HistoryTitleContainer>
-        <HistoryTitleTxt>{selDiary.diary.title}</HistoryTitleTxt>
-      </HistoryTitleContainer>
+      {diaryStatus == 'WAIT' || diaryStatus == 'READY' ? (
+        <HistoryItemNoContainer
+          style={{
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          <HistoryItemNoTitle>
+            <HistoryTitleTxt>{route.params.title}</HistoryTitleTxt>
+          </HistoryItemNoTitle>
 
-      <HistoryDateContainer>
-        <HistoryDateBox>
-          <HistoryDateTxt>
-            {DateTime(selDiary.startDate)} ~ {DateTime(selDiary.endDate)}
-          </HistoryDateTxt>
-        </HistoryDateBox>
+          {diaryStatus == 'WAIT' ? (
+            <HistoryItemNoBtn>
+              <MemoBtnItem>
+                <TouchableOpacity
+                  style={{
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                  onPress={() => {
+                    console.log(route.params.invitationCode);
+                    Clipboard.setString(route.params.invitationCode);
+                  }}>
+                  <MemoData_Text3>
+                    <Text_underline>초대코드 복사하기</Text_underline>
+                    &nbsp;&nbsp;
+                    <Icon_Ionicons
+                      name={'copy-outline'}
+                      size={18}
+                      color={theme.white}
+                    />
+                  </MemoData_Text3>
+                </TouchableOpacity>
+              </MemoBtnItem>
+            </HistoryItemNoBtn>
+          ) : (
+            <HistoryItemNoBtn
+              style={{justifyContent: 'center', alignItems: 'center'}}>
+              <BtnContainer
+                style={{justifyContent: 'center', alignItems: 'center'}}>
+                <Button
+                  title="새 교환 일기 시작"
+                  IconType="plus"
+                  IconColor={theme.pointColor}
+                  onPress={() =>
+                    navigation.navigate('SetMemoPeriod', route.params)
+                  }
+                  containerStyle={{
+                    backgroundColor: theme.white,
+                    borderWidth: 1,
+                    borderColor: theme.pointColor,
+                    borderStyle: 'dashed',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                  textStyle={{
+                    color: theme.pointColor,
+                    fontSize: 18,
+                    fontWeight: '700',
+                    fontFamily: theme.fontRegular,
+                    textAlign: 'center',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                />
+              </BtnContainer>
+            </HistoryItemNoBtn>
+          )}
+        </HistoryItemNoContainer>
+      ) : (
+        <HistoryTitleContainer>
+          <HistoryTitleTxt>{selDiary.diary.title}</HistoryTitleTxt>
+        </HistoryTitleContainer>
+      )}
 
-        <ScrollView
-          horizontal={true}
-          showsHorizontalScrollIndicator={false}
-          keyExtractor={(item, index) => index.toString()}>
-          {History.map(item => {
-            return historyDateSwipeBox(item);
-          })}
-        </ScrollView>
-      </HistoryDateContainer>
+      {!(diaryStatus == 'WAIT' || diaryStatus == 'READY') && (
+        <HistoryDateContainer>
+          <HistoryDateBox>
+            <HistoryDateTxt>
+              {DateTime(selDiary.startDate) +
+                ' ~ ' +
+                DateTime(selDiary.endDate)}
+            </HistoryDateTxt>
+          </HistoryDateBox>
 
-      <HistoryContentContainer>
-        <HistoryContentRemainTimeTxt>
-          {RemainDate(selDiary.endDate) == false
-            ? ''
-            : RemainDate(selDiary.endDate) + '후 교환'}
-        </HistoryContentRemainTimeTxt>
-        <HistoryContentItemContainer>
-          <FlatList
-            data={selDiary.pages}
-            renderItem={historyContentItemBox}
-            numColumns={1}
-            keyExtractor={item => item.id}
-            initialNumToRender={selDiary.pages.length}
-          />
-        </HistoryContentItemContainer>
-      </HistoryContentContainer>
+          <ScrollView
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+            keyExtractor={(item, index) => index.toString()}>
+            {History.map(item => {
+              return historyDateSwipeBox(item);
+            })}
+          </ScrollView>
+        </HistoryDateContainer>
+      )}
+
+      {diaryStatus == 'WAIT' || diaryStatus == 'READY' ? (
+        <HistoryContentContainer
+          style={{
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          <HistoryItemNo>작성된 일기가 없습니다</HistoryItemNo>
+        </HistoryContentContainer>
+      ) : (
+        <HistoryContentContainer>
+          <HistoryContentRemainTimeTxt>
+            {RemainDate(selDiary.endDate) == false
+              ? ''
+              : RemainDate(selDiary.endDate) + '후 교환'}
+          </HistoryContentRemainTimeTxt>
+          <HistoryContentItemContainer>
+            <FlatList
+              data={selDiary.pages}
+              renderItem={historyContentItemBox}
+              numColumns={1}
+              keyExtractor={item => item.id}
+              initialNumToRender={selDiary.pages.length}
+            />
+          </HistoryContentItemContainer>
+        </HistoryContentContainer>
+      )}
 
       {/* top tab Modal */}
       <Modal
@@ -763,7 +907,9 @@ const History = ({navigation, route}) => {
             alignItems: 'flex-end',
           }}
           onPress={() => setHistoryModalVisible(false)}>
-          {isDiscard == true || RemainDate(selDiary.endDate) == false ? (
+          {isDiscard == true ||
+          selDiary == null ||
+          RemainDate(selDiary.endDate) == false ? (
             <StyledModalContainer style={{height: 50}}>
               <StyledModalButton
                 onPress={() => {

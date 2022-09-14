@@ -125,6 +125,19 @@ const LOOK_UP_DIARY_PAGE = gql`
       joinedUsers {
         nickname
       }
+      pastHistories {
+        pages {
+          id
+          title
+          body
+          isSelf
+          createdAt
+          author {
+            profileImg
+          }
+        }
+        id
+      }
       currentHistory {
         remainingDays
         pages {
