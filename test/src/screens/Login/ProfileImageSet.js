@@ -10,6 +10,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import {imageUploadApi} from '../../api/restfulAPI';
 import {ErrorAlert} from '@components';
 import Spinner from 'react-native-loading-spinner-overlay';
+import ImageResizer from 'react-native-image-resizer';
 
 const Container = styled.View`
   flex: 1;
@@ -117,21 +118,46 @@ const ProfileImageSet = ({navigation, route}) => {
       includeBase64: false,
     };
 
-    launchImageLibrary(library_options, response => {
+    launchImageLibrary(library_options, async response => {
       if (response.didCancel) {
         console.log('취소');
       } else if (response.error) {
         alert('에러 발생');
       } else {
-        setProfileImage(() => response.assets[0].uri);
-        const photo = new FormData();
-        let file = {
-          uri: response.assets[0].uri,
-          type: response.assets[0].type,
-          name: response.assets[0].fileName,
+        const resize = () => {
+          return new Promise((resolve, reject) => {
+            ImageResizer.createResizedImage(
+              response.assets[0].uri,
+              400,
+              400,
+              'JPEG',
+              90,
+              0,
+            )
+              .then(response => {
+                resolve(response);
+              })
+              .catch(err => {
+                reject(err);
+              });
+          });
         };
-        photo.append('file', file);
-        setUploadImage(prevState => photo);
+        await resize().then(
+          response => {
+            setProfileImage(() => response.uri);
+            const photo = new FormData();
+            let file = {
+              uri: response.uri,
+              type: 'image/jpeg',
+              name: response.name,
+            };
+            photo.append('file', file);
+            setUploadImage(prevState => photo);
+          },
+          error => {
+            // Handle error
+          },
+        );
       }
     });
   };

@@ -13,6 +13,7 @@ import {USE_MUTATION} from '@apolloClient/queries';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {ErrorAlert} from '@components';
 import Spinner from 'react-native-loading-spinner-overlay';
+import ImageResizer from 'react-native-image-resizer';
 
 const Container = styled.View`
   flex: 1;
@@ -297,19 +298,32 @@ const WriteDiary = ({navigation, route}) => {
         isExportThumbnail: true,
       });
 
-      console.log('response: ', response);
+      const resize = uri => {
+        return new Promise((resolve, reject) => {
+          ImageResizer.createResizedImage(uri, 400, 400, 'JPEG', 90, 0)
+            .then(response => {
+              resolve(response);
+            })
+            .catch(err => {
+              reject(err);
+            });
+        });
+      };
+
       const photo = new FormData();
-      response.map((res, i) => {
-        const file = {
-          uri: res.path,
-          type: 'image/jpeg',
-          name: res.fileName,
-        };
-        photo.append('file', file);
-        if (i + 1 === response.length) {
-          setUploadImage(photo);
-        }
-        setImageArr(prevState => [...prevState, res.path]);
+      response.map(async (res, i) => {
+        await resize(res.path).then(resize_response => {
+          const file = {
+            uri: resize_response.uri,
+            type: 'image/jpeg',
+            name: resize_response.name,
+          };
+          photo.append('file', file);
+          if (i + 1 === response.length) {
+            setUploadImage(photo);
+          }
+          setImageArr(prevState => [...prevState, resize_response.uri]);
+        });
       });
     } catch (e) {
       console.log(e.code, e.message);
@@ -325,21 +339,46 @@ const WriteDiary = ({navigation, route}) => {
       cameraType: 'back',
     };
 
-    launchCamera(camera_options, response => {
+    launchCamera(camera_options, async response => {
       if (response.didCancel) {
         console.log('취소');
       } else if (response.error) {
         alert('에러 발생');
       } else {
-        const photo = new FormData();
-        let file = {
-          uri: response.assets[0].uri,
-          type: 'image/jpeg',
-          name: 'camera.jpg',
+        const resize = () => {
+          return new Promise((resolve, reject) => {
+            ImageResizer.createResizedImage(
+              response.assets[0].uri,
+              400,
+              400,
+              'JPEG',
+              90,
+              0,
+            )
+              .then(response => {
+                resolve(response);
+              })
+              .catch(err => {
+                reject(err);
+              });
+          });
         };
-        photo.append('file', file);
-        setUploadImage(photo);
-        setImageArr(prevState => [...prevState, response.assets[0].uri]);
+        await resize().then(
+          response => {
+            const photo = new FormData();
+            let file = {
+              uri: response.uri,
+              type: 'image/jpeg',
+              name: response.name,
+            };
+            photo.append('file', file);
+            setUploadImage(prevState => photo);
+            setImageArr(prevState => [...prevState, response.uri]);
+          },
+          error => {
+            // Handle error
+          },
+        );
       }
     });
   };
