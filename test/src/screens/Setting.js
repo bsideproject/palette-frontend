@@ -39,7 +39,7 @@ const ProfileContainer = styled.View`
   margin-bottom: 60px;
 `;
 
-const ProfileRow = styled.View`
+const ProfileRow = styled.TouchableOpacity`
   flex: 1;
   flex-direction: row;
   align-items: center;
@@ -190,7 +190,6 @@ const {width, height} = Dimensions.get('window');
 
 const Setting = ({navigation}) => {
   const theme = useContext(ThemeContext);
-  const [editModalVisible, setEditModalVisible] = useState(false);
   const [logoutModalVisible, setLogoutModalVisible] = useState(false);
   const {setUser, user} = useContext(UserContext);
   const [pushToggle, setPushToggle] = useState(user.pushEnabled);
@@ -235,8 +234,8 @@ const Setting = ({navigation}) => {
     let toggle = !pushToggle;
     console.log('Toggle : ', toggle);
     setPushToggle(toggle);
-    setIsLoading(true);
-    setLoadingMessage('푸시 알림 설정 중...');
+    // setIsLoading(true);
+    // setLoadingMessage('푸시 알림 설정 중...');
     updateProfile({
       variables: {pushEnabled: toggle},
     });
@@ -337,12 +336,10 @@ const Setting = ({navigation}) => {
   }, [focus, loading]);
 
   const _handleSetNickname = () => {
-    setEditModalVisible(false);
     navigation.navigate('Nickname2', {setting: true});
   };
 
   const _handleSetProfileImage = () => {
-    setEditModalVisible(false);
     navigation.navigate('ProfileImageSet2', {setting: true});
   };
 
@@ -354,22 +351,23 @@ const Setting = ({navigation}) => {
     <Container>
       <InnerContainer>
         <ProfileContainer>
-          {user.profileImg ? (
-            <ProfileImage
-              source={{uri: user.profileImg}}
-              resizeMethod={'resize'}
-            />
-          ) : (
-            <ProfileImage source={PROFILE_DEFAULT} />
-          )}
-          <ProfileRow>
+          <TouchableOpacity onPress={_handleSetProfileImage}>
+            {user.profileImg ? (
+              <ProfileImage
+                source={{uri: user.profileImg}}
+                resizeMethod={'resize'}
+              />
+            ) : (
+              <ProfileImage source={PROFILE_DEFAULT} />
+            )}
+          </TouchableOpacity>
+          <ProfileRow onPress={_handleSetNickname}>
             <ProfileNickname>{user.nickname}</ProfileNickname>
             <FIcon
               name={'edit-2'}
               size={16}
               color={theme.dark010}
               style={{justifyContent: 'center', marginLeft: 3}}
-              onPress={() => setEditModalVisible(true)}
             />
           </ProfileRow>
         </ProfileContainer>
@@ -455,44 +453,6 @@ const Setting = ({navigation}) => {
           />
         </ClickContainer>
       </InnerContainer>
-
-      <Modal
-        isVisible={editModalVisible}
-        useNativeDriver={true}
-        onRequestClose={() => {
-          setEditModalVisible(false);
-        }}
-        backdropOpacity={0}
-        hideModalContentWhileAnimating={true}>
-        <Pressable
-          style={{
-            flex: 1,
-            width: '100%',
-            height: '100%',
-            backgroundColor: 'transparent',
-            alignItems: 'center',
-          }}
-          onPress={() => {
-            setEditModalVisible(false);
-          }}>
-          <StyledModalContainer
-            style={{marginTop: height * 0.28, marginLeft: width * 0.2}}>
-            <StyledModalButton onPress={_handleSetNickname}>
-              <ModalTxt>
-                <StyledModalText>닉네임</StyledModalText>
-              </ModalTxt>
-            </StyledModalButton>
-
-            <HorizentalLine />
-
-            <StyledModalButton onPress={_handleSetProfileImage}>
-              <ModalTxt>
-                <StyledModalText>프로필 사진</StyledModalText>
-              </ModalTxt>
-            </StyledModalButton>
-          </StyledModalContainer>
-        </Pressable>
-      </Modal>
 
       <Modal
         isVisible={logoutModalVisible}

@@ -507,6 +507,8 @@ const MainPage = ({navigation, route}) => {
       case 'WAIT':
         return (
           <LinearGradient
+            start={{x: 0, y: 0}}
+            end={{x: 1, y: 0}}
             colors={[item.color.startCode, item.color.endCode]}
             style={{
               width: '100%',
