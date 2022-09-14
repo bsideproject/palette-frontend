@@ -28,6 +28,7 @@ import {responsePathAsArray} from 'graphql';
 import {requestUserPermission} from '../../push/PushNotification_helper';
 import {refreshApi, loginApi} from '../../api/restfulAPI';
 import {ErrorAlert} from '@components';
+import {setCookie} from '../../api/Cookie';
 
 const Container = styled.View`
   flex: 1;
@@ -304,6 +305,7 @@ const Signin = ({navigation}) => {
       console.log('Access Token', data.accessToken);
       console.log('AsyncStorage access_token Save!');
       setAccessToken(data.accessToken);
+      setCookie('access_token', data.accessToken);
     });
     AsyncStorage.setItem('social_type', socialType, () => {
       console.log('AsyncStorage social_type Save!');

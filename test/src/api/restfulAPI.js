@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 import {ErrorAlert} from '@components';
 import {getCookie} from './Cookie';
+import {axiosApiInstance} from './axiosAPI';
 
 const API_URL = 'http://61.97.190.252:8080/api/v1';
 
@@ -66,12 +67,16 @@ export const delUserApi = async token => {
 
 export const imageUploadApi = async (uploadImage, accessToken) => {
   try {
-    const response = await axios.post(API_URL + '/upload', uploadImage, {
-      headers: {
-        authorization: `Bearer ${getCookie('access_token')}`,
-        'Content-Type': 'multipart/form-data',
+    const response = await axiosApiInstance.post(
+      API_URL + '/upload',
+      uploadImage,
+      {
+        headers: {
+          authorization: `Bearer ${getCookie('access_token')}`,
+          'Content-Type': 'multipart/form-data',
+        },
       },
-    });
+    );
     return response;
   } catch (error) {
     console.log('imageUpload error', error);
@@ -85,7 +90,7 @@ export const imageDeleteApi = async (urls, accessToken) => {
     urls.forEach(url => {
       delUrls = 'url=' + url + '&';
     });
-    await axios.delete(API_URL + '/files?' + delUrls, {
+    await axiosApiInstance.delete(API_URL + '/files?' + delUrls, {
       headers: {
         authorization: `Bearer ${getCookie('access_token')}`,
         'Content-Type': 'multipart/form-data',

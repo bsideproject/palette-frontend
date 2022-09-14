@@ -121,6 +121,7 @@ const LOOK_UP_DIARY_PAGE = gql`
         startCode
         endCode
       }
+      outedUser
       joinedUsers {
         nickname
       }

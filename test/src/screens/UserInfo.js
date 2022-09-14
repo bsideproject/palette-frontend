@@ -82,6 +82,7 @@ const UserInfo = ({navigation}) => {
         return;
       }
       console.log('FCM Data', dataFCM);
+      _handleAwaitDelUser();
       AsyncStorage.removeItem('refresh_token');
       AsyncStorage.removeItem('access_token');
       AsyncStorage.removeItem('email');
@@ -109,10 +110,14 @@ const UserInfo = ({navigation}) => {
     });
   };
 
+  const _handleAwaitDelUser = async () => {
+    const response = await delUserApi(user.accessToken);
+    console.log('로그아웃', response);
+  };
+
   const _handleDelUser = async () => {
     setIsLoading(true);
     setLoadingMessage('탈퇴 진행 중...');
-    await delUserApi(user.accessToken);
     _handleDeleteFcmToken();
   };
 

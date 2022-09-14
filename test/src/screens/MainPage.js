@@ -612,7 +612,7 @@ const MainPage = ({navigation, route}) => {
                 <MemoBtnItem>
                   <MemoData_Text4>
                     <Text_underline>
-                      {item.joinedUsers[1].nickname}님이 일기장을 나가셨습니다.
+                      {item.outedUser}님이 일기장을 나가셨습니다.
                     </Text_underline>
                   </MemoData_Text4>
                 </MemoBtnItem>
