@@ -633,7 +633,8 @@ const History = ({navigation, route}) => {
     return (
       <HistoryRow
         onPress={() =>
-          item.isSelf && navigation.navigate('ShowDiary', {diary: item})
+          (RemainDate(selDiary.endDate) == false || item.isSelf) &&
+          navigation.navigate('ShowDiary', {diary: item})
         }>
         <HistoryPeriodBar>
           <HistoryPeriodBarCircle isAdmin={item.isSelf} />
@@ -742,6 +743,7 @@ const History = ({navigation, route}) => {
             renderItem={historyContentItemBox}
             numColumns={1}
             keyExtractor={item => item.id}
+            initialNumToRender={selDiary.pages.length}
           />
         </HistoryContentItemContainer>
       </HistoryContentContainer>
@@ -761,7 +763,7 @@ const History = ({navigation, route}) => {
             alignItems: 'flex-end',
           }}
           onPress={() => setHistoryModalVisible(false)}>
-          {isDiscard == true ? (
+          {isDiscard == true || RemainDate(selDiary.endDate) == false ? (
             <StyledModalContainer style={{height: 50}}>
               <StyledModalButton
                 onPress={() => {

@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 import {ThemeContext} from 'styled-components/native';
 import styled from 'styled-components/native';
 import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
@@ -6,6 +6,7 @@ import {Button, PushModal} from '@components';
 import {Image} from 'react-native';
 import {UserContext} from '@contexts';
 import Modal from 'react-native-modal';
+import {BackHandler} from 'react-native';
 
 const Container = styled.View`
   flex: 1;
@@ -74,6 +75,18 @@ const CompleteInviteCode = ({navigation, route}) => {
       setPushModalVisible(true);
     }
   };
+
+  useEffect(() => {
+    if (Platform.OS === 'android') {
+      const backHandler = BackHandler.addEventListener(
+        'hardwareBackPress',
+        () => {
+          return true;
+        },
+      );
+      return () => backHandler.remove();
+    }
+  }, []);
 
   return (
     <KeyboardAvoidingScrollView

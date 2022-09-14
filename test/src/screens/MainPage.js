@@ -187,7 +187,7 @@ const MemoRecent_Text1 = styled.Text`
 `;
 
 const MemoRecent_Text2 = styled.Text`
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 400;
   color: ${({theme}) => theme.dark030};
   font-family: ${({theme}) => theme.fontRegular};
@@ -201,7 +201,7 @@ const MemoRecent_Text3 = styled.Text`
 `;
 
 const MemoRecent_Text4 = styled.Text`
-  font-size: 25px;
+  font-size: 18px;
   font-weight: 700;
   color: ${({theme}) => theme.dark020};
   font-family: ${({theme}) => theme.fontRegular};
@@ -637,7 +637,7 @@ const MainPage = ({navigation, route}) => {
           }}>
           <Icon
             name="lock"
-            size={30}
+            size={23}
             color={theme.dark020}
             style={{marginRight: 3}}
           />

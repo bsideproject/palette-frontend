@@ -17,6 +17,10 @@ const checkDateDiff = ts => {
   return now.diff(target, 'day');
 };
 
+const checkTime = ts => {
+  return moment(ts).format('hh:mm');
+};
+
 const Container = styled.View`
   flex: 1;
   background-color: ${({theme}) => theme.fullWhite};
@@ -59,7 +63,7 @@ const PushItemTitle = styled.Text`
   font-size: 16px;
   font-weight: 600;
   color: ${({theme}) => theme.dark010};
-  font-family: ${({theme}) => theme.fontBold};
+  font-family: ${({theme}) => theme.fontRegular};
 `;
 
 const PushItemDate = styled.Text`
@@ -175,7 +179,8 @@ const PushHistory = ({navigation}) => {
   }, [loadingRAH]);
 
   const Item = ({item}) => (
-    <PushItemContainer>
+    <PushItemContainer
+      style={item.body.length > 56 ? {height: 130} : {height: 100}}>
       <PushItemTop>
         <PushItemTitle>
           {item.isRead == false ? (
@@ -192,7 +197,7 @@ const PushHistory = ({navigation}) => {
       <PushItemBottom>
         <PushItemDate>
           {checkDateDiff(item.createdAt) == 0
-            ? '오늘'
+            ? checkTime(item.createdAt)
             : checkDateDiff(item.createdAt) + '일 전'}
         </PushItemDate>
       </PushItemBottom>
