@@ -39,7 +39,7 @@ const RemainDate = ts => {
   const day_diff = Math.floor(diff.asDays());
   const hour_diff = Math.floor(diff.asHours()) % 24;
   const min_diff = Math.floor(diff.asMinutes()) % 60;
-  return day_diff + '일 ' + hour_diff + ':' + min_diff + ':' + '30 ';
+  return day_diff + '일 ' + hour_diff + '시간 ' + min_diff + '분 ';
 };
 
 const PeriodDiff = (startDate, endDate) => {
