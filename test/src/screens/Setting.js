@@ -184,6 +184,7 @@ const SpinnerContainer = styled.Text`
   font-family: ${({theme}) => theme.fontRegular};
 `;
 
+const PROFILE_DEFAULT = require('/assets/icons/default_profile.png');
 const NOTION_LOGO = require('/assets/logos/notion_logo.png');
 const {width, height} = Dimensions.get('window');
 
@@ -351,10 +352,14 @@ const Setting = ({navigation}) => {
       <InnerContainer>
         <ProfileContainer>
           <TouchableOpacity onPress={_handleSetProfileImage}>
-            <ProfileImage
-              source={{uri: user.profileImg}}
-              resizeMethod={'resize'}
-            />
+            {user.profileImg ? (
+              <ProfileImage
+                source={{uri: user.profileImg}}
+                resizeMethod={'resize'}
+              />
+            ) : (
+              <ProfileImage source={PROFILE_DEFAULT} />
+            )}
           </TouchableOpacity>
           <ProfileRow onPress={_handleSetNickname}>
             <ProfileNickname>{user.nickname}</ProfileNickname>

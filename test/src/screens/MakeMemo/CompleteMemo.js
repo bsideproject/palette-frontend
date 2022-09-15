@@ -151,7 +151,7 @@ const CompleteMemo = ({navigation, route}) => {
       stickyFooter={
         <BtnContainer>
           <Button
-            title="다음 단계로"
+            title="확인"
             onPress={_handleRequestSetMemo}
             containerStyle={{
               backgroundColor: theme.pointColor,

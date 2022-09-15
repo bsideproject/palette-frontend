@@ -293,6 +293,8 @@ const DiscardBottomTxt = styled.Text`
   text-decoration-line: underline;
 `;
 
+const PROFILE_DEFAULT = require('/assets/icons/default_profile.png');
+
 const MainPage = ({navigation, route}) => {
   const theme = useContext(ThemeContext);
   const [memos, setMemos] = useState([]);
@@ -685,7 +687,11 @@ const MainPage = ({navigation, route}) => {
           width={40}
           height={40}
           maxHeight={40}
-          source={{uri: item.author.profileImg}}
+          source={
+            item.author.profileImg
+              ? {uri: item.author.profileImg}
+              : PROFILE_DEFAULT
+          }
           style={{
             borderRadius: 50,
           }}
