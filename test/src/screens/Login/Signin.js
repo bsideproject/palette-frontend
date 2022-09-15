@@ -132,15 +132,11 @@ const Signin = ({navigation}) => {
               if (!response) {
                 setPermission(true);
               } else {
-                //모든 권한 있음 할시
                 AsyncStorage.getItem('access_token', (err, result) => {
                   if (!!result) {
                     setAccessToken(result);
                   }
                 });
-                // AsyncStorage.getItem('social_type', (err, result) => {
-                //   setPrevSignType(result);
-                // });
                 // FCM Token
                 requestUserPermission();
               }
