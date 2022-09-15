@@ -667,11 +667,7 @@ const MainPage = ({navigation, route}) => {
       return (
         <MemoRecentItemLeft>
           <MemoRecent_Text1>{item.title}</MemoRecent_Text1>
-          <MemoRecent_Text2>
-            {body_content.length >= 20
-              ? body_content.substr(0, 20) + '....'
-              : body_content}
-          </MemoRecent_Text2>
+          <MemoRecent_Text2 numberOfLines={1}>{body_content}</MemoRecent_Text2>
         </MemoRecentItemLeft>
       );
     }

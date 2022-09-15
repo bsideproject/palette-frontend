@@ -29,6 +29,7 @@ import {requestUserPermission} from '../../push/PushNotification_helper';
 import {refreshApi, loginApi} from '../../api/restfulAPI';
 import {ErrorAlert} from '@components';
 import {setCookie, getCookie} from '../../api/Cookie';
+import {useIsFocused} from '@react-navigation/native';
 
 const Container = styled.View`
   flex: 1;
@@ -83,7 +84,7 @@ const Signin = ({navigation}) => {
   const theme = useContext(ThemeContext);
   const insets = useSafeAreaInsets();
   const {setUser} = useContext(UserContext);
-  const [prevSignType, setPrevSignType] = useState('');
+  const [prevSignType, setPrevSignType] = useState(null);
   const [accessToken, setAccessToken] = useState(null);
   const [socialType, setSocialType] = useState('');
   const [isRegistered, setIsRegistered] = useState(false);
@@ -100,9 +101,22 @@ const Signin = ({navigation}) => {
 
   const _checkPushPage = () => {
     AsyncStorage.getItem('is_push', (err, result) => {
-      setPushPage(result);
+      if (result === undefined) setPushPage(false);
+      else setPushPage(result);
     });
   };
+  const focus = useIsFocused();
+
+  useEffect(() => {
+    if (focus) {
+      AsyncStorage.getItem('social_type', (err, result) => {
+        setPrevSignType(result);
+      });
+      if (pushPage === '재설치') {
+        setPrevSignType(null);
+      }
+    }
+  }, [focus]);
 
   useEffect(() => {
     _checkPushPage();
@@ -124,9 +138,9 @@ const Signin = ({navigation}) => {
                     setAccessToken(result);
                   }
                 });
-                AsyncStorage.getItem('social_type', (err, result) => {
-                  setPrevSignType(result);
-                });
+                // AsyncStorage.getItem('social_type', (err, result) => {
+                //   setPrevSignType(result);
+                // });
                 // FCM Token
                 requestUserPermission();
               }
@@ -245,18 +259,22 @@ const Signin = ({navigation}) => {
 
   const _handleNaverSignin = props => {
     setIsRegistered(false);
-    return new Promise((resolve, reject) => {
-      NaverLogin.login(props, async (err, token) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-        const naverEmail = await getUserProfile(token);
-        resolve(token);
-        getAccessToken({
-          email: naverEmail,
-          socialType: 'NAVER',
+    const naverLogin = () => {
+      return new Promise((resolve, reject) => {
+        NaverLogin.login(props, (err, token) => {
+          if (err) {
+            reject(err);
+            return;
+          }
+          resolve(token);
         });
+      });
+    };
+    naverLogin().then(async token => {
+      const naverEmail = await getUserProfile(token);
+      getAccessToken({
+        email: naverEmail,
+        socialType: 'NAVER',
       });
     });
   };
@@ -278,7 +296,6 @@ const Signin = ({navigation}) => {
   const getAccessToken = async ({email, socialType}) => {
     const response = await loginApi(email, socialType);
     const {data} = response;
-    console.log('login data', data);
     if (data.code === 'A005') {
       alert(data.message);
       return;
@@ -292,6 +309,7 @@ const Signin = ({navigation}) => {
         accessToken: data.accessToken,
         socialType: data.socialTypes[0],
         email: email,
+        refreshToken: response.headers['set-cookie'][0].split(' ')[0],
       });
       return;
     }

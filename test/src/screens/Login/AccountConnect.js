@@ -62,9 +62,9 @@ const SpinnerContainer = styled.Text`
 const AccountConnect = ({navigation, route}) => {
   const theme = useContext(ThemeContext);
   const socialType = route.params.socialType;
-  const alreadyType = socialType === 'KAKAO' ? 'NAVER' : 'KAKAO';
   const userEmail = route.params.email;
   const accessToken = route.params.accessToken;
+  const refreshToken = route.params.refreshToken;
   const [isLoading, setIsLoading] = useState(false);
   const [connected, setConnected] = useState(false);
   const [updateProfile, {data, loading, error}] = USE_MUTATION(
@@ -77,13 +77,17 @@ const AccountConnect = ({navigation, route}) => {
       setIsLoading(true);
       setTimeout(() => {
         updateProfile({
-          variables: {socialTypes: [alreadyType, socialType]},
+          variables: {socialTypes: ['KAKAO', 'NAVER']},
         });
-      }, 1500);
+      }, 1300);
     } else {
       navigation.goBack();
     }
   };
+
+  useEffect(() => {
+    AsyncStorage.setItem('refresh_token', refreshToken, () => {});
+  }, []);
 
   useEffect(() => {
     if (error != undefined) {
