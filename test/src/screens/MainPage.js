@@ -547,17 +547,17 @@ const MainPage = ({navigation, route}) => {
       case 'READY':
         return (
           <TouchableOpacity
-            onPress={() => navigation.navigate('History', item)}>
+            onPress={() => navigation.navigate('History', item)}
+            style={{
+              width: '100%',
+              height: '80%',
+              marginTop: '8%',
+            }}>
             <LinearGradient
               start={{x: 0, y: 0}}
               end={{x: 1, y: 0}}
               colors={[item.color.startCode, item.color.endCode]}
-              style={{
-                width: '100%',
-                height: '80%',
-                marginTop: '8%',
-                borderRadius: 6,
-              }}>
+              style={{width: '100%', height: '100%', borderRadius: 6}}>
               <MemoDataItem>
                 <MemoData_Text1>
                   {item.joinedUsers[0].nickname}님과&nbsp;

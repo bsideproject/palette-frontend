@@ -186,26 +186,25 @@ const LOOK_UP_HISTORY_PAGE = gql`
         pageSize: 1000
       }
     ) {
-      id
-      startDate
-      diary {
-        title
-      }
-      endDate
-      remainingDays
-      pages {
+      diaryTitle
+      histories {
         id
-        title
-        isSelf
-        author {
-          nickname
-        }
-        images {
+        startDate
+        endDate
+        pages {
           id
-          domain
-          path
+          title
+          isSelf
+          author {
+            nickname
+          }
+          images {
+            id
+            domain
+            path
+          }
+          createdAt
         }
-        createdAt
       }
     }
   }

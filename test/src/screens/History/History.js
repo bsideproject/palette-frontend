@@ -432,6 +432,7 @@ const History = ({navigation, route}) => {
   const [exitModalVisible, setExitModalVisible] = useState(false);
   // History
   const [selDiary, setSelDiary] = useState(null);
+  const [diaryTitle, setDiaryTitle] = useState('');
   const {user} = useContext(UserContext);
   const [diaryId, setDiaryId] = useState(-1);
   const [diaryStatus, setDiaryStatus] = useState(null);
@@ -482,11 +483,14 @@ const History = ({navigation, route}) => {
         console.log('Data Fecting & Data Empty');
         return;
       }
-      //console.log('Read Data', data['histories']);
-      //console.log('Read Pages', data['histories'][0]);
+      // console.log('Read Data', data['histories']);
+      // console.log('Read Data', data['histories'].diaryTitle);
+      // console.log('Read Pages', data['histories'].histories);
 
+      // Set Diary Title
+      setDiaryTitle(data['histories'].diaryTitle);
       // Cur Select Diary
-      setHistory(data['histories']);
+      setHistory(data['histories'].histories);
 
       if (diaryStatus == 'WAIT' || diaryStatus == 'READY') {
         setIsLoading(false);
@@ -495,13 +499,13 @@ const History = ({navigation, route}) => {
       if (isHistoryId) {
         let historyIdx = findIdxfromHistoryId(
           pushObj.historyId,
-          data['histories'],
+          data['histories'].histories,
         );
         //console.log('Push Sel', data['histories'][historyIdx]);
-        setSelDiary(data['histories'][historyIdx]);
+        setSelDiary(data['histories'].histories[historyIdx]);
         _pushDataHandle(pushObj);
       } else {
-        setSelDiary(data['histories'][0]);
+        setSelDiary(data['histories'].histories[0]);
         setTimeout(() => {
           setIsLoading(false);
         }, 300);
@@ -777,7 +781,7 @@ const History = ({navigation, route}) => {
             justifyContent: 'center',
           }}>
           <HistoryItemNoTitle>
-            <HistoryTitleTxt>{route.params.title}</HistoryTitleTxt>
+            <HistoryTitleTxt>{diaryTitle}</HistoryTitleTxt>
           </HistoryItemNoTitle>
 
           {diaryStatus == 'WAIT' ? (
@@ -840,7 +844,7 @@ const History = ({navigation, route}) => {
         </HistoryItemNoContainer>
       ) : (
         <HistoryTitleContainer>
-          <HistoryTitleTxt>{selDiary.diary.title}</HistoryTitleTxt>
+          <HistoryTitleTxt>{diaryTitle}</HistoryTitleTxt>
         </HistoryTitleContainer>
       )}
 
@@ -908,8 +912,7 @@ const History = ({navigation, route}) => {
           }}
           onPress={() => setHistoryModalVisible(false)}>
           {isDiscard == true ||
-          selDiary == null ||
-          RemainDate(selDiary.endDate) == false ? (
+          (selDiary != null && RemainDate(selDiary.endDate) == false) ? (
             <StyledModalContainer style={{height: 50}}>
               <StyledModalButton
                 onPress={() => {
