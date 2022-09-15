@@ -301,7 +301,6 @@ const Signin = ({navigation}) => {
       return;
     }
     if (!data.isRegistered) {
-      //데이터베이스에 회원이 존재 하지 않는 경우
       setAutoLogin(prev => !prev);
     }
     if (data.socialTypes.length === 1 && data.socialTypes[0] !== socialType) {
