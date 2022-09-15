@@ -20,6 +20,7 @@ import {ErrorAlert} from '@components';
 import Clipboard from '@react-native-clipboard/clipboard';
 import Icon_Ionicons from 'react-native-vector-icons/Ionicons';
 import {Button} from '@components';
+import useInterval from 'use-interval';
 
 const DateTime = ts => {
   return moment(ts).format('YYYY년 MM월 DD일');
@@ -29,9 +30,8 @@ const DateTime = ts => {
 const RemainDate = ts => {
   // [TODO] UTC Time Convert
   const now = moment().utc();
-  const target = moment(ts, 'YYYY-MM-DD HH:mm').utc();
+  const target = moment(ts, 'YYYY-MM-DD HH:mm:ss').utc();
   const diff = moment.duration(target.diff(now));
-  //console.log(diff);
 
   if (diff < 0) {
     return false;
@@ -39,7 +39,22 @@ const RemainDate = ts => {
   const day_diff = Math.floor(diff.asDays());
   const hour_diff = Math.floor(diff.asHours()) % 24;
   const min_diff = Math.floor(diff.asMinutes()) % 60;
-  return day_diff + '일 ' + hour_diff + '시간 ' + min_diff + '분 ';
+  const second_diff = Math.floor(diff.asSeconds()) % 60;
+
+  if (day_diff == 0 && hour_diff == 0 && min_diff == 0 && second_diff == 0) {
+    return 'END';
+  }
+
+  return (
+    day_diff +
+    '일 ' +
+    hour_diff +
+    '시간 ' +
+    min_diff +
+    '분 ' +
+    second_diff +
+    '초 '
+  );
 };
 
 const PeriodDiff = (startDate, endDate) => {
@@ -444,8 +459,6 @@ const History = ({navigation, route}) => {
     user.accessToken,
     {diaryId: diaryId},
   );
-  //console.log('DI', diaryId);
-
   const [
     exitDiary,
     {data: exitDiaryData, loading: exitDiaryLoading, error: exitDiaryError},
@@ -455,6 +468,23 @@ const History = ({navigation, route}) => {
     {loading: loadingRAH, error: errorRAH, data: dataRAH},
   ] = USE_MUTATION('READ_PUSH_HISTORY', user.accessToken);
   const focus = useIsFocused();
+  const [selDiaryRemainTime, setSelDiaryRemainTime] = useState('');
+
+  //console.log('DI', diaryId);
+
+  // useInterval
+  useInterval(() => {
+    if (selDiary) {
+      let remainTime = RemainDate(selDiary.endDate);
+      setSelDiaryRemainTime(remainTime);
+      // Diary End
+      if (remainTime == 'END') {
+        setIsLoading(true);
+        refetch();
+        getData(false, null);
+      }
+    }
+  }, 1000);
 
   const findIdxfromHistoryId = (HistoryId, data) => {
     let findIdx = -1;
@@ -882,7 +912,7 @@ const History = ({navigation, route}) => {
           <HistoryContentRemainTimeTxt>
             {RemainDate(selDiary.endDate) == false
               ? ''
-              : RemainDate(selDiary.endDate) + '후 교환'}
+              : selDiaryRemainTime + '후 교환'}
           </HistoryContentRemainTimeTxt>
           <HistoryContentItemContainer>
             <FlatList
