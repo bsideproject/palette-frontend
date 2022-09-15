@@ -55,7 +55,7 @@ export const logoutApi = async () => {
 
 export const delUserApi = async token => {
   try {
-    await axios.delete(API_URL + '/user', {
+    await axiosApiInstance.delete(API_URL + '/user', {
       headers: {
         authorization: `Bearer ${getCookie('access_token')}`,
       },

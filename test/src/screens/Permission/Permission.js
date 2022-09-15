@@ -62,6 +62,7 @@ const Title = styled.Text`
 `;
 
 const CAMERA_PERMISSION = require('/assets/icons/camera_permission.png');
+const STORAGE_PERMISSION = require('/assets/icons/storage_permission.png');
 const Permission = props => {
   const theme = useContext(ThemeContext);
 
@@ -133,7 +134,7 @@ const Permission = props => {
               </View>
             </PermissionBox>
             <PermissionBox>
-              <Image source={CAMERA_PERMISSION} style={{marginRight: 6}} />
+              <Image source={STORAGE_PERMISSION} style={{marginRight: 6}} />
               <View>
                 <PermissionType>저장공간</PermissionType>
                 <PermissionDetail>

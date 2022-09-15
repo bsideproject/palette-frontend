@@ -46,8 +46,6 @@ const ProfileNickname = styled.Text`
   margin-left: 10px;
 `;
 
-const PROFILE_DEFAULT = require('/assets/icons/default_profile.png');
-
 const Tab = createBottomTabNavigator();
 
 const Home = ({navigation, route}) => {
@@ -92,17 +90,13 @@ const Home = ({navigation, route}) => {
         title:
           curScreenName != '더 보기' ? (
             <ProfileContainer>
-              {user.profileImg ? (
-                <ProfileRow>
-                  <ProfileImage source={{uri: user.profileImg}} resizeMethod={"resize"} />
-                  <ProfileNickname>{curScreenName}</ProfileNickname>
-                </ProfileRow>
-              ) : (
-                <ProfileRow>
-                  <ProfileImage source={PROFILE_DEFAULT} />
-                  <ProfileNickname>{curScreenName}</ProfileNickname>
-                </ProfileRow>
-              )}
+              <ProfileRow>
+                <ProfileImage
+                  source={{uri: user.profileImg}}
+                  resizeMethod={'resize'}
+                />
+                <ProfileNickname>{curScreenName}</ProfileNickname>
+              </ProfileRow>
             </ProfileContainer>
           ) : (
             '더 보기'

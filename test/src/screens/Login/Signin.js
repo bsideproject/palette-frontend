@@ -28,7 +28,7 @@ import {responsePathAsArray} from 'graphql';
 import {requestUserPermission} from '../../push/PushNotification_helper';
 import {refreshApi, loginApi} from '../../api/restfulAPI';
 import {ErrorAlert} from '@components';
-import {setCookie} from '../../api/Cookie';
+import {setCookie, getCookie} from '../../api/Cookie';
 
 const Container = styled.View`
   flex: 1;
@@ -93,6 +93,10 @@ const Signin = ({navigation}) => {
   const {loading, error, data, refetch} = USE_QUERY('GET_PROFILE', accessToken);
   const [addFcmToken, {loading: loadingFCM, error: errorFCM, data: dataFCM}] =
     USE_MUTATION('ADD_FCM_TOKEN', accessToken);
+  const [
+    updateProfile,
+    {loading: loadingProfile, error: errorProfile, data: dataProfile},
+  ] = USE_MUTATION('UPDATE_PROFILE', accessToken);
 
   const _checkPushPage = () => {
     AsyncStorage.getItem('is_push', (err, result) => {
@@ -209,7 +213,9 @@ const Signin = ({navigation}) => {
         nickname: data.myProfile.nickname,
         profileImg: data.myProfile.profileImg,
         socialTypes: data.myProfile.socialTypes,
-        pushEnabled: data.myProfile.pushEnabled,
+        pushEnabled: getCookie('is_push')
+          ? getCookie('is_push')
+          : data.myProfile.pushEnabled,
       });
     }
   }, [loadingFCM]);
@@ -319,6 +325,12 @@ const Signin = ({navigation}) => {
     if (!data.isRegistered) {
       navigation.navigate('Agree');
     }
+
+    const isPush =
+      getCookie('is_push') !== undefined ? getCookie('is_push') : false;
+    updateProfile({
+      variables: {pushEnabled: isPush},
+    });
   };
 
   const _handleNavFirstExplain = () => {

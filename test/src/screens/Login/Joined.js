@@ -10,6 +10,7 @@ import {USE_QUERY, USE_MUTATION} from '@apolloClient/queries';
 import {loginApi} from '../../api/restfulAPI';
 import Spinner from 'react-native-loading-spinner-overlay';
 import {ErrorAlert} from '@components';
+import {getCookie} from '../../api/Cookie';
 
 const Container = styled.View`
   flex: 1;
@@ -122,10 +123,10 @@ const Joined = ({navigation}) => {
         return;
       }
       console.log('FCM Data', dataFCM);
-      AsyncStorage.getItem('is_push', (err, result) => {
-        updateProfile({
-          variables: {pushEnabled: result},
-        });
+      const isPush =
+        getCookie('is_push') !== undefined ? getCookie('is_push') : false;
+      updateProfile({
+        variables: {pushEnabled: isPush, socialTypes: [socialType]},
       });
     }
   }, [loadingFCM]);

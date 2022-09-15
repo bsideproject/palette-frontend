@@ -5,6 +5,7 @@ import {ThemeContext} from 'styled-components/native';
 import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
 import SwitchToggle from 'react-native-switch-toggle';
 import AsyncStorage from '@react-native-community/async-storage';
+import {setCookie} from '../../api/Cookie';
 
 const Container = styled.View`
   flex: 1;
@@ -71,7 +72,8 @@ const PushCheck = props => {
   };
 
   const _handleNextButton = () => {
-    AsyncStorage.setItem('is_push', JSON.stringify(pushToggle), () => {
+    setCookie('is_push', pushToggle);
+    AsyncStorage.setItem('is_push', 'true', () => {
       console.log('저장');
       props.onClick();
     });

@@ -293,8 +293,6 @@ const DiscardBottomTxt = styled.Text`
   text-decoration-line: underline;
 `;
 
-const PROFILE_DEFAULT = require('/assets/icons/default_profile.png');
-
 const MainPage = ({navigation, route}) => {
   const theme = useContext(ThemeContext);
   const [memos, setMemos] = useState([]);
@@ -547,15 +545,17 @@ const MainPage = ({navigation, route}) => {
       case 'READY':
         return (
           <TouchableOpacity
-            onPress={() => navigation.navigate('History', item)}
-            style={{
-              width: '100%',
-              height: '80%',
-              marginTop: '8%',
-            }}>
+            onPress={() => navigation.navigate('History', item)}>
             <LinearGradient
+              start={{x: 0, y: 0}}
+              end={{x: 1, y: 0}}
               colors={[item.color.startCode, item.color.endCode]}
-              style={{width: '100%', height: '100%', borderRadius: 6}}>
+              style={{
+                width: '100%',
+                height: '80%',
+                marginTop: '8%',
+                borderRadius: 6,
+              }}>
               <MemoDataItem>
                 <MemoData_Text1>
                   {item.joinedUsers[0].nickname}님과&nbsp;
@@ -581,6 +581,8 @@ const MainPage = ({navigation, route}) => {
               marginTop: '8%',
             }}>
             <LinearGradient
+              start={{x: 0, y: 0}}
+              end={{x: 1, y: 0}}
               colors={[item.color.startCode, item.color.endCode]}
               style={{width: '100%', height: '100%', borderRadius: 6}}>
               <MemoDataItem>
@@ -610,6 +612,8 @@ const MainPage = ({navigation, route}) => {
               marginTop: '8%',
             }}>
             <LinearGradient
+              start={{x: 0, y: 0}}
+              end={{x: 1, y: 0}}
               colors={[theme.dark030, theme.dark030]}
               style={{width: '100%', height: '100%', borderRadius: 6}}>
               <MemoDataItem>
@@ -685,11 +689,7 @@ const MainPage = ({navigation, route}) => {
           width={40}
           height={40}
           maxHeight={40}
-          source={
-            item.author.profileImg
-              ? {uri: item.author.profileImg}
-              : PROFILE_DEFAULT
-          }
+          source={{uri: item.author.profileImg}}
           style={{
             borderRadius: 50,
           }}

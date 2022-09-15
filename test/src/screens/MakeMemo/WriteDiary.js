@@ -229,12 +229,12 @@ const WriteDiary = ({navigation, route}) => {
         </TouchableOpacity>
       ),
       headerRight: () => (
-        <TouchableOpacity onPress={_handleSave}>
+        <TouchableOpacity onPress={!isLoading ? _handleSave : null} on>
           <Text style={{marginRight: 18, color: theme.success}}>저장</Text>
         </TouchableOpacity>
       ),
     });
-  }, [titleText, contentText, imageArr]);
+  }, [titleText, contentText, imageArr, isLoading]);
 
   useEffect(() => {
     if (errorCreate != undefined) {
@@ -434,12 +434,12 @@ const WriteDiary = ({navigation, route}) => {
     } else if (contentText.length === 0) {
       setContentError(true);
     } else {
+      setIsLoading(true);
       if (uploadImage !== null) {
         const response = await imageUploadApi(uploadImage, user.accessToken);
         if (params.mode === 'edit') {
-          delImageArr.length > 0 && (await imageDeleteApi(delImageArr));
-          setIsLoading(true);
           setLoadingMessage('일기장 수정 중...');
+          delImageArr.length > 0 && (await imageDeleteApi(delImageArr));
           editPage({
             variables: {
               pageId: params.pageId,
@@ -449,7 +449,6 @@ const WriteDiary = ({navigation, route}) => {
             },
           });
         } else {
-          setIsLoading(true);
           setLoadingMessage('일기장 생성 중...');
           createPage({
             variables: {
@@ -462,18 +461,17 @@ const WriteDiary = ({navigation, route}) => {
         }
       } else {
         if (params.mode === 'edit') {
-          delImageArr.length > 0 && (await imageDeleteApi(delImageArr));
-          setIsLoading(true);
           setLoadingMessage('일기장 수정 중...');
+          delImageArr.length > 0 && (await imageDeleteApi(delImageArr));
           editPage({
             variables: {
               pageId: params.pageId,
               title: titleText,
               body: contentText,
+              imageUrls: [],
             },
           });
         } else {
-          setIsLoading(true);
           setLoadingMessage('일기장 생성 중...');
           createPage({
             variables: {

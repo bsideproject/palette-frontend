@@ -43,7 +43,6 @@ const SpinnerContainer = styled.Text`
 const Nickname = ({navigation, route}) => {
   const {params} = route;
   const [pass, setPass] = useState(false);
-  const [socialType, setSocialType] = useState('');
   const [nickname, setNickname] = useState('');
   const theme = useContext(ThemeContext);
   const [errorMessage, setErrorMessage] = useState('');
@@ -69,7 +68,7 @@ const Nickname = ({navigation, route}) => {
       setIsError(false);
       setIsLoading(true);
       updateProfile({
-        variables: {nickname: nickname, socialTypes: [socialType]},
+        variables: {nickname: nickname},
       });
     }
   };
@@ -96,9 +95,6 @@ const Nickname = ({navigation, route}) => {
   useEffect(() => {
     AsyncStorage.getItem('access_token', (err, result) => {
       setAccessToken(result);
-    });
-    AsyncStorage.getItem('social_type', (err, result) => {
-      setSocialType(result);
     });
   }, []);
 
