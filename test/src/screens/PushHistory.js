@@ -180,7 +180,7 @@ const PushHistory = ({navigation}) => {
 
   const Item = ({item}) => (
     <PushItemContainer
-      style={item.body.length > 56 ? {height: 130} : {height: 100}}>
+      style={item.body.length > 50 ? {height: 130} : {height: 100}}>
       <PushItemTop>
         <PushItemTitle>
           {item.isRead == false ? (
