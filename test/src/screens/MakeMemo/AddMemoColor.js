@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState, useRef} from 'react';
 import {ThemeContext} from 'styled-components/native';
 import styled from 'styled-components/native';
-import {TouchableOpacity} from 'react-native';
+import {Text, TouchableOpacity, View} from 'react-native';
 import Spinner from 'react-native-loading-spinner-overlay';
 import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
 import {FlatList} from 'react-native-gesture-handler';
@@ -10,6 +10,7 @@ import {UserContext} from '@contexts';
 import {Button, ErrorMessage, ErrorAlert} from '@components';
 import LinearGradient from 'react-native-linear-gradient';
 import {LogBox} from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const Container = styled.View`
   flex: 1;
@@ -193,13 +194,28 @@ const AddMemoColor = ({navigation, route}) => {
         start={{x: 0, y: 0}}
         end={{x: 1, y: 0}}
         style={{
+          flex: 1,
           height: 80,
-          borderRadius: 6,
-          borderColor: borderColor,
-          borderWidth: borderWidth,
-          borderStyle: borderStyle,
-        }}
-      />
+          borderRadius:6
+        }}>
+        {item === selectedColor && (
+          <View
+            style={{
+              flex: 1,
+              borderRadius: 8,
+              borderColor: borderColor,
+              borderWidth: borderWidth,
+              borderStyle: borderStyle,
+            }}>
+            <Icon
+              name={'checkmark-circle'}
+              size={20}
+              color={theme.pointColor}
+              style={{position: 'absolute', bottom: 5, left: 5}}
+            />
+          </View>
+        )}
+      </LinearGradient>
     </TouchableOpacity>
   );
 
@@ -210,7 +226,7 @@ const AddMemoColor = ({navigation, route}) => {
     const borderColor =
       item === selectedColor ? theme.pointColor : theme.dark010;
     const borderWidth = item === selectedColor ? 3 : 0;
-    const borderStyle = item === selectedColor ? 'dotted' : 'solid';
+    const borderStyle = 'solid';
 
     return (
       <Item
@@ -280,28 +296,3 @@ const AddMemoColor = ({navigation, route}) => {
 };
 
 export default AddMemoColor;
-
-/*
-const testColorData = [
-  {id: '1', color: '#FFFFFF', selected: 'false'},
-  {id: '2', color: '#000000', selected: 'false'},
-  {id: '3', color: '#FF0000', selected: 'false'},
-  {id: '4', color: '#00FF00', selected: 'false'},
-  {id: '5', color: '#0000FF', selected: 'false'},
-  {id: '6', color: '#FFFF00', selected: 'false'},
-  {id: '7', color: '#00FFFF', selected: 'false'},
-  {id: '8', color: '#FF00FF', selected: 'false'},
-  {id: '9', color: '#FE2E9A', selected: 'false'},
-  {id: '10', color: '#6A0888', selected: 'false'},
-  {id: '11', color: '#04B4AE', selected: 'false'},
-  {id: '12', color: '#088A4B', selected: 'false'},
-  {id: '13', color: '#886A08', selected: 'false'},
-  {id: '14', color: '#61210B', selected: 'false'},
-  {id: '15', color: '#F781D8', selected: 'false'},
-  {id: '16', color: '#BE81F7', selected: 'false'},
-  {id: '17', color: '#81DAF5', selected: 'false'},
-  {id: '18', color: '#81F79F', selected: 'false'},
-  {id: '19', color: '#F5DA81', selected: 'false'},
-  {id: '20', color: '#8A0829', selected: 'false'},
-];
-*/

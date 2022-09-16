@@ -123,10 +123,14 @@ const CompleteInviteCode = ({navigation, route}) => {
           />
         </ImgContainer>
         <TxtContainer>
-          <InviteTxtStyle>
+          {/* <InviteTxtStyle>
             {route.params.userName}의 {route.params.memoName}
+          </InviteTxtStyle> */}
+          <InviteTxtStyle>
+            {route.params.userName}님이 {route.params.memoName}일기에
           </InviteTxtStyle>
-          <TxtStyle>일기장에 초대하셨습니다.</TxtStyle>
+          {/* <TxtStyle>일기장에 초대하셨습니다.</TxtStyle> */}
+          <TxtStyle>초대하셨습니다.</TxtStyle>
         </TxtContainer>
       </Container>
 

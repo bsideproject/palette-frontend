@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState, useRef} from 'react';
 import {ThemeContext} from 'styled-components/native';
 import styled from 'styled-components/native';
-import {TouchableOpacity} from 'react-native';
+import {TouchableOpacity, View} from 'react-native';
 import Spinner from 'react-native-loading-spinner-overlay';
 import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
 import {FlatList} from 'react-native-gesture-handler';
@@ -10,6 +10,7 @@ import {UserContext} from '@contexts';
 import {Button, ErrorMessage} from '@components';
 import LinearGradient from 'react-native-linear-gradient';
 import {ErrorAlert} from '@components';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const Container = styled.View`
   flex: 1;
@@ -175,13 +176,28 @@ const EditDiaryColor = ({navigation, route}) => {
         start={{x: 0, y: 0}}
         end={{x: 1, y: 0}}
         style={{
+          flex: 1,
           height: 80,
           borderRadius: 6,
-          borderColor: borderColor,
-          borderWidth: borderWidth,
-          borderStyle: borderStyle,
-        }}
-      />
+        }}>
+        {item === selectedColor && (
+          <View
+            style={{
+              flex: 1,
+              borderRadius: 8,
+              borderColor: borderColor,
+              borderWidth: borderWidth,
+              borderStyle: borderStyle,
+            }}>
+            <Icon
+              name={'checkmark-circle'}
+              size={20}
+              color={theme.pointColor}
+              style={{position: 'absolute', bottom: 5, left: 5}}
+            />
+          </View>
+        )}
+      </LinearGradient>
     </TouchableOpacity>
   );
 
@@ -192,7 +208,7 @@ const EditDiaryColor = ({navigation, route}) => {
     const borderColor =
       item === selectedColor ? theme.pointColor : theme.dark010;
     const borderWidth = item === selectedColor ? 3 : 0;
-    const borderStyle = item === selectedColor ? 'dotted' : 'solid';
+    const borderStyle = 'solid';
 
     return (
       <Item
