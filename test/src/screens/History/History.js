@@ -29,7 +29,7 @@ const DateTime = ts => {
 // Time & Date Function
 const RemainDate = ts => {
   // [TODO] UTC Time Convert
-  const now = moment().utc();
+  const now = moment().add(9, 'hour').utc();
   const target = moment(ts, 'YYYY-MM-DD HH:mm:ss').utc();
   const diff = moment.duration(target.diff(now));
 
