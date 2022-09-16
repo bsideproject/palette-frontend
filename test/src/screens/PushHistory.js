@@ -18,7 +18,7 @@ const checkDateDiff = ts => {
 };
 
 const checkTime = ts => {
-  return moment(ts).format('hh:mm');
+  return moment(ts).format('hh:mm  A');
 };
 
 const Container = styled.View`
