@@ -136,7 +136,6 @@ const LOOK_UP_DIARY_PAGE = gql`
             profileImg
           }
         }
-        id
       }
       currentHistory {
         remainingDays

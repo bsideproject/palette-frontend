@@ -513,8 +513,7 @@ const History = ({navigation, route}) => {
         console.log('Data Fecting & Data Empty');
         return;
       }
-      // console.log('Read Data', data['histories']);
-      // console.log('Read Data', data['histories'].diaryTitle);
+      //console.log('Read Data', data['histories']);
       // console.log('Read Pages', data['histories'].histories);
 
       // Set Diary Title
@@ -522,7 +521,10 @@ const History = ({navigation, route}) => {
       // Cur Select Diary
       setHistory(data['histories'].histories);
 
-      if (diaryStatus == 'WAIT' || diaryStatus == 'READY') {
+      if (
+        diaryStatus == 'WAIT' ||
+        (diaryStatus == 'READY' && data['histories'].histories.length == 0)
+      ) {
         setIsLoading(false);
         return;
       }
@@ -807,7 +809,8 @@ const History = ({navigation, route}) => {
     </SpinnerContainer>
   ) : (
     <Container>
-      {diaryStatus == 'WAIT' || diaryStatus == 'READY' ? (
+      {diaryStatus == 'WAIT' ||
+      (diaryStatus == 'READY' && History.length == 0) ? (
         <HistoryItemNoContainer
           style={{
             alignItems: 'center',
@@ -881,7 +884,10 @@ const History = ({navigation, route}) => {
         </HistoryTitleContainer>
       )}
 
-      {!(diaryStatus == 'WAIT' || diaryStatus == 'READY') && (
+      {!(
+        diaryStatus == 'WAIT' ||
+        (diaryStatus == 'READY' && History.length == 0)
+      ) && (
         <HistoryDateContainer>
           <HistoryDateBox>
             <HistoryDateTxt>
@@ -902,7 +908,8 @@ const History = ({navigation, route}) => {
         </HistoryDateContainer>
       )}
 
-      {diaryStatus == 'WAIT' || diaryStatus == 'READY' ? (
+      {diaryStatus == 'WAIT' ||
+      (diaryStatus == 'READY' && History.length == 0) ? (
         <HistoryContentContainer
           style={{
             alignItems: 'center',

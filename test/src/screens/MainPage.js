@@ -315,7 +315,6 @@ const MainPage = ({navigation, route}) => {
     {loading: loadingRAH, error: errorRAH, data: dataRAH},
   ] = USE_MUTATION('READ_PUSH_HISTORY', getCookie('access_token'));
 
-  // console.log(user);
   // console.log('Access Token', getCookie('access_token'));
 
   // [EVENT FUNCTION] ------------------------------------------
@@ -642,7 +641,7 @@ const MainPage = ({navigation, route}) => {
     item.isAddContainer ? AddContainer() : MemoStatusContainer(item);
 
   const RecentContent = item => {
-    if (!item.isSelf) {
+    if (!item.isSelf && memos[slideIdx].currentHistory != null) {
       return (
         <MemoRecentItemLeft
           style={{
@@ -679,7 +678,7 @@ const MainPage = ({navigation, route}) => {
     //[TODO] Item.user.profileImg using
     <MemoRecentItemContainer
       onPress={() =>
-        item.isSelf &&
+        (item.isSelf || memos[slideIdx].currentHistory == null) &&
         navigation.navigate('ShowDiary', {
           diary: item,
           historyTitle: memos[slideIdx].title,
@@ -734,15 +733,13 @@ const MainPage = ({navigation, route}) => {
     }
     if (sliderIdx > 0) {
       if (
-        memos[sliderIdx].currentHistory == null &&
-        memos[sliderIdx].pastHistories == null
+        (memos[sliderIdx].currentHistory == null ||
+          memos[sliderIdx].currentHistory.pages.length == 0) &&
+        (memos[sliderIdx].pastHistories == null ||
+          memos[sliderIdx].pastHistories.pages.length == 0)
       ) {
         return <MemoEmpty_Text1>최근 작성한 교환일기가 없어요</MemoEmpty_Text1>;
-      } else if (
-        memos[sliderIdx].currentHistory == null &&
-        memos[sliderIdx].pastHistories != null
-      ) {
-        console.log('Past');
+      } else if (memos[sliderIdx].currentHistory == null) {
         return (
           <FlatList
             data={memos[sliderIdx].pastHistories.pages}
@@ -753,8 +750,7 @@ const MainPage = ({navigation, route}) => {
             }}
           />
         );
-      } else if (memos[sliderIdx].currentHistory != null) {
-        console.log('Current');
+      } else {
         return (
           <FlatList
             data={memos[sliderIdx].currentHistory.pages}
