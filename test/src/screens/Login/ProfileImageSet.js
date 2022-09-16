@@ -1,16 +1,17 @@
 import React, {useContext, useState, useEffect} from 'react';
 import {Button} from '@components';
 import styled from 'styled-components/native';
-import {Image} from 'react-native';
+import {Image, View, Text, Pressable, TouchableOpacity} from 'react-native';
 import {ThemeContext} from 'styled-components/native';
 import {KeyboardAvoidingScrollView} from 'react-native-keyboard-avoiding-scroll-view';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import {launchImageLibrary} from 'react-native-image-picker';
 import {USE_MUTATION} from '@apolloClient/queries';
 import AsyncStorage from '@react-native-community/async-storage';
 import {imageUploadApi} from '../../api/restfulAPI';
 import {ErrorAlert} from '@components';
 import Spinner from 'react-native-loading-spinner-overlay';
 import ImageResizer from 'react-native-image-resizer';
+import Modal from 'react-native-modal';
 
 const Container = styled.View`
   flex: 1;
@@ -80,7 +81,29 @@ const SpinnerContainer = styled.Text`
   font-family: ${({theme}) => theme.fontRegular};
 `;
 
-const PROFILEIMG_DEFAULT = require('/assets/icons/set_profileImg.png');
+const ModalContainer = styled.View`
+  width: 90%;
+  border-radius: 6px;
+  height: 157px;
+  background: ${({theme}) => theme.fullWhite};
+  padding: 15px 0 0 23px;
+`;
+
+const ModalTitle = styled.Text`
+  font-family: ${({theme}) => theme.fontBold};
+  font-weight: 600;
+  font-size: 16px;
+  color: ${({theme}) => theme.dark010};
+  margin-bottom: 20px;
+`;
+
+const ModalContents = styled.Text`
+  font-size: 16px;
+  font-family: ${({theme}) => theme.fontRegular};
+  color: ${({theme}) => theme.dark010};
+  margin-bottom: 20px;
+`;
+
 const DEFAULT_PROFILE = require('/assets/icons/default_profile.png');
 const UPLOAD = require('/assets/icons/upload.png');
 
@@ -91,11 +114,14 @@ const ProfileImageSet = ({navigation, route}) => {
   const [profileImage, setProfileImage] = useState('');
   const [accessToken, setAccessToken] = useState(null);
   const [uploadImage, setUploadImage] = useState(null);
+  const [pass, setPass] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [updateProfile, {data, loading, error}] = USE_MUTATION(
     'UPDATE_PROFILE',
     accessToken,
   );
+  const [isSelect, setIsSelect] = useState(false);
+
   const _handleNextButtonPress = async () => {
     setIsLoading(true);
     if (!!uploadImage) {
@@ -111,7 +137,17 @@ const ProfileImageSet = ({navigation, route}) => {
     }
   };
 
+  const _handleDefaultImg = () => {
+    setIsSelect(false);
+    setIsLoading(true);
+    setProfileImage('');
+    updateProfile({
+      variables: {profileImg: ''},
+    });
+  };
+
   const _handleLaunchImageLibrary = () => {
+    setIsSelect(false);
     // 사진첩 사진 등록 기능
     const library_options = {
       selectionLimit: 1,
@@ -179,7 +215,16 @@ const ProfileImageSet = ({navigation, route}) => {
     AsyncStorage.getItem('access_token', (err, result) => {
       setAccessToken(result);
     });
+    if (!params) {
+      setPass(true);
+    }
   }, []);
+
+  useEffect(() => {
+    if (uploadImage !== null) {
+      setPass(true);
+    }
+  }, [uploadImage]);
 
   useEffect(() => {
     if (error != undefined) {
@@ -206,9 +251,7 @@ const ProfileImageSet = ({navigation, route}) => {
     ) : params ? (
       <ProfileImage
         source={
-          params.profileImg !== ''
-            ? {uri: params.profileImg}
-            : DEFAULT_PROFILE
+          params.profileImg !== '' ? {uri: params.profileImg} : DEFAULT_PROFILE
         }
       />
     ) : (
@@ -227,12 +270,12 @@ const ProfileImageSet = ({navigation, route}) => {
           backgroundColor: theme.fullWhite,
         }}
         stickyFooter={
-          <ButtonContainer>
+          <ButtonContainer pointerEvents={pass ? 'auto' : 'none'}>
             <Button
               title={params ? '확인' : '다음 단계로'}
               onPress={_handleNextButtonPress}
               containerStyle={{
-                backgroundColor: theme.pointColor,
+                backgroundColor: pass ? theme.pointColor : theme.dark040,
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
@@ -252,8 +295,7 @@ const ProfileImageSet = ({navigation, route}) => {
           <SubTitleText>사용하실 프로필 사진을 설정해주세요!</SubTitleText>
           <ProfileImageContainer>
             <ConditionProfileImage />
-            <UploadProfileImgContainer
-              onPress={() => _handleLaunchImageLibrary()}>
+            <UploadProfileImgContainer onPress={() => setIsSelect(true)}>
               <UploadBtnContainer>
                 <Image source={UPLOAD} style={{marginRight: 10}} />
                 <UploadBtnText>
@@ -263,6 +305,35 @@ const ProfileImageSet = ({navigation, route}) => {
             </UploadProfileImgContainer>
           </ProfileImageContainer>
         </InnerContainer>
+        <Modal
+          isVisible={isSelect}
+          useNativeDriver={true}
+          onRequestClose={() => {
+            setIsSelect(false);
+          }}
+          hideModalContentWhileAnimating={true}>
+          <Pressable
+            style={{
+              flex: 1,
+              width: '100%',
+              height: '100%',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+            onPress={() => {
+              setIsSelect(false);
+            }}>
+            <ModalContainer>
+              <ModalTitle>프로필 사진</ModalTitle>
+              <TouchableOpacity onPress={_handleLaunchImageLibrary}>
+                <ModalContents>앨범에서 사진 선택</ModalContents>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={_handleDefaultImg}>
+                <ModalContents>기본 이미지로 설정</ModalContents>
+              </TouchableOpacity>
+            </ModalContainer>
+          </Pressable>
+        </Modal>
       </KeyboardAvoidingScrollView>
     </Container>
   );

@@ -3,11 +3,11 @@ import React from 'react';
 
 const SocialButton = styled.TouchableOpacity`
   flex-direction: row;
-  width: 283px;
-  height: 56px;
+  width: 90%;
+  height: 45px;
   justify-content: center;
   align-items: center;
-  border-radius: 14px;
+  border-radius: 8px;
   background-color: ${({id, theme}) =>
     id === 'kakao' ? theme.kakao : theme.naver};
 `;

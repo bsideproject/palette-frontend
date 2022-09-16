@@ -42,14 +42,24 @@ const Container = styled.View`
 `;
 
 const SubTitleContainer = styled.View`
+  margin-top: 25px;
   justify-content: center;
   align-items: center;
-  margin-bottom: 27px;
+  margin-bottom: 108px;
 `;
 
-const SubTitle = styled.Text`
+const SubTitle1 = styled.Text`
+  font-family: ${({theme}) => theme.fontRegular};
+  font-size: 16px;
+  color: #8c8c8c;
+  margin-bottom: 5px;
+`;
+
+const SubTitle2 = styled.Text`
   font-family: ${({theme}) => theme.fontBold};
-  font-size: 24px;
+  font-weight: 600;
+  font-size: 19px;
+  color: #222227;
 `;
 
 const LinkContainer = styled.View`
@@ -70,10 +80,10 @@ const LastLoginBox = styled.View`
   background-color: ${({theme}) => theme.white};
 `;
 const LastLoginText = styled.Text`
-  font-family: ${({theme}) => theme.fontLight};
+  font-family: ${({theme}) => theme.fontRegular};
   color: ${({theme}) => theme.dark020};
   font-size: 14px;
-  margin-top: 16px;
+  margin-top: 13px;
 `;
 
 const APP_LOGO = require('/assets/logos/app_logo.png');
@@ -339,11 +349,13 @@ const Signin = ({navigation}) => {
       navigation.navigate('Agree');
     }
 
-    const isPush =
-      getCookie('is_push') !== undefined ? getCookie('is_push') : false;
-    updateProfile({
-      variables: {pushEnabled: isPush},
-    });
+    if (getCookie('is_push') !== undefined) {
+      const isPush =
+        getCookie('is_push') !== undefined ? getCookie('is_push') : false;
+      updateProfile({
+        variables: {pushEnabled: isPush},
+      });
+    }
   };
 
   const _handleNavFirstExplain = () => {
@@ -378,15 +390,15 @@ const Signin = ({navigation}) => {
       extraScrollHeight={20}
       contentContainerStyle={{flex: 1}}>
       <Container insets={insets}>
+        <Image source={APP_LOGO} width={51} />
         <SubTitleContainer>
-          <SubTitle>너랑 나랑</SubTitle>
-          <SubTitle>함께 완성하는</SubTitle>
+          <SubTitle1>너랑 나랑 함께 완성하는</SubTitle1>
+          <SubTitle2>Wellcome! 반쪽일기</SubTitle2>
         </SubTitleContainer>
-        <Image source={APP_LOGO} style={{marginBottom: 58}} />
         <SocialBtn
           id={'kakao'}
           onPress={_handleKakaoSignin}
-          style={{marginBottom: 20}}>
+          style={{marginBottom: 10}}>
           <Image source={KAKAO_LOGO} style={{marginRight: 15}} />
           <Text
             style={{
