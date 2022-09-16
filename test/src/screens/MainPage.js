@@ -23,7 +23,7 @@ import {getCookie} from './../api/Cookie';
 // Time & Date Function
 const checkDate = ts => {
   // [TODO] UTC Time Convert
-  const now = moment().add(9, 'hour').startOf('day');
+  const now = moment().add(-9, 'hour').startOf('day');
   const target = moment(ts).startOf('day');
 
   // Today Check

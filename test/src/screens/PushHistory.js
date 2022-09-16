@@ -11,7 +11,7 @@ import {ErrorAlert} from '@components';
 
 const checkDateDiff = ts => {
   // Convert Korea Time
-  const now = moment().add(9, 'hour').startOf('day');
+  const now = moment().add(-9, 'hour').startOf('day');
   const target = moment(ts).startOf('day');
 
   return now.diff(target, 'day');
