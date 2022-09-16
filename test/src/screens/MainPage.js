@@ -679,7 +679,11 @@ const MainPage = ({navigation, route}) => {
     //[TODO] Item.user.profileImg using
     <MemoRecentItemContainer
       onPress={() =>
-        item.isSelf && navigation.navigate('ShowDiary', {diary: item})
+        item.isSelf &&
+        navigation.navigate('ShowDiary', {
+          diary: item,
+          historyTitle: memos[slideIdx].title,
+        })
       }
       color={item.isSelf ? theme.white : theme.homeColor}>
       <MemoRecent_Icon>

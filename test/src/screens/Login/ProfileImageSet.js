@@ -81,6 +81,7 @@ const SpinnerContainer = styled.Text`
 `;
 
 const PROFILEIMG_DEFAULT = require('/assets/icons/set_profileImg.png');
+const DEFAULT_PROFILE = require('/assets/icons/default_profile.png');
 const UPLOAD = require('/assets/icons/upload.png');
 
 const ProfileImageSet = ({navigation, route}) => {
@@ -202,10 +203,16 @@ const ProfileImageSet = ({navigation, route}) => {
   const ConditionProfileImage = () => {
     return profileImage !== '' ? (
       <ProfileImage source={{uri: profileImage}} />
-    ) : params.profileImg ? (
-      <ProfileImage source={{uri: params.profileImg}} />
+    ) : params ? (
+      <ProfileImage
+        source={
+          params.profileImg !== ''
+            ? {uri: params.profileImg}
+            : DEFAULT_PROFILE
+        }
+      />
     ) : (
-      <ProfileImage source={PROFILEIMG_DEFAULT} />
+      <ProfileImage source={DEFAULT_PROFILE} />
     );
   };
 

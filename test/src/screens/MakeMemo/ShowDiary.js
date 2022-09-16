@@ -25,39 +25,53 @@ const Container = styled.ScrollView`
 
 const InnerContainer = styled.View`
   padding: 17px 16px 50px 16px;
+  ${({paddingTop}) => paddingTop && `padding-top:2px`}
+`;
+
+const DiaryBody = styled.View`
+  padding-left: 37px;
+  ${({isMargin}) => isMargin && `margin-top:37px;`};
+`;
+
+const HistoryTitle = styled.Text`
+  font-size: 11px;
+  font-family: ${({theme}) => theme.fontRegular};
+  margin-bottom: 11px;
 `;
 
 const DiaryTitle = styled.Text`
-  height: 40px;
-  width: 100%;
-  text-align: center;
   font-size: 16px;
   font-family: ${({theme}) => theme.fontBold};
-  ${({isMargin}) => isMargin && `margin-top: 20px;`};
+  font-weight: 600;
 `;
 
 const DiaryContent = styled.Text`
   text-align-vertical: top;
-  padding: 0 19px 0 28px;
-  margin-bottom: 30px;
   font-size: 14px;
   font-family: ${({theme}) => theme.fontRegular};
+  color: ${({theme}) => theme.dark020};
 `;
 
-const WrittenInfo = styled.Text`
+const WrittenDate = styled.Text`
   width: 100%;
+  font-size: 18px;
+  font-family: ${({theme}) => theme.fontBold};
+  font-weight: 600;
+  margin-bottom: 27px;
+`;
+
+const WrittenUser = styled.Text`
   font-size: 14px;
   font-family: ${({theme}) => theme.fontBold};
-  text-align: right;
 `;
 
 const SubUploadImageContainer = styled.View`
+  width: 100%;
+  background: ${({theme}) => theme.fullWhite}
   flex-direction: row;
-  margin-bottom: 11px;
   position: absolute;
   z-index: 10;
-  top: 15;
-  left: 15;
+  padding:15px 0 0 15px;
 `;
 
 const SubUploadImage = styled.Image`
@@ -308,7 +322,12 @@ const ShowDiary = ({navigation, route}) => {
   const getCreateTime = time => {
     const date = new Date(time);
     return (
-      date.getFullYear() + '.' + (date.getMonth() + 1) + '.' + date.getDate()
+      date.getFullYear() +
+      '년 ' +
+      (date.getMonth() + 1) +
+      '월 ' +
+      date.getDate() +
+      '일'
     );
   };
 
@@ -325,7 +344,7 @@ const ShowDiary = ({navigation, route}) => {
       )}
       {diaryData !== null && (
         <Container onScroll={_handleScroll}>
-          <InnerContainer>
+          <InnerContainer paddingTop={imageArr.length === 0 ? true : false}>
             {imageArr.length > 0 && (
               <CarouselContainer isHidden={changeImage}>
                 <Carousel
@@ -353,12 +372,17 @@ const ShowDiary = ({navigation, route}) => {
                 />
               </CarouselContainer>
             )}
-            <DiaryTitle isMargin={imageArr.length === 1 ? true : false}>
-              {diaryData.title}
-            </DiaryTitle>
-            <DiaryContent>{diaryData.body}</DiaryContent>
-            <WrittenInfo>{getCreateTime(diaryData.createdAt)}</WrittenInfo>
-            <WrittenInfo>by.{diaryData.author.nickname}</WrittenInfo>
+            <DiaryBody isMargin={imageArr.length <= 1 ? true : false}>
+              <WrittenDate>{getCreateTime(diaryData.createdAt)}</WrittenDate>
+              <View
+                style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
+                <DiaryTitle>{diaryData.title}</DiaryTitle>
+                <WrittenUser> • {diaryData.author.nickname}</WrittenUser>
+              </View>
+              <HistoryTitle>{params.historyTitle}</HistoryTitle>
+
+              <DiaryContent>{diaryData.body}</DiaryContent>
+            </DiaryBody>
           </InnerContainer>
 
           {/* top tab Modal */}

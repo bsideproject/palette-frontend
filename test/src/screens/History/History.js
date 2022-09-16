@@ -728,7 +728,10 @@ const History = ({navigation, route}) => {
       <HistoryRow
         onPress={() =>
           (RemainDate(selDiary.endDate) == false || item.isSelf) &&
-          navigation.navigate('ShowDiary', {diary: item})
+          navigation.navigate('ShowDiary', {
+            diary: item,
+            historyTitle: diaryTitle,
+          })
         }>
         <HistoryPeriodBar>
           <HistoryPeriodBarCircle isAdmin={item.isSelf} />
@@ -1064,123 +1067,3 @@ const History = ({navigation, route}) => {
 };
 
 export default History;
-
-/*
-const testHistoryData = {
-  title: route.params.title,
-  content: [
-    {
-      startDate: '2022-07-01 07:11:36.045248',
-      endDate: '2022-07-08 07:11:36.045248',
-      period: 7,
-      content: [
-        {
-          title: '김지은님의 일기',
-          content: '일기 test',
-          createdAt: '2022-08-16 22:41:56.045248',
-          contentImg: ['https://...', 'https://...'],
-          isAdmin: true,
-        },
-        {
-          title: '김반쪽의 일기',
-          content: '일기 test다..',
-          createdAt: '2022-08-18 22:41:56.045248',
-          contentImg: ['https://...', 'https://...'],
-          isAdmin: false,
-        },
-        {
-          title: '여행 계획을 세우자',
-          content: '오늘 김반쪽과 만나기로 했다..',
-          createdAt: '2022-08-03 07:11:36.045248',
-          contentImg: ['https://...', 'https://...'],
-          isAdmin: true,
-        },
-      ],
-    },
-    {
-      startDate: '2022-06-01 07:11:36.045248',
-      endDate: '2022-06-30 07:11:36.045248',
-      period: 30,
-      content: [
-        {
-          title: '김지은님의 일기',
-          content: '일기 test',
-          createdAt: '2022-08-16 22:41:56.045248',
-          contentImg: ['https://...', 'https://...'],
-          isAdmin: true,
-        },
-        {
-          title: '김반쪽의 일기',
-          content: '일기 test다..',
-          createdAt: '2022-08-18 22:41:56.045248',
-          contentImg: ['https://...', 'https://...'],
-          isAdmin: false,
-        },
-        {
-          title: '여행 계획을 세우자',
-          content: '오늘 김반쪽과 만나기로 했다..',
-          createdAt: '2022-08-03 07:11:36.045248',
-          contentImg: ['https://...', 'https://...'],
-          isAdmin: true,
-        },
-      ],
-    },
-    {
-      startDate: '2022-05-15 07:11:36.045248',
-      endDate: '2022-05-30 07:11:36.045248',
-      period: 15,
-      content: [
-        {
-          title: '김지은님의 일기',
-          content: '일기 test',
-          createdAt: '2022-08-16 22:41:56.045248',
-          contentImg: ['https://...', 'https://...'],
-          isAdmin: true,
-        },
-        {
-          title: '김반쪽의 일기',
-          content: '일기 test다..',
-          createdAt: '2022-08-18 22:41:56.045248',
-          contentImg: ['https://...', 'https://...'],
-          isAdmin: false,
-        },
-        {
-          title: '여행 계획을 세우자',
-          content: '오늘 김반쪽과 만나기로 했다..',
-          createdAt: '2022-08-03 07:11:36.045248',
-          contentImg: ['https://...', 'https://...'],
-          isAdmin: true,
-        },
-      ],
-    },
-    {
-      startDate: '2022-05-15 07:11:36.045248',
-      endDate: '2022-05-30 07:11:36.045248',
-      period: 15,
-      content: [
-        {
-          title: '김지은님의 일기',
-          content: '일기 test',
-          createdAt: '2022-08-16 22:41:56.045248',
-          contentImg: ['https://...', 'https://...'],
-          isAdmin: true,
-        },
-        {
-          title: '김반쪽의 일기',
-          content: '일기 test다..',
-          createdAt: '2022-08-18 22:41:56.045248',
-          contentImg: ['https://...', 'https://...'],
-          isAdmin: false,
-        },
-        {
-          title: '여행 계획을 세우자',
-          content: '오늘 김반쪽과 만나기로 했다..',
-          createdAt: '2022-08-03 07:11:36.045248',
-          contentImg: ['https://...', 'https://...'],
-          isAdmin: true,
-        },
-      ],
-    },
-  ],
-};
-*/
