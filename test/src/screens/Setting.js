@@ -340,7 +340,10 @@ const Setting = ({navigation}) => {
   };
 
   const _handleSetProfileImage = () => {
-    navigation.navigate('ProfileImageSet2', {setting: true});
+    navigation.navigate('ProfileImageSet2', {
+      setting: true,
+      profileImg: user.profileImg,
+    });
   };
 
   return isLoading ? (

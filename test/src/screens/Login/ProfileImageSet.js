@@ -84,6 +84,7 @@ const PROFILEIMG_DEFAULT = require('/assets/icons/set_profileImg.png');
 const UPLOAD = require('/assets/icons/upload.png');
 
 const ProfileImageSet = ({navigation, route}) => {
+  const MB = 1000 * 1000;
   const {params} = route;
   const theme = useContext(ThemeContext);
   const [profileImage, setProfileImage] = useState('');
@@ -95,15 +96,14 @@ const ProfileImageSet = ({navigation, route}) => {
     accessToken,
   );
   const _handleNextButtonPress = async () => {
+    setIsLoading(true);
     if (!!uploadImage) {
       const response = await imageUploadApi(uploadImage, accessToken);
       const {data} = response;
-      setIsLoading(true);
       updateProfile({
         variables: {profileImg: data.urls[0]},
       });
     } else {
-      setIsLoading(true);
       updateProfile({
         variables: {profileImg: ''},
       });
@@ -128,10 +128,10 @@ const ProfileImageSet = ({navigation, route}) => {
           return new Promise((resolve, reject) => {
             ImageResizer.createResizedImage(
               response.assets[0].uri,
-              400,
-              400,
+              700,
+              700,
               'JPEG',
-              90,
+              100,
               0,
             )
               .then(response => {
@@ -142,22 +142,34 @@ const ProfileImageSet = ({navigation, route}) => {
               });
           });
         };
-        await resize().then(
-          response => {
-            setProfileImage(() => response.uri);
-            const photo = new FormData();
-            let file = {
-              uri: response.uri,
-              type: 'image/jpeg',
-              name: response.name,
-            };
-            photo.append('file', file);
-            setUploadImage(prevState => photo);
-          },
-          error => {
-            // Handle error
-          },
-        );
+        if (response.assets[0].fileSize > 3 * MB) {
+          await resize().then(
+            response => {
+              setProfileImage(() => response.uri);
+              const photo = new FormData();
+              let file = {
+                uri: response.uri,
+                type: 'image/jpeg',
+                name: response.name,
+              };
+              photo.append('file', file);
+              setUploadImage(prevState => photo);
+            },
+            error => {
+              // Handle error
+            },
+          );
+        } else {
+          setProfileImage(() => response.assets[0].uri);
+          const photo = new FormData();
+          let file = {
+            uri: response.assets[0].uri,
+            type: 'image/jpeg',
+            name: response.assets[0].fileName,
+          };
+          photo.append('file', file);
+          setUploadImage(prevState => photo);
+        }
       }
     });
   };
@@ -190,6 +202,8 @@ const ProfileImageSet = ({navigation, route}) => {
   const ConditionProfileImage = () => {
     return profileImage !== '' ? (
       <ProfileImage source={{uri: profileImage}} />
+    ) : params.profileImg ? (
+      <ProfileImage source={{uri: params.profileImg}} />
     ) : (
       <ProfileImage source={PROFILEIMG_DEFAULT} />
     );

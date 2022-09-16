@@ -177,6 +177,7 @@ const CLOSE_ICON = require('/assets/icons/close_circle.png');
 
 let params;
 const WriteDiary = ({navigation, route}) => {
+  const MB = 1000 * 1000;
   const {user} = useContext(UserContext);
   const theme = useContext(ThemeContext);
   const [uploadImage, setUploadImage] = useState(null);
@@ -297,10 +298,9 @@ const WriteDiary = ({navigation, route}) => {
         maxSelectedAssets: 3,
         isExportThumbnail: true,
       });
-
       const resize = uri => {
         return new Promise((resolve, reject) => {
-          ImageResizer.createResizedImage(uri, 400, 400, 'JPEG', 90, 0)
+          ImageResizer.createResizedImage(uri, 700, 700, 'JPEG', 100, 0)
             .then(response => {
               resolve(response);
             })
@@ -309,21 +309,33 @@ const WriteDiary = ({navigation, route}) => {
             });
         });
       };
-
       const photo = new FormData();
       response.map(async (res, i) => {
-        await resize(res.path).then(resize_response => {
+        if (res.size > 3 * MB) {
+          await resize(res.path).then(resize_response => {
+            const file = {
+              uri: resize_response.uri,
+              type: 'image/jpeg',
+              name: resize_response.name,
+            };
+            photo.append('file', file);
+            if (i + 1 === response.length) {
+              setUploadImage(photo);
+            }
+            setImageArr(prevState => [...prevState, resize_response.uri]);
+          });
+        } else {
           const file = {
-            uri: resize_response.uri,
+            uri: res.path,
             type: 'image/jpeg',
-            name: resize_response.name,
+            name: res.fileName,
           };
           photo.append('file', file);
           if (i + 1 === response.length) {
             setUploadImage(photo);
           }
-          setImageArr(prevState => [...prevState, resize_response.uri]);
-        });
+          setImageArr(prevState => [...prevState, res.path]);
+        }
       });
     } catch (e) {
       console.log(e.code, e.message);
@@ -349,10 +361,10 @@ const WriteDiary = ({navigation, route}) => {
           return new Promise((resolve, reject) => {
             ImageResizer.createResizedImage(
               response.assets[0].uri,
-              400,
-              400,
+              700,
+              700,
               'JPEG',
-              90,
+              100,
               0,
             )
               .then(response => {
@@ -363,22 +375,34 @@ const WriteDiary = ({navigation, route}) => {
               });
           });
         };
-        await resize().then(
-          response => {
-            const photo = new FormData();
-            let file = {
-              uri: response.uri,
-              type: 'image/jpeg',
-              name: response.name,
-            };
-            photo.append('file', file);
-            setUploadImage(prevState => photo);
-            setImageArr(prevState => [...prevState, response.uri]);
-          },
-          error => {
-            // Handle error
-          },
-        );
+        if (response.assets[0].fileSize > 3 * MB) {
+          await resize().then(
+            response => {
+              const photo = new FormData();
+              let file = {
+                uri: response.uri,
+                type: 'image/jpeg',
+                name: response.name,
+              };
+              photo.append('file', file);
+              setUploadImage(prevState => photo);
+              setImageArr(prevState => [...prevState, response.uri]);
+            },
+            error => {
+              // Handle error
+            },
+          );
+        } else {
+          const photo = new FormData();
+          let file = {
+            uri: response.assets[0].uri,
+            type: 'image/jpeg',
+            name: response.assets[0].fileName,
+          };
+          photo.append('file', file);
+          setUploadImage(prevState => photo);
+          setImageArr(prevState => [...prevState, response.assets[0].uri]);
+        }
       }
     });
   };
@@ -462,15 +486,25 @@ const WriteDiary = ({navigation, route}) => {
       } else {
         if (params.mode === 'edit') {
           setLoadingMessage('일기장 수정 중...');
-          delImageArr.length > 0 && (await imageDeleteApi(delImageArr));
-          editPage({
-            variables: {
-              pageId: params.pageId,
-              title: titleText,
-              body: contentText,
-              imageUrls: [],
-            },
-          });
+          if (delImageArr.length > 0) {
+            await imageDeleteApi(delImageArr);
+            editPage({
+              variables: {
+                pageId: params.pageId,
+                title: titleText,
+                body: contentText,
+                imageUrls: [],
+              },
+            });
+          } else {
+            editPage({
+              variables: {
+                pageId: params.pageId,
+                title: titleText,
+                body: contentText,
+              },
+            });
+          }
         } else {
           setLoadingMessage('일기장 생성 중...');
           createPage({
