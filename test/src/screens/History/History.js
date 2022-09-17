@@ -725,7 +725,6 @@ const History = ({navigation, route}) => {
   };
 
   const historyDateSwipeBox = (item, index) => {
-    console.log(item.remainingDays);
     return (
       <HistoryDateItemContainer>
         <TouchableOpacity
