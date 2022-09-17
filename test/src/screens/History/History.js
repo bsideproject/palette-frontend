@@ -985,7 +985,7 @@ const History = ({navigation, route}) => {
           <HistoryContentRemainTimeTxt>
             {RemainDate(selDiary.endDate) == false || isDiscard == true
               ? ''
-              : selDiaryRemainTime + '후 교환'}
+              : (selDiaryRemainTime ? selDiaryRemainTime : '') + '후 교환'}
           </HistoryContentRemainTimeTxt>
           <HistoryContentItemContainer>
             <FlatList
