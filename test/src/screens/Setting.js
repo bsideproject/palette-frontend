@@ -288,6 +288,7 @@ const Setting = ({navigation}) => {
       AsyncStorage.removeItem('disableDiscard');
       // Logout Set Access token -> Null Value
       setCookie('access_token', null);
+      setCookie('HistoyData', null);
       setUser({
         accessToken: null,
         email: null,

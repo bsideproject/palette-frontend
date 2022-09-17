@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState, useRef} from 'react';
 import {ThemeContext} from 'styled-components/native';
 import styled from 'styled-components/native';
 import {TouchableOpacity, Pressable, ScrollView} from 'react-native';
@@ -21,6 +21,7 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import Icon_Ionicons from 'react-native-vector-icons/Ionicons';
 import {Button} from '@components';
 import useInterval from 'use-interval';
+import {setCookie, getCookie} from '../../api/Cookie';
 
 const DateTime = ts => {
   return moment(ts).format('YYYY년 MM월 DD일');
@@ -497,6 +498,48 @@ const History = ({navigation, route}) => {
     return findIdx == -1 ? 0 : findIdx;
   };
 
+  const setHistoryDataInCookie = historyIdx => {
+    let Json = new Object();
+    Json.diaryId = diaryId;
+    Json.historyIdx = historyIdx;
+
+    if (Array.isArray(getCookie('HistoyData'))) {
+      let origin = getCookie('HistoyData');
+      let isDuplicate = false;
+
+      for (let i = 0; i < origin.length; ++i) {
+        if (origin[i].diaryId == diaryId) {
+          origin[i].historyIdx = historyIdx;
+          isDuplicate = true;
+          break;
+        }
+      }
+      if (!isDuplicate) {
+        origin.push(Json);
+      }
+      setCookie('HistoyData', JSON.stringify(origin));
+    } else {
+      let JsonArray = new Array();
+      JsonArray.push(Json);
+      setCookie('HistoyData', JSON.stringify(JsonArray));
+    }
+  };
+
+  const getHistoryDataInCookie = () => {
+    let cookie = getCookie('HistoyData');
+
+    if (Array.isArray(cookie)) {
+      for (let i = 0; i < cookie.length; ++i) {
+        if (cookie[i].diaryId == diaryId) {
+          return cookie[i].historyIdx;
+        }
+      }
+      return 0;
+    } else {
+      return 0;
+    }
+  };
+
   // [QUERY EVENT FUNCTION] --------------------------------------
   const getData = (isHistoryId, pushObj) => {
     //console.log(error, loading, data);
@@ -513,7 +556,7 @@ const History = ({navigation, route}) => {
         console.log('Data Fecting & Data Empty');
         return;
       }
-      //console.log('Read Data', data['histories']);
+      // console.log('Read Data', data['histories']);
       // console.log('Read Pages', data['histories'].histories);
 
       // Set Diary Title
@@ -537,7 +580,8 @@ const History = ({navigation, route}) => {
         setSelDiary(data['histories'].histories[historyIdx]);
         _pushDataHandle(pushObj);
       } else {
-        setSelDiary(data['histories'].histories[0]);
+        let historyIdx = getHistoryDataInCookie();
+        setSelDiary(data['histories'].histories[historyIdx]);
         setTimeout(() => {
           setIsLoading(false);
         }, 300);
@@ -679,11 +723,14 @@ const History = ({navigation, route}) => {
     setHistoryModalVisible(false);
   };
 
-  const historyDateSwipeBox = item => {
+  const historyDateSwipeBox = (item, index) => {
     return (
       <HistoryDateItemContainer>
         <TouchableOpacity
-          onPress={() => setSelDiary(item)}
+          onPress={() => {
+            setSelDiary(item);
+            setHistoryDataInCookie(index);
+          }}
           style={{
             backgroundColor:
               item == selDiary ? theme.pointColor : theme.light020,
@@ -891,18 +938,20 @@ const History = ({navigation, route}) => {
         <HistoryDateContainer>
           <HistoryDateBox>
             <HistoryDateTxt>
-              {DateTime(selDiary.startDate) +
-                ' ~ ' +
-                DateTime(selDiary.endDate)}
+              {selDiary != null &&
+                DateTime(selDiary.startDate) +
+                  ' ~ ' +
+                  DateTime(selDiary.endDate)}
             </HistoryDateTxt>
           </HistoryDateBox>
 
           <ScrollView
             horizontal={true}
             showsHorizontalScrollIndicator={false}
+            contentOffset={{x: 1000, y: 1000}}
             keyExtractor={(item, index) => index.toString()}>
-            {History.map(item => {
-              return historyDateSwipeBox(item);
+            {History.map((item, index) => {
+              return historyDateSwipeBox(item, index);
             })}
           </ScrollView>
         </HistoryDateContainer>
