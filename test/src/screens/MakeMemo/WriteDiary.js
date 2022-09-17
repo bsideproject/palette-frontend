@@ -300,7 +300,7 @@ const WriteDiary = ({navigation, route}) => {
       });
       const resize = uri => {
         return new Promise((resolve, reject) => {
-          ImageResizer.createResizedImage(uri, 700, 700, 'JPEG', 100, 0)
+          ImageResizer.createResizedImage(uri, 500, 500, 'JPEG', 90, 0)
             .then(response => {
               resolve(response);
             })
@@ -356,15 +356,16 @@ const WriteDiary = ({navigation, route}) => {
         console.log('취소');
       } else if (response.error) {
         alert('에러 발생');
+        ImageResizer;
       } else {
         const resize = () => {
           return new Promise((resolve, reject) => {
             ImageResizer.createResizedImage(
               response.assets[0].uri,
-              700,
-              700,
+              500,
+              500,
               'JPEG',
-              100,
+              90,
               0,
             )
               .then(response => {
