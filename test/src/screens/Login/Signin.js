@@ -356,6 +356,7 @@ const Signin = ({navigation}) => {
         variables: {pushEnabled: isPush},
       });
     }
+    setCookie('is_push', undefined);
   };
 
   const _handleNavFirstExplain = () => {
@@ -393,7 +394,7 @@ const Signin = ({navigation}) => {
         <Image source={APP_LOGO} width={51} />
         <SubTitleContainer>
           <SubTitle1>너랑 나랑 함께 완성하는</SubTitle1>
-          <SubTitle2>Wellcome! 반쪽일기</SubTitle2>
+          <SubTitle2>Welcome! 반쪽일기</SubTitle2>
         </SubTitleContainer>
         <SocialBtn
           id={'kakao'}
