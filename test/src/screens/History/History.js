@@ -755,7 +755,7 @@ const History = ({navigation, route}) => {
                 : 0,
           }}>
           <HistoryDateItemTxt selected={item == selDiary ? true : false}>
-            {PeriodDiff(item.startDate, item.endDate)}&nbsp;Days
+            {item == selDiary && selDiary.remainingDays}&nbsp;Days
           </HistoryDateItemTxt>
         </TouchableOpacity>
 
@@ -993,7 +993,13 @@ const History = ({navigation, route}) => {
               renderItem={historyContentItemBox}
               numColumns={1}
               keyExtractor={item => item.id}
-              initialNumToRender={selDiary.pages.length}
+              initialNumToRender={
+                selDiary == null ||
+                selDiary.pages == null ||
+                selDiary.pages.length == 0
+                  ? 10
+                  : selDiary.pages.length
+              }
             />
           </HistoryContentItemContainer>
         </HistoryContentContainer>
