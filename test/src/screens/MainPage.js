@@ -682,6 +682,9 @@ const MainPage = ({navigation, route}) => {
         navigation.navigate('ShowDiary', {
           diary: item,
           historyTitle: memos[slideIdx].title,
+          isModifyDisable:
+            memos[slideIdx].diaryStatus == 'DISCARD' ||
+            memos[slideIdx].currentHistory == null,
         })
       }
       color={item.isSelf ? theme.white : theme.homeColor}>

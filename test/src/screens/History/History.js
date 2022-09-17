@@ -742,11 +742,17 @@ const History = ({navigation, route}) => {
             marginBottom: 10,
             justifyContent: 'center',
             borderColor:
-              item == selDiary && RemainDate(selDiary.endDate) != false
+              item == selDiary &&
+              RemainDate(selDiary.endDate) != false &&
+              !isDiscard
                 ? '#F3B948'
                 : '#FFFFFF',
             borderWidth:
-              item == selDiary && RemainDate(selDiary.endDate) != false ? 3 : 0,
+              item == selDiary &&
+              RemainDate(selDiary.endDate) != false &&
+              !isDiscard
+                ? 3
+                : 0,
           }}>
           <HistoryDateItemTxt selected={item == selDiary ? true : false}>
             {PeriodDiff(item.startDate, item.endDate)}&nbsp;Days
@@ -781,6 +787,8 @@ const History = ({navigation, route}) => {
           navigation.navigate('ShowDiary', {
             diary: item,
             historyTitle: diaryTitle,
+            isModifyDisable:
+              RemainDate(selDiary.endDate) == false || isDiscard == true,
           })
         }>
         <HistoryPeriodBar>
@@ -1006,8 +1014,7 @@ const History = ({navigation, route}) => {
             alignItems: 'flex-end',
           }}
           onPress={() => setHistoryModalVisible(false)}>
-          {isDiscard == true ||
-          (selDiary != null && RemainDate(selDiary.endDate) == false) ? (
+          {isDiscard == true ? (
             <StyledModalContainer style={{height: 50}}>
               <StyledModalButton
                 onPress={() => {

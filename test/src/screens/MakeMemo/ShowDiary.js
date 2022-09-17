@@ -212,18 +212,20 @@ const ShowDiary = ({navigation, route}) => {
 
   // [USE EFFECT] -----------------------------------------------
   useEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <TouchableOpacity onPress={() => setTabModalVisible(true)}>
-          <Icon
-            name={'more-vertical'}
-            size={18}
-            color={'black'}
-            style={{marginRight: 20}}
-          />
-        </TouchableOpacity>
-      ),
-    });
+    if (!params.isModifyDisable) {
+      navigation.setOptions({
+        headerRight: () => (
+          <TouchableOpacity onPress={() => setTabModalVisible(true)}>
+            <Icon
+              name={'more-vertical'}
+              size={18}
+              color={'black'}
+              style={{marginRight: 20}}
+            />
+          </TouchableOpacity>
+        ),
+      });
+    }
   }, []);
 
   useEffect(() => {
