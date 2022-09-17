@@ -470,6 +470,7 @@ const History = ({navigation, route}) => {
   ] = USE_MUTATION('READ_PUSH_HISTORY', user.accessToken);
   const focus = useIsFocused();
   const [selDiaryRemainTime, setSelDiaryRemainTime] = useState('');
+  const scrollViewRef = useRef();
 
   //console.log('DI', diaryId);
 
@@ -947,8 +948,13 @@ const History = ({navigation, route}) => {
 
           <ScrollView
             horizontal={true}
+            ref={scrollViewRef}
+            onContentSizeChange={() =>
+              scrollViewRef.current?.scrollTo({
+                x: 98 * getHistoryDataInCookie(),
+              })
+            }
             showsHorizontalScrollIndicator={false}
-            contentOffset={{x: 1000, y: 1000}}
             keyExtractor={(item, index) => index.toString()}>
             {History.map((item, index) => {
               return historyDateSwipeBox(item, index);
