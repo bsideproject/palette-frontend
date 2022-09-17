@@ -725,6 +725,7 @@ const History = ({navigation, route}) => {
   };
 
   const historyDateSwipeBox = (item, index) => {
+    console.log(item.remainingDays);
     return (
       <HistoryDateItemContainer>
         <TouchableOpacity
@@ -755,7 +756,7 @@ const History = ({navigation, route}) => {
                 : 0,
           }}>
           <HistoryDateItemTxt selected={item == selDiary ? true : false}>
-            {item == selDiary && selDiary.remainingDays}&nbsp;Days
+            {item.remainingDays ? item.remainingDays : '?'}&nbsp;Days
           </HistoryDateItemTxt>
         </TouchableOpacity>
 
@@ -997,7 +998,7 @@ const History = ({navigation, route}) => {
                 selDiary == null ||
                 selDiary.pages == null ||
                 selDiary.pages.length == 0
-                  ? 10
+                  ? 30
                   : selDiary.pages.length
               }
             />
