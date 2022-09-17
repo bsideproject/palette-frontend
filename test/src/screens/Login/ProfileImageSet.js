@@ -126,6 +126,10 @@ const ProfileImageSet = ({navigation, route}) => {
     setIsLoading(true);
     if (!!uploadImage) {
       const response = await imageUploadApi(uploadImage, accessToken);
+      if (response == 'Error') {
+        setIsLoading(false);
+        return;
+      }
       const {data} = response;
       updateProfile({
         variables: {profileImg: data.urls[0]},

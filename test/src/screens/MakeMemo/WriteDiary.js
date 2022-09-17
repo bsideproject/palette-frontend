@@ -461,9 +461,19 @@ const WriteDiary = ({navigation, route}) => {
       setIsLoading(true);
       if (uploadImage !== null) {
         const response = await imageUploadApi(uploadImage, user.accessToken);
+        if (response == 'Error') {
+          setIsLoading(false);
+          return;
+        }
         if (params.mode === 'edit') {
           setLoadingMessage('일기장 수정 중...');
-          delImageArr.length > 0 && (await imageDeleteApi(delImageArr));
+          if (delImageArr.length > 0) {
+            const response = await imageDeleteApi(delImageArr);
+            if (response == 'Error') {
+              setIsLoading(false);
+              return;
+            }
+          }
           editPage({
             variables: {
               pageId: params.pageId,
@@ -487,7 +497,11 @@ const WriteDiary = ({navigation, route}) => {
         if (params.mode === 'edit') {
           setLoadingMessage('일기장 수정 중...');
           if (delImageArr.length > 0) {
-            await imageDeleteApi(delImageArr);
+            const response = await imageDeleteApi(delImageArr);
+            if (response == 'Error') {
+              setIsLoading(false);
+              return;
+            }
             editPage({
               variables: {
                 pageId: params.pageId,

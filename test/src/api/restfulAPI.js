@@ -81,6 +81,7 @@ export const imageUploadApi = async (uploadImage, accessToken) => {
   } catch (error) {
     console.log('imageUpload error', error);
     ErrorAlert();
+    return 'Error';
   }
 };
 
@@ -99,5 +100,6 @@ export const imageDeleteApi = async (urls, accessToken) => {
   } catch (error) {
     console.log('imageUpload error', error);
     ErrorAlert();
+    return 'Error';
   }
 };
