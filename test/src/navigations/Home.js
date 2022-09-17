@@ -75,9 +75,6 @@ const Home = ({navigation, route}) => {
         {showLabel: false})
       }
       screenOptions={{
-        tabBarStyle: {
-          height: 60,
-        },
         headerTitleStyle: {
           color: theme.dark010,
           fontSize: 16,
