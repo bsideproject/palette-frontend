@@ -265,7 +265,7 @@ const ProfileImageSet = ({navigation, route}) => {
 
   return isLoading ? (
     <SpinnerContainer>
-      <Spinner visible={isLoading} textContent={'프로필 설정 중...'} />
+      <Spinner visible={isLoading} />
     </SpinnerContainer>
   ) : (
     <Container>

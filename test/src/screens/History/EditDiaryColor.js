@@ -223,7 +223,7 @@ const EditDiaryColor = ({navigation, route}) => {
 
   return isLoading ? (
     <SpinnerContainer>
-      <Spinner visible={isLoading} textContent={loadingMessage} />
+      <Spinner visible={isLoading} />
     </SpinnerContainer>
   ) : (
     <KeyboardAvoidingScrollView

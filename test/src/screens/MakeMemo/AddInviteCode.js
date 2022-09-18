@@ -99,7 +99,7 @@ const AddInviteCode = ({navigation}) => {
 
   return isLoading ? (
     <SpinnerContainer>
-      <Spinner visible={isLoading} textContent={'초대 코드 확인 중...'} />
+      <Spinner visible={isLoading} />
     </SpinnerContainer>
   ) : (
     <KeyboardAvoidingScrollView

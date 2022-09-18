@@ -97,7 +97,7 @@ const EditDiaryTitle = ({navigation, route}) => {
 
   return isLoading ? (
     <SpinnerContainer>
-      <Spinner visible={isLoading} textContent={'일기 제목 수정 중...'} />
+      <Spinner visible={isLoading} />
     </SpinnerContainer>
   ) : (
     <KeyboardAvoidingScrollView

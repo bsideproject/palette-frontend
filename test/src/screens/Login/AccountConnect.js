@@ -109,7 +109,7 @@ const AccountConnect = ({navigation, route}) => {
 
   return isLoading ? (
     <SpinnerContainer>
-      <Spinner visible={isLoading} textContent={'계정 연동 중...'} />
+      <Spinner visible={isLoading} />
     </SpinnerContainer>
   ) : (
     <Container>

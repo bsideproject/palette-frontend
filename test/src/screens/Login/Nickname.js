@@ -108,7 +108,7 @@ const Nickname = ({navigation, route}) => {
 
   return isLoading ? (
     <SpinnerContainer>
-      <Spinner visible={isLoading} textContent={'닉네임 설정 중...'} />
+      <Spinner visible={isLoading} />
     </SpinnerContainer>
   ) : (
     <Container>

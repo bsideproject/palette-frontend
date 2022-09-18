@@ -844,7 +844,7 @@ const MainPage = ({navigation, route}) => {
 
   return isLoading ? (
     <SpinnerContainer>
-      <Spinner visible={isLoading} textContent={'유저 데이터 로딩 중...'} />
+      <Spinner visible={isLoading} />
     </SpinnerContainer>
   ) : (
     <MemoDataContainer>

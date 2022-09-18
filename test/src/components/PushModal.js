@@ -136,7 +136,7 @@ const PushModal = ({onPressEnd}) => {
 
   return isLoading ? (
     <SpinnerContainer>
-      <Spinner visible={isLoading} textContent={'설정 적용 중...'} />
+      <Spinner visible={isLoading} />
     </SpinnerContainer>
   ) : (
     <Conatiner>

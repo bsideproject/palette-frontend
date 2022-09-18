@@ -210,7 +210,7 @@ const PushHistory = ({navigation}) => {
 
   return isLoading ? (
     <SpinnerContainer>
-      <Spinner visible={isLoading} textContent={'푸시 히스토리 조회 중...'} />
+      <Spinner visible={isLoading} />
     </SpinnerContainer>
   ) : (
     <Container>

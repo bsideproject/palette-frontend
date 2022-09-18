@@ -349,7 +349,7 @@ const Setting = ({navigation}) => {
 
   return isLoading ? (
     <SpinnerContainer>
-      <Spinner visible={isLoading} textContent={loadingMessage} />
+      <Spinner visible={isLoading} />
     </SpinnerContainer>
   ) : (
     <Container>

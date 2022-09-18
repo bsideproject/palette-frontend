@@ -86,13 +86,12 @@ const Navigation = () => {
   useEffect(() => {
     getInitialData();
   }, [loading]);
-  //console.log('Navi', user.accessToken, getCookie('access_token'), isLoading);
 
   return netConnected ? (
     <NavigationContainer ref={navigationRef}>
       {isLoading ? (
         <SpinnerContainer>
-          <Spinner visible={isLoading} textContent={'유저 로그인 검사 중...'} />
+          <Spinner visible={isLoading} />
         </SpinnerContainer>
       ) : user.accessToken ? (
         <Main />
