@@ -485,8 +485,10 @@ const History = ({navigation, route}) => {
       // Diary End
       if (remainTime == 'END') {
         setIsLoading(true);
-        refetch();
-        getData(false, null);
+        setTimeout(() => {
+          refetch();
+          getData(false, null);
+        }, 1000);
       }
     }
   }, 1000);
