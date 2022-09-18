@@ -756,7 +756,7 @@ const History = ({navigation, route}) => {
                 : 0,
           }}>
           <HistoryDateItemTxt selected={item == selDiary ? true : false}>
-            {item.remainingDays ? item.remainingDays : '?'}&nbsp;Days
+            {item.periodDays ? item.periodDays : '?'}&nbsp;Days
           </HistoryDateItemTxt>
         </TouchableOpacity>
 

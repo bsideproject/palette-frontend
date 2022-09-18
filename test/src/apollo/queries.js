@@ -188,7 +188,7 @@ const LOOK_UP_HISTORY_PAGE = gql`
       diaryTitle
       histories {
         id
-        remainingDays
+        periodDays
         startDate
         endDate
         pages {
