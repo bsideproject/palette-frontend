@@ -852,6 +852,7 @@ const MainPage = ({navigation, route}) => {
       <MemoFlexTop>
         <Carousel
           data={memos}
+          enableSnap={true}
           renderItem={renderItem1}
           sliderWidth={width * 0.9}
           itemWidth={width * 0.75}
