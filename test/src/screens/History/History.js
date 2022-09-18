@@ -473,9 +473,8 @@ const History = ({navigation, route}) => {
   const focus = useIsFocused();
   const [selDiaryRemainTime, setSelDiaryRemainTime] = useState('');
   const scrollViewRef = useRef();
-  const [lastHistoyLength, setLastHistoryLength] = useState(10);
-
-  //console.log('DI', lastHistoyLength);
+  const [isCompleteHistory, setIsCompletHistory] = useState(false);
+  //console.log('DI', diaryId);
 
   // useInterval
   useInterval(() => {
@@ -488,6 +487,7 @@ const History = ({navigation, route}) => {
         setTimeout(() => {
           refetch();
           getData(false, null);
+          setIsCompletHistory(true);
         }, 1000);
       }
     }
@@ -696,7 +696,7 @@ const History = ({navigation, route}) => {
       setHistoryModalVisible(false);
     }
     // Set Initial Diary Id
-    console.log('Initial', route);
+    // console.log('Initial', route);
     if (route.params.diaryStatus) {
       setDiaryStatus(route.params.diaryStatus);
     }
@@ -736,7 +736,6 @@ const History = ({navigation, route}) => {
           onPress={() => {
             setSelDiary(item);
             setHistoryDataInCookie(index);
-            setLastHistoryLength(item.pages.length);
           }}
           style={{
             backgroundColor:
@@ -989,7 +988,7 @@ const History = ({navigation, route}) => {
       ) : (
         <HistoryContentContainer>
           <HistoryContentRemainTimeTxt>
-            {RemainDate(selDiary.endDate) == false || isDiscard == true
+            {RemainDate(selDiary.endDate) == false
               ? ''
               : (selDiaryRemainTime ? selDiaryRemainTime : '') + '후 교환'}
           </HistoryContentRemainTimeTxt>
@@ -1004,11 +1003,12 @@ const History = ({navigation, route}) => {
                 renderItem={historyContentItemBox}
                 numColumns={1}
                 keyExtractor={item => item.id}
+                extraData={isCompleteHistory}
                 initialNumToRender={
                   selDiary == null ||
                   selDiary.pages == null ||
                   selDiary.pages.length == 0
-                    ? lastHistoyLength
+                    ? 50
                     : selDiary.pages.length
                 }
               />
