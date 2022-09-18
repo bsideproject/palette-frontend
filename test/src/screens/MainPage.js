@@ -743,7 +743,9 @@ const MainPage = ({navigation, route}) => {
       ) {
         return <MemoEmpty_Text1>최근 작성한 교환일기가 없어요</MemoEmpty_Text1>;
       } else if (memos[sliderIdx].currentHistory == null) {
-        return (
+        return memos[sliderIdx].pastHistories.pages.length == 0 ? (
+          <MemoEmpty_Text1>최근 작성한 교환일기가 없어요</MemoEmpty_Text1>
+        ) : (
           <FlatList
             data={memos[sliderIdx].pastHistories.pages}
             renderItem={renderItem2}
@@ -754,7 +756,9 @@ const MainPage = ({navigation, route}) => {
           />
         );
       } else {
-        return (
+        return memos[sliderIdx].currentHistory.pages.length == 0 ? (
+          <MemoEmpty_Text1>최근 작성한 교환일기가 없어요</MemoEmpty_Text1>
+        ) : (
           <FlatList
             data={memos[sliderIdx].currentHistory.pages}
             renderItem={renderItem2}

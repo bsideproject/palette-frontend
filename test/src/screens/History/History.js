@@ -270,6 +270,7 @@ const HistoryContentRemainTimeTxt = styled.Text`
 const HistoryContentItemContainer = styled.View`
   flex: 1;
   margin-top: 2%;
+  justify-content: center;
 `;
 
 const HistoryRow = styled.TouchableOpacity`
@@ -988,19 +989,25 @@ const History = ({navigation, route}) => {
               : (selDiaryRemainTime ? selDiaryRemainTime : '') + '후 교환'}
           </HistoryContentRemainTimeTxt>
           <HistoryContentItemContainer>
-            <FlatList
-              data={selDiary.pages}
-              renderItem={historyContentItemBox}
-              numColumns={1}
-              keyExtractor={item => item.id}
-              initialNumToRender={
-                selDiary == null ||
-                selDiary.pages == null ||
-                selDiary.pages.length == 0
-                  ? 30
-                  : selDiary.pages.length
-              }
-            />
+            {selDiary == null ||
+            selDiary.pages == null ||
+            selDiary.pages.length == 0 ? (
+              <HistoryItemNo>작성된 일기가 없습니다</HistoryItemNo>
+            ) : (
+              <FlatList
+                data={selDiary.pages}
+                renderItem={historyContentItemBox}
+                numColumns={1}
+                keyExtractor={item => item.id}
+                initialNumToRender={
+                  selDiary == null ||
+                  selDiary.pages == null ||
+                  selDiary.pages.length == 0
+                    ? 30
+                    : selDiary.pages.length
+                }
+              />
+            )}
           </HistoryContentItemContainer>
         </HistoryContentContainer>
       )}
