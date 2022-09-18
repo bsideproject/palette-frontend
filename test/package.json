@@ -37,6 +37,7 @@
     "react-dom": "^18.2.0",
     "react-is": "^18.2.0",
     "react-native": "0.68.2",
+    "react-native-animated-spinkit": "^1.5.2",
     "react-native-auto-height-image": "^3.2.4",
     "react-native-elements": "^3.4.2",
     "react-native-flatlist-slider": "^1.0.6",
