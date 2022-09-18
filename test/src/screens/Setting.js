@@ -20,6 +20,7 @@ import Modal from 'react-native-modal';
 import Spinner from 'react-native-loading-spinner-overlay';
 import {ErrorAlert} from '@components';
 import {setCookie} from '../api/Cookie';
+import {Flow} from 'react-native-animated-spinkit';
 
 const Container = styled.ScrollView`
   flex: 1;
@@ -176,7 +177,7 @@ const ModalTxt = styled.View`
 `;
 
 // Spinner
-const SpinnerContainer = styled.Text`
+const SpinnerContainer = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
@@ -349,7 +350,7 @@ const Setting = ({navigation}) => {
 
   return isLoading ? (
     <SpinnerContainer>
-      <Spinner visible={isLoading} />
+      <Flow animating={isLoading} size={100} color={theme.pointColor} />
     </SpinnerContainer>
   ) : (
     <Container>

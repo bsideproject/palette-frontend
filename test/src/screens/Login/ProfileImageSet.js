@@ -12,6 +12,7 @@ import {ErrorAlert} from '@components';
 import Spinner from 'react-native-loading-spinner-overlay';
 import ImageResizer from 'react-native-image-resizer';
 import Modal from 'react-native-modal';
+import {Flow} from 'react-native-animated-spinkit';
 
 const Container = styled.View`
   flex: 1;
@@ -73,7 +74,7 @@ const ProfileImage = styled.Image`
   border-radius: 70px;
 `;
 
-const SpinnerContainer = styled.Text`
+const SpinnerContainer = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
@@ -265,7 +266,7 @@ const ProfileImageSet = ({navigation, route}) => {
 
   return isLoading ? (
     <SpinnerContainer>
-      <Spinner visible={isLoading} />
+      <Flow animating={isLoading} size={100} color={theme.pointColor} />
     </SpinnerContainer>
   ) : (
     <Container>

@@ -22,6 +22,7 @@ import Icon_Ionicons from 'react-native-vector-icons/Ionicons';
 import {Button} from '@components';
 import useInterval from 'use-interval';
 import {setCookie, getCookie} from '../../api/Cookie';
+import {Flow} from 'react-native-animated-spinkit';
 
 const DateTime = ts => {
   return moment(ts).format('YYYY년 MM월 DD일');
@@ -84,7 +85,7 @@ const Container = styled.View`
 `;
 
 // Spinner
-const SpinnerContainer = styled.Text`
+const SpinnerContainer = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
@@ -472,8 +473,9 @@ const History = ({navigation, route}) => {
   const focus = useIsFocused();
   const [selDiaryRemainTime, setSelDiaryRemainTime] = useState('');
   const scrollViewRef = useRef();
+  const [lastHistoyLength, setLastHistoryLength] = useState(10);
 
-  //console.log('DI', diaryId);
+  //console.log('DI', lastHistoyLength);
 
   // useInterval
   useInterval(() => {
@@ -732,6 +734,7 @@ const History = ({navigation, route}) => {
           onPress={() => {
             setSelDiary(item);
             setHistoryDataInCookie(index);
+            setLastHistoryLength(item.pages.length);
           }}
           style={{
             backgroundColor:
@@ -756,7 +759,7 @@ const History = ({navigation, route}) => {
                 : 0,
           }}>
           <HistoryDateItemTxt selected={item == selDiary ? true : false}>
-            {item.periodDays ? item.periodDays : '?'}&nbsp;Days
+            {item.periodDays}&nbsp;Days
           </HistoryDateItemTxt>
         </TouchableOpacity>
 
@@ -862,7 +865,7 @@ const History = ({navigation, route}) => {
 
   return isLoading ? (
     <SpinnerContainer>
-      <Spinner visible={isLoading} />
+      <Flow animating={isLoading} size={100} color={theme.pointColor} />
     </SpinnerContainer>
   ) : (
     <Container>
@@ -1003,7 +1006,7 @@ const History = ({navigation, route}) => {
                   selDiary == null ||
                   selDiary.pages == null ||
                   selDiary.pages.length == 0
-                    ? 30
+                    ? lastHistoyLength
                     : selDiary.pages.length
                 }
               />

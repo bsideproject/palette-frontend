@@ -11,6 +11,7 @@ import {delUserApi} from '../api/restfulAPI';
 import Modal from 'react-native-modal';
 import Spinner from 'react-native-loading-spinner-overlay';
 import {ErrorAlert} from '@components';
+import {Flow} from 'react-native-animated-spinkit';
 
 const getCreateTime = time => {
   const date = new Date(time);
@@ -20,7 +21,7 @@ const getCreateTime = time => {
 };
 
 // Spinner
-const SpinnerContainer = styled.Text`
+const SpinnerContainer = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
@@ -123,7 +124,7 @@ const UserInfo = ({navigation}) => {
 
   return isLoading ? (
     <SpinnerContainer>
-      <Spinner visible={isLoading} />
+      <Flow animating={isLoading} size={100} color={theme.pointColor} />
     </SpinnerContainer>
   ) : (
     <Container>

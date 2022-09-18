@@ -19,6 +19,7 @@ import {useIsFocused} from '@react-navigation/native';
 import AsyncStorage from '@react-native-community/async-storage';
 import Modal from 'react-native-modal';
 import {getCookie} from './../api/Cookie';
+import {Flow} from 'react-native-animated-spinkit';
 
 // Time & Date Function
 const checkDate = ts => {
@@ -39,7 +40,7 @@ const checkTime = ts => {
 };
 
 // Spinner
-const SpinnerContainer = styled.Text`
+const SpinnerContainer = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
@@ -844,7 +845,7 @@ const MainPage = ({navigation, route}) => {
 
   return isLoading ? (
     <SpinnerContainer>
-      <Spinner visible={isLoading} />
+      <Flow animating={isLoading} size={100} color={theme.pointColor} />
     </SpinnerContainer>
   ) : (
     <MemoDataContainer>

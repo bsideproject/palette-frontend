@@ -14,6 +14,7 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {ErrorAlert} from '@components';
 import Spinner from 'react-native-loading-spinner-overlay';
 import ImageResizer from 'react-native-image-resizer';
+import {Flow} from 'react-native-animated-spinkit';
 
 const Container = styled.View`
   flex: 1;
@@ -163,7 +164,7 @@ const ExitModalMargin = styled.View`
   margin-top: 5%;
 `;
 
-const SpinnerContainer = styled.Text`
+const SpinnerContainer = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
@@ -553,7 +554,7 @@ const WriteDiary = ({navigation, route}) => {
 
   return isLoading ? (
     <SpinnerContainer>
-      <Spinner visible={isLoading} />
+      <Flow animating={isLoading} size={100} color={theme.pointColor} />
     </SpinnerContainer>
   ) : (
     <KeyboardAwareScrollView>

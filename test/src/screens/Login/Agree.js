@@ -9,6 +9,7 @@ import {USE_MUTATION} from '@apolloClient/queries';
 import AsyncStorage from '@react-native-community/async-storage';
 import {ErrorAlert} from '@components';
 import Spinner from 'react-native-loading-spinner-overlay';
+import {Flow} from 'react-native-animated-spinkit';
 
 const Container = styled.View`
   flex: 1;
@@ -56,7 +57,7 @@ const ButtonContainer = styled.View`
   margin-bottom: 106px;
 `;
 
-const SpinnerContainer = styled.Text`
+const SpinnerContainer = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
@@ -156,7 +157,7 @@ const Agree = ({navigation}) => {
 
   return isLoading ? (
     <SpinnerContainer>
-      <Spinner visible={isLoading} />
+      <Flow animating={isLoading} size={100} color={theme.pointColor} />
     </SpinnerContainer>
   ) : (
     <Container>

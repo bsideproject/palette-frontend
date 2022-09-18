@@ -7,6 +7,7 @@ import {ThemeContext} from 'styled-components/native';
 import {UserContext} from '@contexts';
 import {USE_MUTATION} from '@apolloClient/queries';
 import Spinner from 'react-native-loading-spinner-overlay';
+import {Flow} from 'react-native-animated-spinkit';
 
 const Conatiner = styled.View`
   flex: 1;
@@ -78,7 +79,7 @@ const BottomTxt = styled.Text`
   text-decoration-line: underline;
 `;
 
-const SpinnerContainer = styled.Text`
+const SpinnerContainer = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
@@ -89,6 +90,7 @@ const SpinnerContainer = styled.Text`
 const PushModal = ({onPressEnd}) => {
   const {user, setUser} = useContext(UserContext);
   const [isLoading, setIsLoading] = useState(false);
+  const theme = useContext(ThemeContext);
   const [updateProfile, {loading, error, data}] = USE_MUTATION(
     'UPDATE_PROFILE',
     user.accessToken,
@@ -136,7 +138,7 @@ const PushModal = ({onPressEnd}) => {
 
   return isLoading ? (
     <SpinnerContainer>
-      <Spinner visible={isLoading} />
+      <Flow animating={isLoading} size={100} color={theme.pointColor} />
     </SpinnerContainer>
   ) : (
     <Conatiner>

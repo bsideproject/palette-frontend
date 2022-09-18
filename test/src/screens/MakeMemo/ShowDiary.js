@@ -13,72 +13,66 @@ import Modal from 'react-native-modal';
 import {UserContext} from '@contexts';
 import Carousel, {Pagination} from 'react-native-snap-carousel';
 import {USE_QUERY, USE_MUTATION} from '@apolloClient/queries';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {ErrorAlert} from '@components';
 import Spinner from 'react-native-loading-spinner-overlay';
+import {Flow} from 'react-native-animated-spinkit';
 
-const Container = styled.View`
+const Container = styled.ScrollView`
   flex: 1;
   background-color: ${({theme}) => theme.fullWhite};
+  flex-direction: column;
 `;
 
 const InnerContainer = styled.View`
-  padding: 0 14px 50px 12px;
-  ${({paddingTop}) => paddingTop && `padding-top:2px`};
-`;
-
-const SContainer = styled.ScrollView`
-  width: 100%;
-  height: 80%;
-  background-color: ${({theme}) => theme.fullWhite};
+  padding: 17px 16px 50px 16px;
+  ${({paddingTop}) => paddingTop && `padding-top:2px`}
 `;
 
 const DiaryBody = styled.View`
-  margin-top: 36px;
+  padding-left: 37px;
+  ${({isMargin}) => isMargin && `margin-top:37px;`};
 `;
 
-const SubTitle = styled.Text`
-  font-size: 14px;
+const HistoryTitle = styled.Text`
+  font-size: 11px;
   font-family: ${({theme}) => theme.fontRegular};
-`;
-
-const DiaryHeader = styled.View`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 32px;
-  margin-bottom: 28px;
+  margin-bottom: 11px;
 `;
 
 const DiaryTitle = styled.Text`
-  font-size: 24px;
+  font-size: 16px;
   font-family: ${({theme}) => theme.fontBold};
   font-weight: 600;
 `;
 
 const DiaryContent = styled.Text`
   text-align-vertical: top;
-  font-size: 16px;
+  font-size: 14px;
   font-family: ${({theme}) => theme.fontRegular};
   color: ${({theme}) => theme.dark020};
 `;
 
 const WrittenDate = styled.Text`
+  width: 100%;
+  font-size: 18px;
+  font-family: ${({theme}) => theme.fontBold};
+  font-weight: 600;
+  margin-bottom: 27px;
+`;
+
+const WrittenUser = styled.Text`
   font-size: 14px;
-  font-family: ${({theme}) => theme.fontRegular};
-  color: ${({theme}) => theme.dark020};
-  margin-top: 36px;
-  margin-right: 7px;
+  font-family: ${({theme}) => theme.fontBold};
 `;
 
 const SubUploadImageContainer = styled.View`
   width: 100%;
   background: ${({theme}) => theme.fullWhite}
-  display: flex;
   flex-direction: row;
-  justify-content: center;
   position: absolute;
-  top: 16%;
   z-index: 10;
+  padding:15px 0 0 15px;
 `;
 
 const SubUploadImage = styled.Image`
@@ -186,7 +180,7 @@ const CarouselContainer = styled.View`
   ${({isHidden}) => isHidden && `opacity:0`}
 `;
 
-const SpinnerContainer = styled.Text`
+const SpinnerContainer = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
@@ -292,16 +286,16 @@ const ShowDiary = ({navigation, route}) => {
       },
     });
   };
-  const SLIDER_WIDTH = Dimensions.get('window').width - 25;
+  const SLIDER_WIDTH = Dimensions.get('window').width - 30;
 
   const CarouselCardItem = ({item, index}) => {
     return (
       <View key={index} style={{width: SLIDER_WIDTH, height: SLIDER_WIDTH}}>
-        <Image
+        {/* <Image
           source={{uri: item}}
           style={{width: SLIDER_WIDTH, height: SLIDER_WIDTH, borderRadius: 6}}
           resizeMethod={'resize'}
-        />
+        /> */}
       </View>
     );
   };
@@ -309,7 +303,7 @@ const ShowDiary = ({navigation, route}) => {
   const _handleScroll = e => {
     const {height} = Dimensions.get('screen');
     const scrollValue = e.nativeEvent.contentOffset.y;
-    if (scrollValue > height * 0.3) {
+    if (scrollValue > height * 0.25) {
       setChangeImage(true);
     } else {
       setChangeImage(false);
@@ -342,76 +336,56 @@ const ShowDiary = ({navigation, route}) => {
 
   return isLoading ? (
     <SpinnerContainer>
-      <Spinner visible={isLoading} />
+      <Flow animating={isLoading} size={100} color={theme.pointColor} />
     </SpinnerContainer>
   ) : (
     <>
+      {changeImage && (
+        <SubUploadImageContainer>
+          <SelectedImage />
+        </SubUploadImageContainer>
+      )}
       {diaryData !== null && (
-        <Container>
-          {changeImage && (
-            <SubUploadImageContainer>
-              <SelectedImage />
-            </SubUploadImageContainer>
-          )}
+        <Container onScroll={_handleScroll}>
           <InnerContainer paddingTop={imageArr.length === 0 ? true : false}>
-            <DiaryHeader>
-              <DiaryTitle>{diaryData.title}</DiaryTitle>
-              <SubTitle>
-                {params.historyTitle} • {diaryData.author.nickname}
-              </SubTitle>
-            </DiaryHeader>
-            <SContainer
-              onScroll={_handleScroll}
-              showsVerticalScrollIndicator={false}>
-              {imageArr.length > 0 && (
-                <CarouselContainer isHidden={changeImage}>
-                  <Carousel
-                    data={imageArr}
-                    ref={isCarousel}
-                    renderItem={CarouselCardItem}
-                    sliderWidth={SLIDER_WIDTH}
-                    itemWidth={SLIDER_WIDTH}
-                    onSnapToItem={index => setIndex(index)}
-                    useScrollView={true}
-                  />
-                  <Pagination
-                    containerStyle={{
-                      position: 'absolute',
-                      bottom: -10,
-                      left: '50%',
-                      transform: [{translateX: -45}],
-                    }}
-                    dotsLength={imageArr.length}
-                    activeDotIndex={index}
-                    carouselRef={isCarousel}
-                    dotStyle={{
-                      width: 8,
-                      height: 8,
-                      borderRadius: 5,
-                      marginHorizontal: 0,
-                    }}
-                    dotColor="#0F4CFC"
-                    inactiveDotColor="#D9D9D9"
-                    inactiveDotOpacity={1}
-                    inactiveDotScale={1}
-                  />
-                </CarouselContainer>
-              )}
-              <DiaryBody>
-                <DiaryContent>{diaryData.body}</DiaryContent>
-                <View
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    flex: 1,
-                    justifyContent: 'flex-end',
-                  }}>
-                  <WrittenDate>
-                    {getCreateTime(diaryData.createdAt)}
-                  </WrittenDate>
-                </View>
-              </DiaryBody>
-            </SContainer>
+            {imageArr.length > 0 && (
+              <CarouselContainer isHidden={changeImage}>
+                <Carousel
+                  data={imageArr}
+                  ref={isCarousel}
+                  renderItem={CarouselCardItem}
+                  sliderWidth={SLIDER_WIDTH}
+                  itemWidth={SLIDER_WIDTH}
+                  onSnapToItem={index => setIndex(index)}
+                  useScrollView={true}
+                />
+                <Pagination
+                  dotsLength={imageArr.length}
+                  activeDotIndex={index}
+                  carouselRef={isCarousel}
+                  dotStyle={{
+                    width: 10,
+                    height: 10,
+                    borderRadius: 5,
+                    marginHorizontal: 0,
+                    backgroundColor: theme.pointColor,
+                  }}
+                  inactiveDotOpacity={0.4}
+                  inactiveDotScale={0.6}
+                />
+              </CarouselContainer>
+            )}
+            <DiaryBody isMargin={imageArr.length <= 1 ? true : false}>
+              <WrittenDate>{getCreateTime(diaryData.createdAt)}</WrittenDate>
+              <View
+                style={{flex: 1, flexDirection: 'row', alignItems: 'center'}}>
+                <DiaryTitle>{diaryData.title}</DiaryTitle>
+                <WrittenUser> • {diaryData.author.nickname}</WrittenUser>
+              </View>
+              <HistoryTitle>{params.historyTitle}</HistoryTitle>
+
+              <DiaryContent>{diaryData.body}</DiaryContent>
+            </DiaryBody>
           </InnerContainer>
 
           {/* top tab Modal */}

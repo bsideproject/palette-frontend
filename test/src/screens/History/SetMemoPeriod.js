@@ -6,6 +6,7 @@ import {UserContext} from '@contexts';
 import {USE_MUTATION} from '@apolloClient/queries';
 import Spinner from 'react-native-loading-spinner-overlay';
 import {ErrorAlert} from '@components';
+import {Flow} from 'react-native-animated-spinkit';
 
 const SetMemoFlexTop = styled.View`
   justify-content: center;
@@ -55,7 +56,7 @@ const Container = styled.View`
   align-items: center;
 `;
 
-const SpinnerContainer = styled.Text`
+const SpinnerContainer = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
@@ -135,7 +136,7 @@ const SetMemoPeriod = ({navigation, route}) => {
 
   return isLoading ? (
     <SpinnerContainer>
-      <Spinner visible={isLoading} />
+      <Flow animating={isLoading} size={100} color={theme.pointColor} />
     </SpinnerContainer>
   ) : (
     <Container>

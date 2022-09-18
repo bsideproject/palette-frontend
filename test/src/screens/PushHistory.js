@@ -8,6 +8,7 @@ import {FlatList} from 'react-native-gesture-handler';
 import moment from 'moment';
 import {useIsFocused} from '@react-navigation/native';
 import {ErrorAlert} from '@components';
+import {Flow} from 'react-native-animated-spinkit';
 
 const checkDateDiff = ts => {
   // Convert Korea Time
@@ -30,7 +31,7 @@ const Container = styled.View`
 `;
 
 // Spinner
-const SpinnerContainer = styled.Text`
+const SpinnerContainer = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
@@ -210,7 +211,7 @@ const PushHistory = ({navigation}) => {
 
   return isLoading ? (
     <SpinnerContainer>
-      <Spinner visible={isLoading} />
+      <Flow animating={isLoading} size={100} color={theme.pointColor} />
     </SpinnerContainer>
   ) : (
     <Container>

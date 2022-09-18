@@ -11,9 +11,11 @@ import {getCookie} from '../api/Cookie';
 import Spinner from 'react-native-loading-spinner-overlay';
 import {USE_LAZY_QUERY} from '@apolloClient/queries';
 import styled from 'styled-components/native';
+import {Flow} from 'react-native-animated-spinkit';
+import {ThemeContext} from 'styled-components/native';
 
 // Spinner
-const SpinnerContainer = styled.Text`
+const SpinnerContainer = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
@@ -25,6 +27,7 @@ const Navigation = () => {
   const {setUser, user} = useContext(UserContext);
   const [netConnected, setNetConnected] = useState(true);
   const netinfo = useNetInfo();
+  const theme = useContext(ThemeContext);
   const [isLoading, setIsLoading] = useState(true);
   const [get_profile, {loading, error, data}] = USE_LAZY_QUERY(
     'GET_PROFILE',
@@ -91,7 +94,7 @@ const Navigation = () => {
     <NavigationContainer ref={navigationRef}>
       {isLoading ? (
         <SpinnerContainer>
-          <Spinner visible={isLoading} />
+          <Flow animating={isLoading} size={100} color={theme.pointColor} />
         </SpinnerContainer>
       ) : user.accessToken ? (
         <Main />

@@ -11,6 +11,7 @@ import {Button, ErrorMessage} from '@components';
 import LinearGradient from 'react-native-linear-gradient';
 import {ErrorAlert} from '@components';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {Flow} from 'react-native-animated-spinkit';
 
 const Container = styled.View`
   flex: 1;
@@ -22,7 +23,7 @@ const Container = styled.View`
   justify-content: space-between;
 `;
 
-const SpinnerContainer = styled.Text`
+const SpinnerContainer = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
@@ -223,7 +224,7 @@ const EditDiaryColor = ({navigation, route}) => {
 
   return isLoading ? (
     <SpinnerContainer>
-      <Spinner visible={isLoading} />
+      <Flow animating={isLoading} size={100} color={theme.pointColor} />
     </SpinnerContainer>
   ) : (
     <KeyboardAvoidingScrollView
