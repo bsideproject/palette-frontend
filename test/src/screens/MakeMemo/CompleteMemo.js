@@ -175,7 +175,7 @@ const CompleteMemo = ({navigation, route}) => {
           <Image source={MAKE_IMG} style={{marginTop: 30, marginBottom: 15}} />
         </ImgContainer>
         <TxtContainer>
-          <TxtStyle>반쪽이의 반쪽일기</TxtStyle>
+          <TxtStyle>{user.nickname}의 반쪽일기</TxtStyle>
           <TxtStyle>일기장이 생성되었습니다!</TxtStyle>
         </TxtContainer>
         <InviteContainer>
