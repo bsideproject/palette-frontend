@@ -20,14 +20,16 @@
         android:screenOrientation="portrait"
         android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
         android:launchMode="singleTask"
-        android:windowSoftInputMode="adjustResize">
+        android:windowSoftInputMode="adjustResize"
+        android:exported="false">
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
       </activity>
       <!-- kakao login start -->
-      <activity android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity">
+      <activity android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
+        android:exported="false">
         <intent-filter>
             <action android:name="android.intent.action.VIEW" />
             <category android:name="android.intent.category.DEFAULT" />
@@ -53,9 +55,12 @@
       <meta-data  android:name="com.google.firebase.messaging.default_notification_icon" 
                   android:resource="@mipmap/ic_notification" />
 
-      <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationActions" />
-      <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationPublisher" />
-      <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationBootEventReceiver">
+      <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationActions" 
+                android:exported="false"/>
+      <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationPublisher" 
+                android:exported="false"/>
+      <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationBootEventReceiver"
+                android:exported="false">
           <intent-filter>
               <action android:name="android.intent.action.BOOT_COMPLETED" />
               <action android:name="android.intent.action.QUICKBOOT_POWERON" />
