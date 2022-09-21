@@ -1,4 +1,4 @@
-package com.diary;
+package com.half.diary;
 
 import android.os.Bundle;
 import org.devio.rn.splashscreen.SplashScreen;

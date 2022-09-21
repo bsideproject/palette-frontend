@@ -1,4 +1,4 @@
-package com.diary;
+package com.half.diary;
 
 import android.app.Application;
 import android.content.Context;

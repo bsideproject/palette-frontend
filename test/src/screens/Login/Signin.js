@@ -243,7 +243,7 @@ const Signin = ({navigation}) => {
   const androidKeys = {
     kConsumerKey: 'w4cSPEHXMDrXw_OcULnX',
     kConsumerSecret: '7dATQfr1oi',
-    kServiceAppName: 'com.diary',
+    kServiceAppName: 'com.half.diary',
   };
 
   const initials = androidKeys;

@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:421917305912:android:9a3864ebab62d12cd98acd",
         "android_client_info": {
-          "package_name": "com.diary"
+          "package_name": "com.half.diary"
         }
       },
       "oauth_client": [
@@ -38,7 +38,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:421917305912:android:878ef1872d65cd5cd98acd",
         "android_client_info": {
-          "package_name": "com.diary"
+          "package_name": "com.half.diary"
         }
       },
       "oauth_client": [
