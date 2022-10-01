@@ -108,6 +108,10 @@ const Signin = ({navigation}) => {
     updateProfile,
     {loading: loadingProfile, error: errorProfile, data: dataProfile},
   ] = USE_MUTATION('UPDATE_PROFILE', accessToken);
+  const [asyncIsPush, setAsyncIsPush] = useState();
+  AsyncStorage.getItem('is_push', (err, result) => {
+    result === 'true' ? setAsyncIsPush(true) : setAsyncIsPush(false);
+  });
 
   const _checkPushPage = () => {
     AsyncStorage.getItem('is_push', (err, result) => {
@@ -122,7 +126,7 @@ const Signin = ({navigation}) => {
       AsyncStorage.getItem('social_type', (err, result) => {
         setPrevSignType(result);
       });
-      if (pushPage === '재설치') {
+      if (pushPage) {
         setPrevSignType(null);
       }
     }
@@ -351,7 +355,7 @@ const Signin = ({navigation}) => {
 
     if (getCookie('is_push') !== undefined) {
       const isPush =
-        getCookie('is_push') !== undefined ? getCookie('is_push') : false;
+        getCookie('is_push') !== undefined ? getCookie('is_push') : asyncIsPush;
       updateProfile({
         variables: {pushEnabled: isPush},
       });

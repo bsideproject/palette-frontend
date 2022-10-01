@@ -74,15 +74,17 @@ const Navigation = () => {
       }
       console.log('Success', data);
       setIsLoading(false);
-      // If Success
-      setUser({
-        accessToken: getCookie('access_token'),
-        email: data.myProfile.email,
-        nickname: data.myProfile.nickname,
-        profileImg: data.myProfile.profileImg,
-        socialTypes: data.myProfile.socialTypes,
-        pushEnabled: data.myProfile.pushEnabled,
-      });
+      if (data.myProfile.nickname !== '') {
+        // If Success
+        setUser({
+          accessToken: getCookie('access_token'),
+          email: data.myProfile.email,
+          nickname: data.myProfile.nickname,
+          profileImg: data.myProfile.profileImg,
+          socialTypes: data.myProfile.socialTypes,
+          pushEnabled: data.myProfile.pushEnabled,
+        });
+      }
     }
   };
 

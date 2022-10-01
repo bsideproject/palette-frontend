@@ -73,7 +73,7 @@ const PushCheck = props => {
 
   const _handleNextButton = () => {
     setCookie('is_push', pushToggle);
-    AsyncStorage.setItem('is_push', '재설치', () => {
+    AsyncStorage.setItem('is_push', pushToggle.toString(), () => {
       console.log('저장');
       props.onClick();
     });

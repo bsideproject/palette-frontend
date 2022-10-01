@@ -61,6 +61,10 @@ const Joined = ({navigation}) => {
     updateProfile,
     {loading: loadingProfile, error: errorProfile, data: dataProfile},
   ] = USE_MUTATION('UPDATE_PROFILE', accessToken);
+  const [asyncIsPush, setAsyncIsPush] = useState();
+  AsyncStorage.getItem('is_push', (err, result) => {
+    result === 'true' ? setAsyncIsPush(true) : setAsyncIsPush(false);
+  });
 
   const _handleNextButtonPress = async () => {
     setLoadingMessage('가입 진행 중...');
@@ -125,7 +129,7 @@ const Joined = ({navigation}) => {
       }
       console.log('FCM Data', dataFCM);
       const isPush =
-        getCookie('is_push') !== undefined ? getCookie('is_push') : false;
+        getCookie('is_push') !== undefined ? getCookie('is_push') : asyncIsPush;
       updateProfile({
         variables: {pushEnabled: isPush, socialTypes: [socialType]},
       });
@@ -155,6 +159,7 @@ const Joined = ({navigation}) => {
         data.myProfile.socialTypes,
         data.myProfile.pushEnabled,
       );
+      console.log('회원가입 완료', data);
       setUser({
         accessToken: accessToken,
         email: data.myProfile.email,
