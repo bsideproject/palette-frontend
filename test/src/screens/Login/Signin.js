@@ -176,7 +176,7 @@ const Signin = ({navigation}) => {
       setTimeout(async () => {
         await refetch()
           .then(data => {
-            if (data.data.myProfile.nickname !== '') {
+            if (data.data.myProfile.nickname !== null) {
               AsyncStorage.getItem('fcmtoken', (err, result) => {
                 console.log('[Auto Login]fcm token', result);
                 addFcmToken({
@@ -201,7 +201,7 @@ const Signin = ({navigation}) => {
     // Get From DataBase
     console.log('회원인지 아닌지', isRegistered);
     if (!!data && isRegistered) {
-      if (data.myProfile.nickname === '') {
+      if (data.myProfile.nickname === null) {
         //닉네임 설정을 안한 회원
         navigation.navigate('Nickname');
       } else {
@@ -231,16 +231,18 @@ const Signin = ({navigation}) => {
       }
       //최종 로그인
       console.log('Login Success', dataFCM, data);
-      setUser({
-        accessToken: accessToken,
-        email: data.myProfile.email,
-        nickname: data.myProfile.nickname,
-        profileImg: data.myProfile.profileImg,
-        socialTypes: data.myProfile.socialTypes,
-        pushEnabled: getCookie('is_push')
-          ? getCookie('is_push')
-          : data.myProfile.pushEnabled,
-      });
+      if (data.myProfile.nickname !== null) {
+        setUser({
+          accessToken: accessToken,
+          email: data.myProfile.email,
+          nickname: data.myProfile.nickname,
+          profileImg: data.myProfile.profileImg,
+          socialTypes: data.myProfile.socialTypes,
+          pushEnabled: getCookie('is_push')
+            ? getCookie('is_push')
+            : data.myProfile.pushEnabled,
+        });
+      }
     }
   }, [loadingFCM]);
 

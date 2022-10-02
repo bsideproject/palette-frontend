@@ -74,7 +74,7 @@ const Navigation = () => {
       }
       console.log('Success', data);
       setIsLoading(false);
-      if (data.myProfile.nickname !== '') {
+      if (data.myProfile.nickname !== null) {
         // If Success
         setUser({
           accessToken: getCookie('access_token'),
