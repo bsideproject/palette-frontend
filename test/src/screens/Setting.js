@@ -418,7 +418,7 @@ const Setting = ({navigation}) => {
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <SettingText style={{fontWeight: '700'}}>앱정보</SettingText>
           </View>
-          <VersionText>v.1.4.0</VersionText>
+          <VersionText>v.1.1.0</VersionText>
         </NoneClickContainer>
         <BoundaryContainer />
         <ClickContainer onPress={() => navigation.navigate('Introduce')}>
